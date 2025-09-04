@@ -1,8 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using AddInManager.Properties;
@@ -114,9 +114,9 @@ namespace AddInManager
             Applications.Save(RevitIniFile);
         }
 
-        public void SaveToLocal()
+        public void SaveToLocal(AddinType addinTypeToSave)
         {
-            SaveToLocalManifest();
+            SaveToLocalManifest(addinTypeToSave);
         }
 
         public void SaveToLocalRevitIni()
@@ -166,44 +166,37 @@ namespace AddInManager
             return false;
         }
 
-        public string SaveToAllUserManifest()
+        public string SaveToAllUserManifest(AddinType addinTypeToSave)
         {
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
             var currentAddinFolder = Path.Combine(folderPath, $"Autodesk\\Revit\\Addins\\{App.RevitVersion}");
             var manifestFile = new ManifestFile(false);
             var numCmdAddins = 0;
             Addin savedCmdAddin = null;
-            foreach (var cmdAddin in Commands.AddinDict.Values)
+            if (addinTypeToSave == AddinType.Command)
             {
-                if (cmdAddin.Save)
+                foreach (var cmdAddin in Commands.AddinDict.Values.Where(a => a.Save))
                 {
                     numCmdAddins++;
                     savedCmdAddin = cmdAddin;
-                }
-                foreach (var addinItem in cmdAddin.ItemList)
-                {
-                    if (addinItem.Save)
+                    foreach (var addinItem in cmdAddin.ItemList.Where(i => i.Save))
                     {
                         manifestFile.Commands.Add(addinItem);
                     }
                 }
             }
+
             var numAppAddins = 0;
             Addin savedAppAddin = null;
-            foreach (var appAddin in Applications.AddinDict.Values)
+            if (addinTypeToSave == AddinType.Application)
             {
-                if (appAddin.Save)
+                foreach (var appAddin in Applications.AddinDict.Values.Where(a => a.Save))
                 {
-                    numCmdAddins++;
+                    numAppAddins++;
                     savedAppAddin = appAddin;
-                }
-                foreach (var appAddinItem in appAddin.ItemList)
-                {
-                    if (appAddinItem.Save)
+                    foreach (var appAddinItem in appAddin.ItemList.Where(i => i.Save))
                     {
                         manifestFile.Applications.Add(appAddinItem);
-                        numAppAddins++;
-                        savedAppAddin = appAddin;
                     }
                 }
             }
@@ -236,67 +229,37 @@ namespace AddInManager
             return addinFilePath;
         }
 
-        public void SaveToLocalManifest()
+        public void SaveToLocalManifest(AddinType addinTypeToSave)
         {
-            var dictionary = new Dictionary<string, Addin>();
-            var dictionary2 = new Dictionary<string, Addin>();
-            foreach (var cmdKeyValuePair in Commands.AddinDict)
+            if (addinTypeToSave == AddinType.Command)
             {
-                var key = cmdKeyValuePair.Key;
-                var value = cmdKeyValuePair.Value;
-                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(value.FilePath);
-                var directoryName = Path.GetDirectoryName(value.FilePath);
-                var text = Path.Combine(directoryName, $"{fileNameWithoutExtension}.addin");
-                var manifestFile = new ManifestFile(true);
-                foreach (var addinItem in value.ItemList)
+                foreach (var cmdKeyValuePair in Commands.AddinDict.Where(kv => kv.Value.Save))
                 {
-                    if (addinItem.Save)
+                    var value = cmdKeyValuePair.Value;
+                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(value.FilePath);
+                    var directoryName = Path.GetDirectoryName(value.FilePath);
+                    var text = Path.Combine(directoryName, $"{fileNameWithoutExtension}.addin");
+                    var manifestFile = new ManifestFile(true);
+                    foreach (var addinItem in value.ItemList.Where(i => i.Save))
                     {
                         manifestFile.Commands.Add(addinItem);
                     }
+                    manifestFile.SaveAs(text);
                 }
-                if (Applications.AddinDict.ContainsKey(key))
-                {
-                    var addin = Applications.AddinDict[key];
-                    foreach (var addinItem2 in addin.ItemList)
-                    {
-                        if (addinItem2.Save)
-                        {
-                            manifestFile.Applications.Add(addinItem2);
-                        }
-                    }
-                    dictionary.Add(key, Applications.AddinDict[key]);
-                }
-                manifestFile.SaveAs(text);
             }
-            foreach (var appKeyValuePair in Applications.AddinDict)
+
+            if (addinTypeToSave == AddinType.Application)
             {
-                var key2 = appKeyValuePair.Key;
-                var value2 = appKeyValuePair.Value;
-                if (!dictionary.ContainsKey(key2))
+                foreach (var appKeyValuePair in Applications.AddinDict.Where(kv => kv.Value.Save))
                 {
+                    var value2 = appKeyValuePair.Value;
                     var fileNameWithoutExtension2 = Path.GetFileNameWithoutExtension(value2.FilePath);
                     var directoryName2 = Path.GetDirectoryName(value2.FilePath);
                     var text2 = Path.Combine(directoryName2, $"{fileNameWithoutExtension2}.addin");
                     var manifestFile2 = new ManifestFile(true);
-                    foreach (var addinItem3 in value2.ItemList)
+                    foreach (var addinItem3 in value2.ItemList.Where(i => i.Save))
                     {
-                        if (addinItem3.Save)
-                        {
-                            manifestFile2.Applications.Add(addinItem3);
-                        }
-                    }
-                    if (Commands.AddinDict.ContainsKey(key2))
-                    {
-                        var addin2 = Commands.AddinDict[key2];
-                        foreach (var addinItem4 in addin2.ItemList)
-                        {
-                            if (addinItem4.Save)
-                            {
-                                manifestFile2.Commands.Add(addinItem4);
-                            }
-                        }
-                        dictionary2.Add(key2, Commands.AddinDict[key2]);
+                        manifestFile2.Applications.Add(addinItem3);
                     }
                     manifestFile2.SaveAs(text2);
                 }

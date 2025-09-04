@@ -330,61 +330,70 @@ namespace AddInManager.Wpf
 
         private void TreeViewCheckBox_Changed(object sender, RoutedEventArgs e)
         {
-            if (sender is CheckBox checkBox)
+            if (!(sender is CheckBox checkBox)) return;
+
+            var item = FindTreeViewItemFromCheckBox(checkBox);
+            if (item?.Tag == null) return;
+
+            // 区分是父节点还是子节点
+            if (item.Tag is Addin addin)
             {
-                var item = FindTreeViewItemFromCheckBox(checkBox);
-                if (item == null) return;
-
-                var isChecked = checkBox.IsChecked == true;
-
-                // 更新对应的数据模型
-                if (item.Tag is Addin addin)
+                // --- 父节点逻辑 ---
+                var newState = checkBox.IsChecked;
+                // 仅当父节点被用户明确点击为“选中”或“未选中”时，才更新所有子节点
+                // 如果状态变为 null（不确定），则不执行任何操作，因为它是由子节点更新引起的
+                if (newState.HasValue)
                 {
+                    var isChecked = newState.Value;
                     addin.Save = isChecked;
-
-                    // 父节点状态变化时，同步更新所有子节点
                     UpdateChildrenCheckBoxes(item, isChecked);
                 }
-                else if (item.Tag is AddinItem addinItem)
+                else
                 {
-                    addinItem.Save = isChecked;
-
-                    // 子节点状态变化时，检查是否需要更新父节点状态
-                    UpdateParentCheckBoxState(item);
+                    // 当状态为不确定时，我们认为它仍然有需要保存的项
+                    addin.Save = true;
                 }
-
-                // 保存更改
-                m_aim.AddinManager.SaveToAimIni();
             }
+            else if (item.Tag is AddinItem addinItem)
+            {
+                // --- 子节点逻辑 ---
+                var isChecked = checkBox.IsChecked == true;
+                addinItem.Save = isChecked;
+                // 更新父节点的状态
+                UpdateParentCheckBoxState(item);
+            }
+
+            // 保存更改到配置文件
+            m_aim.AddinManager.SaveToAimIni();
         }
 
         private void UpdateChildrenCheckBoxes(TreeViewItem parentItem, bool isChecked)
         {
+            // 遍历所有子项并更新它们的状态
             foreach (TreeViewItem childItem in parentItem.Items)
             {
-                // 更新子节点CheckBox状态
-                var childCheckBox = FindCheckBoxInTreeViewItem(childItem);
-                if (childCheckBox != null)
-                {
-                    // 临时移除事件处理，避免递归调用
-                    childCheckBox.Checked -= TreeViewCheckBox_Changed;
-                    childCheckBox.Unchecked -= TreeViewCheckBox_Changed;
-
-                    childCheckBox.IsChecked = isChecked;
-
-                    // 重新添加事件处理
-                    childCheckBox.Checked += TreeViewCheckBox_Changed;
-                    childCheckBox.Unchecked += TreeViewCheckBox_Changed;
-                }
-
-                // 更新子节点数据模型
                 if (childItem.Tag is AddinItem addinItem)
                 {
+                    // 更新数据模型
                     addinItem.Save = isChecked;
+
+                    // 更新UI（CheckBox）
+                    var childCheckBox = FindCheckBoxInTreeViewItem(childItem);
+                    if (childCheckBox != null)
+                    {
+                        // 临时移除事件处理程序，防止无限递归
+                        childCheckBox.Checked -= TreeViewCheckBox_Changed;
+                        childCheckBox.Unchecked -= TreeViewCheckBox_Changed;
+
+                        childCheckBox.IsChecked = isChecked;
+
+                        // 重新附加事件处理程序
+                        childCheckBox.Checked += TreeViewCheckBox_Changed;
+                        childCheckBox.Unchecked += TreeViewCheckBox_Changed;
+                    }
                 }
             }
         }
-
         private void UpdateParentCheckBoxState(TreeViewItem childItem)
         {
             if (childItem.Parent is TreeViewItem parentItem)
@@ -443,7 +452,6 @@ namespace AddInManager.Wpf
                 }
             }
         }
-
         #endregion
 
         private void LoadButton_Click(object sender, RoutedEventArgs e)
@@ -831,12 +839,14 @@ namespace AddInManager.Wpf
         private void CommandsTreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left) return;
+            // 使用辅助方法 FindTreeViewItem 查找被双击的 TreeViewItem
+            var clickedItem = FindTreeViewItem(e.OriginalSource as DependencyObject);
 
-            var selectedItem = commandsTreeView.SelectedItem as TreeViewItem;
-            if (selectedItem != null && !HasChildren(selectedItem))
+            // 确保双击的是一个有效的 TreeViewItem，并且它是一个子节点（没有子项）
+            if (clickedItem != null && !HasChildren(clickedItem))
             {
-                // 确保选中的是可执行的命令项
-                if (m_aim.ActiveCmdItem != null)
+                // 确保选中的是可执行的命令项 (AddinItem)
+                if (clickedItem.Tag is AddinItem)
                 {
                     Run();
                 }
@@ -845,6 +855,21 @@ namespace AddInManager.Wpf
                     ShowStatusError("选中的项目不是可执行的命令");
                 }
             }
+            // 如果双击的是空白区域或父节点，则不执行任何操作
+            //var selectedItem = commandsTreeView.SelectedItem as TreeViewItem;
+
+            //if (selectedItem != null && !HasChildren(selectedItem))
+            //{
+            //    // 确保选中的是可执行的命令项
+            //    if (m_aim.ActiveCmdItem != null)
+            //    {
+            //        Run();
+            //    }
+            //    else
+            //    {
+            //        ShowStatusError("选中的项目不是可执行的命令");
+            //    }
+            //}
         }
 
         private void SaveToAddinMenuItem_Click(object sender, RoutedEventArgs e)
@@ -854,7 +879,8 @@ namespace AddInManager.Wpf
                 MessageBox.Show(Properties.Resources.NoItemsSelected, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            m_aim.AddinManager.SaveToAllUserManifest();
+            var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
+            m_aim.AddinManager.SaveToAllUserManifest(typeToSave);
             ShowStatusLabel("保存成功，请关闭窗口加载插件");
         }
 
@@ -865,7 +891,8 @@ namespace AddInManager.Wpf
                 MessageBox.Show(Properties.Resources.NoItemsSelected, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            m_aim.AddinManager.SaveToLocal();
+            var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
+            m_aim.AddinManager.SaveToLocal(typeToSave);
             ShowStatusLabel("保存成功");
         }
 
