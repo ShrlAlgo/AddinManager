@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+   <AddIn Type="Application">
+      <Assembly>AddInManager.dll</Assembly>
+      <Name>插件开发工具</Name>
+      <ClientId>E8196B4E-AC4F-4B22-BF75-48F9A6039BDA</ClientId>
+      <FullClassName>AddInManager.App</FullClassName>
+      <Text>Add-In Manager</Text>
+      <VisibilityMode>AlwaysVisible</VisibilityMode>
+      <LanguageType>Unknown</LanguageType>
+      <VendorId>ADSK</VendorId>
+      <VendorDescription>Autodesk, www.autodesk.com</VendorDescription>
+  </AddIn>
+</RevitAddIns>
