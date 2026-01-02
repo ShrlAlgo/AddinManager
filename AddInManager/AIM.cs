@@ -84,10 +84,7 @@ namespace AddInManager
                 {
                     lock (typeof(AIM))
                     {
-                        if (m_inst == null)
-                        {
-                            m_inst = new AIM();
-                        }
+                        m_inst ??= new AIM();
                     }
                 }
                 return m_inst;

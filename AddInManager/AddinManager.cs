@@ -34,13 +34,13 @@ namespace AddInManager
         private void GetIniFilePaths()
         {
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var text = Path.Combine(folderPath, Settings.Default.AppFolder);
-            var text2 = Path.Combine(text, "AimInternal.ini");
-            AimIniFile = new IniFile(text2);
+            var appFolder = Path.Combine(folderPath, Resources.AppFolder);
+            var iniFilePath = Path.Combine(appFolder, "AimInternal.ini");
+            AimIniFile = new IniFile(iniFilePath);
             var currentProcess = Process.GetCurrentProcess();
             var fileName = currentProcess.MainModule.FileName;
-            var text3 = fileName.Replace(".exe", ".ini");
-            RevitIniFile = new IniFile(text3);
+            var revitIniFilePath = fileName.Replace(".exe", ".ini");
+            RevitIniFile = new IniFile(revitIniFilePath);
         }
 
         public void ReadAddinsFromAimIni()
@@ -66,8 +66,8 @@ namespace AddInManager
             }
             Path.GetFileName(filePath);
             var assemLoader = new AssemLoader();
-            List<AddinItem> list = null;
-            List<AddinItem> list2 = null;
+            List<AddinItem> cmdItems = null;
+            List<AddinItem> appItems = null;
             try
             {
                 assemLoader.HookAssemblyResolve();
@@ -76,8 +76,8 @@ namespace AddInManager
                 {
                     return addinType;
                 }
-                list = Commands.LoadItems(assembly, StaticUtil.m_ecFullName, filePath, AddinType.Command);
-                list2 = Applications.LoadItems(assembly, StaticUtil.m_eaFullName, filePath, AddinType.Application);
+                cmdItems = Commands.LoadItems(assembly, StaticUtil.m_ecFullName, filePath, AddinType.Command);
+                appItems = Applications.LoadItems(assembly, StaticUtil.m_eaFullName, filePath, AddinType.Application);
             }
             catch (Exception)
             {
@@ -86,16 +86,16 @@ namespace AddInManager
             {
                 assemLoader.UnhookAssemblyResolve();
             }
-            if (list != null && list.Count > 0)
+            if (cmdItems != null && cmdItems.Count > 0)
             {
-                var addin = new Addin(filePath, list);
-                Commands.AddAddIn(addin);
+                var cmdAddin = new Addin(filePath, cmdItems);
+                Commands.AddAddIn(cmdAddin);
                 addinType |= AddinType.Command;
             }
-            if (list2 != null && list2.Count > 0)
+            if (appItems != null && appItems.Count > 0)
             {
-                var addin2 = new Addin(filePath, list2);
-                Applications.AddAddIn(addin2);
+                var appAddin = new Addin(filePath, appItems);
+                Applications.AddAddIn(appAddin);
                 addinType |= AddinType.Application;
             }
             return addinType;
@@ -105,8 +105,7 @@ namespace AddInManager
         {
             if (!File.Exists(RevitIniFile.FilePath))
             {
-                throw new System.IO.FileNotFoundException(
-                    $"can't find the revit.ini file from: {RevitIniFile.FilePath}",
+                throw new System.IO.FileNotFoundException($"路径{RevitIniFile.FilePath}中未找到revit.ini: ",
     RevitIniFile.FilePath
 );
             }

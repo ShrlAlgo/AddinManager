@@ -69,7 +69,7 @@
                                         Margin="2"
                                         Click="SelectAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="选择所有命令项">
+                                        ToolTip="选中所有命令">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -81,7 +81,7 @@
                                         x:Name="selectNoneButton"
                                         Click="SelectNoneButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="取消所有选择">
+                                        ToolTip="取消选中应用">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -133,7 +133,6 @@
                             MouseDoubleClick="CommandsTreeView_MouseDoubleClick"
                             PreviewMouseRightButtonDown="CommandsTreeView_PreviewMouseRightButtonDown"
                             SelectedItemChanged="CommandsTreeView_SelectedItemChanged">
-                            <!--  为 TreeViewItem 定义右键菜单 (已更新图标)  -->
                             <TreeView.ContextMenu>
                                 <ContextMenu x:Name="commandsTreeViewContextMenu">
                                     <MenuItem
@@ -238,7 +237,7 @@
                                     Margin="2"
                                     Click="AppSelectAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="选择所有命令项">
+                                    ToolTip="选中所有应用">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -250,7 +249,7 @@
                                     x:Name="appSelectNoneButton"
                                     Click="AppSelectNoneButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="取消所有选择">
+                                    ToolTip="取消选中应用">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"

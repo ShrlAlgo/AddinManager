@@ -14,9 +14,9 @@ namespace AddInManager
             stringBuilder.AppendLine($"文件夹[{folderPath}]");
             stringBuilder.AppendLine($"有{sizeInMB}MB大小");
             stringBuilder.AppendLine("AddinManager尝试复制所有文件到临时文件夹");
-            stringBuilder.AppendLine("选择[Yes]复制所有文件到临时文件夹");
-            stringBuilder.AppendLine("选择[No]仅复制测试DLL文件到临时文件夹");
-            stringBuilder.AppendLine("选择[Cancel]取消操作");
+            stringBuilder.AppendLine("选择[是(Y)]复制所有文件到临时文件夹");
+            stringBuilder.AppendLine("选择[否(N)]仅复制测试DLL文件到临时文件夹");
+            stringBuilder.AppendLine("选择[取消]取消操作");
             var text = stringBuilder.ToString();
             return MessageBox.Show(text, Resources.AppName, MessageBoxButton.YesNoCancel, MessageBoxImage.Information, MessageBoxResult.Yes);
         }
