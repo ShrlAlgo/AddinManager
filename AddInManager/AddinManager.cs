@@ -4,7 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using System.Runtime.Serialization.Json;
+using System.Text;
 using AddInManager.Properties;
 
 namespace AddInManager
@@ -33,10 +34,46 @@ namespace AddInManager
 
         private void GetIniFilePaths()
         {
-            var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            //var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var appFolder = Path.Combine(folderPath, Resources.AppFolder);
-            var iniFilePath = Path.Combine(appFolder, "AimInternal.ini");
+            // switch from INI to JSON storage
+            var iniFilePath = Path.Combine(appFolder, "AimInternal.json");
             AimIniFile = new IniFile(iniFilePath);
+
+            // If an old INI exists, migrate it to JSON (one-time)
+            try
+            {
+                var oldIniPath = Path.Combine(appFolder, "AimInternal.ini");
+                if (File.Exists(oldIniPath) && !File.Exists(iniFilePath))
+                {
+                    var oldIni = new IniFile(oldIniPath);
+                    // populate commands/applications from old INI
+                    Commands.ReadItems(oldIni);
+                    Applications.ReadItems(oldIni);
+
+                    // save to new JSON store
+                    SaveToPersistentStore(iniFilePath);
+
+                    // backup old INI
+                    try
+                    {
+                        var backupPath = oldIniPath + ".bak";
+                        File.Copy(oldIniPath, backupPath, true);
+                        FileUtils.SetWriteable(oldIniPath);
+                        File.Delete(oldIniPath);
+                    }
+                    catch (Exception)
+                    {
+                        // ignore backup errors
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignore migration errors
+            }
+
             var currentProcess = Process.GetCurrentProcess();
             var fileName = currentProcess.MainModule.FileName;
             var revitIniFilePath = fileName.Replace(".exe", ".ini");
@@ -45,8 +82,12 @@ namespace AddInManager
 
         public void ReadAddinsFromAimIni()
         {
-            Commands.ReadItems(AimIniFile);
-            Applications.ReadItems(AimIniFile);
+            // try load from persistent JSON store; if fails, fall back to legacy INI-format reader
+            if (!LoadFromPersistentStore(AimIniFile.FilePath))
+            {
+                Commands.ReadItems(AimIniFile);
+                Applications.ReadItems(AimIniFile);
+            }
         }
 
         public void RemoveAddin(Addin addin)
@@ -101,49 +142,34 @@ namespace AddInManager
             return addinType;
         }
 
-        public void SaveToRevitIni()
-        {
-            if (!File.Exists(RevitIniFile.FilePath))
-            {
-                throw new System.IO.FileNotFoundException($"路径{RevitIniFile.FilePath}中未找到revit.ini: ",
-    RevitIniFile.FilePath
-);
-            }
-            Commands.Save(RevitIniFile);
-            Applications.Save(RevitIniFile);
-        }
-
         public void SaveToLocal(AddinType addinTypeToSave)
         {
             SaveToLocalManifest(addinTypeToSave);
         }
 
-        public void SaveToLocalRevitIni()
-        {
-            foreach (var keyValuePair in Commands.AddinDict)
-            {
-                var key = keyValuePair.Key;
-                var value = keyValuePair.Value;
-                var directoryName = Path.GetDirectoryName(value.FilePath);
-                var iniFile = new IniFile(Path.Combine(directoryName, "revit.ini"));
-                value.SaveToLocalIni(iniFile);
-                if (Applications.AddinDict.ContainsKey(key))
-                {
-                    var addin = Applications.AddinDict[key];
-                    addin.SaveToLocalIni(iniFile);
-                }
-            }
-        }
-
         public void SaveToAimIni()
         {
-            if (!File.Exists(AimIniFile.FilePath))
+            // ensure file exists
+            try
             {
-                new FileInfo(AimIniFile.FilePath).Create();
-                FileUtils.SetWriteable(AimIniFile.FilePath);
+                if (!File.Exists(AimIniFile.FilePath))
+                {
+                    new FileInfo(AimIniFile.FilePath).Directory?.Create();
+                    FileUtils.CreateFile(AimIniFile.FilePath);
+                    FileUtils.SetWriteable(AimIniFile.FilePath);
+                }
             }
-            Commands.Save(AimIniFile);
-            Applications.Save(AimIniFile);
+            catch (Exception)
+            {
+                // ignore
+            }
+
+            // save to persistent JSON store; if fails, fall back to legacy INI writer
+            if (!SaveToPersistentStore(AimIniFile.FilePath))
+            {
+                Commands.Save(AimIniFile);
+                Applications.Save(AimIniFile);
+            }
         }
 
         public bool HasItemsToSave()
@@ -222,7 +248,7 @@ namespace AddInManager
             }
             else
             {
-                addinFilePath = GetProperFilePath(currentAddinFolder, "ExternalTool", ".addin");
+                addinFilePath = GetProperFilePath(currentAddinFolder, addinFileName, ".addin");
             }
             manifestFile.SaveAs(addinFilePath);
             return addinFilePath;
@@ -277,6 +303,169 @@ namespace AddInManager
             }
             while (File.Exists(filePath));
             return filePath;
+        }
+
+        private bool LoadFromPersistentStore(string filePath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return false;
+                using (var fs = File.OpenRead(filePath))
+                {
+                    var ser = new DataContractJsonSerializer(typeof(PersistentAddinStore));
+                    var obj = ser.ReadObject(fs) as PersistentAddinStore;
+                    if (obj == null) return false;
+
+
+                    // reset internal dictionaries
+                    Commands.AddinDict.Clear();
+                    Applications.AddinDict.Clear();
+
+                    foreach (var p in obj.Commands)
+                    {
+                        var items = new List<AddinItem>();
+                        foreach (var pi in p.Items)
+                        {
+                            var ai = new AddinItem(pi.AssemblyPath ?? string.Empty, pi.ClientId == Guid.Empty ? Guid.NewGuid() : pi.ClientId, pi.FullClassName ?? string.Empty, AddinType.Command, pi.TransactionMode, pi.RegenerationMode, pi.JournalingMode)
+                            {
+                                Name = pi.Name,
+                                Description = pi.Description,
+                                VisibilityMode = pi.VisibilityMode,
+                                Save = pi.Save,
+                                Hidden = pi.Hidden
+                            };
+                            items.Add(ai);
+                        }
+                        var addin = new Addin(p.FilePath ?? string.Empty, items)
+                        {
+                            Save = p.Save,
+                            Hidden = p.Hidden
+                        };
+                        Commands.AddAddIn(addin);
+                    }
+
+                    foreach (var p in obj.Applications)
+                    {
+                        var items = new List<AddinItem>();
+                        foreach (var pi in p.Items)
+                        {
+                            var ai = new AddinItem(pi.AssemblyPath ?? string.Empty, pi.ClientId == Guid.Empty ? Guid.NewGuid() : pi.ClientId, pi.FullClassName ?? string.Empty, AddinType.Application, pi.TransactionMode, pi.RegenerationMode, pi.JournalingMode)
+                            {
+                                Name = pi.Name,
+                                Description = pi.Description,
+                                VisibilityMode = pi.VisibilityMode,
+                                Save = pi.Save,
+                                Hidden = pi.Hidden
+                            };
+                            items.Add(ai);
+                        }
+                        var addin = new Addin(p.FilePath ?? string.Empty, items)
+                        {
+                            Save = p.Save,
+                            Hidden = p.Hidden
+                        };
+                        Applications.AddAddIn(addin);
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool SaveToPersistentStore(string filePath)
+        {
+            try
+            {
+                var store = new PersistentAddinStore
+                {
+                    FormatVersion = 1,
+                    RevitVersion = App.RevitVersion,
+                    LastSaved = DateTime.Now
+                };
+
+                foreach (var kv in Commands.AddinDict)
+                {
+                    var a = kv.Value;
+                    var p = new PersistentAddin
+                    {
+                        FilePath = a.FilePath,
+                        Save = a.Save,
+                        Hidden = a.Hidden
+                    };
+                    foreach (var ai in a.ItemList)
+                    {
+                        var pi = new PersistentAddinItem
+                        {
+                            AddinType = ai.AddinType,
+                            AssemblyPath = ai.AssemblyPath,
+                            AssemblyName = ai.AssemblyName,
+                            ClientId = ai.ClientId,
+                            FullClassName = ai.FullClassName,
+                            Name = ai.Name,
+                            Description = ai.Description,
+                            VisibilityMode = ai.VisibilityMode,
+                            Save = ai.Save,
+                            Hidden = ai.Hidden,
+                            TransactionMode = ai.TransactionMode,
+                            RegenerationMode = ai.RegenerationMode,
+                            JournalingMode = ai.JournalingMode
+                        };
+                        p.Items.Add(pi);
+                    }
+                    store.Commands.Add(p);
+                }
+
+                foreach (var kv in Applications.AddinDict)
+                {
+                    var a = kv.Value;
+                    var p = new PersistentAddin
+                    {
+                        FilePath = a.FilePath,
+                        Save = a.Save,
+                        Hidden = a.Hidden
+                    };
+                    foreach (var ai in a.ItemList)
+                    {
+                        var pi = new PersistentAddinItem
+                        {
+                            AddinType = ai.AddinType,
+                            AssemblyPath = ai.AssemblyPath,
+                            AssemblyName = ai.AssemblyName,
+                            ClientId = ai.ClientId,
+                            FullClassName = ai.FullClassName,
+                            Name = ai.Name,
+                            Description = ai.Description,
+                            VisibilityMode = ai.VisibilityMode,
+                            Save = ai.Save,
+                            Hidden = ai.Hidden,
+                            TransactionMode = ai.TransactionMode,
+                            RegenerationMode = ai.RegenerationMode,
+                            JournalingMode = ai.JournalingMode
+                        };
+                        p.Items.Add(pi);
+                    }
+                    store.Applications.Add(p);
+                }
+
+                var directory = Path.GetDirectoryName(filePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+                using (var fs = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    var ser = new DataContractJsonSerializer(typeof(PersistentAddinStore));
+                    ser.WriteObject(fs, store);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

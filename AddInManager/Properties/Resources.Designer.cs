@@ -61,7 +61,7 @@ namespace AddInManager.Properties {
         }
         
         /// <summary>
-        ///   查找类似 RevitAddInManager 的本地化字符串。
+        ///   查找类似 AddinData 的本地化字符串。
         /// </summary>
         internal static string AppFolder {
             get {

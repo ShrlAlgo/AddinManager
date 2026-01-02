@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AddInManager
+﻿namespace AddInManager
 {
     public interface IAddinNode
     {

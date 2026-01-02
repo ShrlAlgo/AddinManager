@@ -1116,7 +1116,7 @@ namespace AddInManager.Wpf
         // (重写) 重新加载
         private void ContextMenuReload_Click(object sender, RoutedEventArgs e)
         {
-            if (!(commandsTreeView.SelectedItem is TreeViewItem selectedItem)) return;
+            if (commandsTreeView.SelectedItem is not TreeViewItem selectedItem) return;
 
             Addin addinToReload = null;
             // 判断选中项是Addin(父)还是AddinItem(子)
@@ -1130,7 +1130,7 @@ namespace AddInManager.Wpf
                 var parent = VisualTreeHelper.GetParent(selectedItem);
                 while (parent != null)
                 {
-                    if (parent is TreeViewItem parentItem && parentItem.Tag is Addin parentAddin)
+                    if (parent is TreeViewItem { Tag: Addin parentAddin })
                     {
                         addinToReload = parentAddin;
                         break;

@@ -5,19 +5,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using AddInManager.Properties;
-
-using Autodesk.Private.InfoCenter;
-using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Windows;
 
@@ -58,12 +49,10 @@ namespace AddInManager
             AddPushButton(pulldownButton, typeof(CAddInManagerFaceless), "插件管理(手动模式,无界面)");
             AddPushButton(pulldownButton, typeof(CAddInManagerReadOnly), "插件管理(只读模式)");
             var tab = ComponentManager.Ribbon.FindTab("Modify");
-            if (tab != null)
-            {
-                var adwPanel = new Autodesk.Windows.RibbonPanel();
-                adwPanel.CopyFrom(GetRibbonPanel(ribbonPanel));
-                tab.Panels.Add(adwPanel);
-            }
+            if (tab == null) return;
+            var adwPanel = new Autodesk.Windows.RibbonPanel();
+            adwPanel.CopyFrom(GetRibbonPanel(ribbonPanel));
+            tab.Panels.Add(adwPanel);
 
         }
         internal static BitmapImage ToImageSource(Bitmap bitmap)

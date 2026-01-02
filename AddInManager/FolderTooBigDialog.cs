@@ -1,6 +1,4 @@
 ﻿using AddInManager.Properties;
-
-using System;
 using System.Text;
 using System.Windows;
 

@@ -10,12 +10,12 @@ namespace AddInManager
         public AddinItem(AddinType type)
         {
             AddinType = type;
-            m_clientId = Guid.NewGuid();
-            ClientIdString = m_clientId.ToString();
-            m_assemblyPath = string.Empty;
+            MClientId = Guid.NewGuid();
+            ClientIdString = MClientId.ToString();
+            MAssemblyPath = string.Empty;
             AssemblyName = string.Empty;
             FullClassName = string.Empty;
-            m_name = string.Empty;
+            _mName = string.Empty;
             Save = true;
             VisibilityMode = VisibilityMode.AlwaysVisible;
         }
@@ -26,20 +26,20 @@ namespace AddInManager
             RegenerationMode = regenerationOption;
             JournalingMode = journalingMode;
             AddinType = type;
-            m_assemblyPath = assemblyPath;
-            AssemblyName = Path.GetFileName(m_assemblyPath);
-            m_clientId = clientId;
+            MAssemblyPath = assemblyPath;
+            AssemblyName = Path.GetFileName(MAssemblyPath);
+            MClientId = clientId;
             ClientIdString = clientId.ToString();
             FullClassName = fullClassName;
             var num = fullClassName.LastIndexOf(".");
-            m_name = fullClassName.Substring(num + 1);
+            _mName = fullClassName.Substring(num + 1);
             Save = true;
             VisibilityMode = VisibilityMode.AlwaysVisible;
         }
 
         public void SaveToManifest()
         {
-            var manifestFile = new ManifestFile($"{m_name}.addin");
+            var manifestFile = new ManifestFile($"{_mName}.addin");
             if (AddinType == AddinType.Application)
             {
                 manifestFile.Applications.Add(this);
@@ -55,11 +55,11 @@ namespace AddInManager
 
         public string AssemblyPath
         {
-            get => m_assemblyPath;
+            get => MAssemblyPath;
             set
             {
-                m_assemblyPath = value;
-                AssemblyName = Path.GetFileName(m_assemblyPath);
+                MAssemblyPath = value;
+                AssemblyName = Path.GetFileName(MAssemblyPath);
             }
         }
 
@@ -67,11 +67,11 @@ namespace AddInManager
 
         public Guid ClientId
         {
-            get => m_clientId;
+            get => MClientId;
             set
             {
-                m_clientId = value;
-                ClientIdString = m_clientId.ToString();
+                MClientId = value;
+                ClientIdString = MClientId.ToString();
             }
         }
 
@@ -81,43 +81,29 @@ namespace AddInManager
 
         public string Name
         {
-            get
-            {
-                if (string.IsNullOrEmpty(m_name))
-                {
-                    return "External Tool";
-                }
-                return m_name;
-            }
+            get => string.IsNullOrEmpty(_mName) ? "External Tool" : _mName;
             set
             {
                 if (!string.IsNullOrEmpty(value))
                 {
-                    m_name = value;
+                    _mName = value;
                     return;
                 }
-                m_name = "External Tool";
+                _mName = "External Tool";
             }
         }
 
         public string Description
         {
-            get
-            {
-                if (string.IsNullOrEmpty(m_description))
-                {
-                    return "\"\"";
-                }
-                return m_description;
-            }
+            get => string.IsNullOrEmpty(field) ? "\"\"" : field;
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    m_description = "\"\"";
+                    field = "\"\"";
                     return;
                 }
-                m_description = value;
+                field = value;
             }
         }
 
@@ -135,12 +121,11 @@ namespace AddInManager
 
         public override string ToString()
         {
-            return m_name;
+            return _mName;
         }
 
-        protected string m_assemblyPath;
-        protected Guid m_clientId;
-        private string m_name;
-        private string m_description;
+        protected string MAssemblyPath;
+        protected Guid MClientId;
+        private string _mName;
     }
 }

@@ -9,8 +9,10 @@
     <AppendPlatformToOutputPath>False</AppendPlatformToOutputPath>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
     <TargetFramework>net48</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="2020.2.60" />
     <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2020.2.60" />
     <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2020.2.60" />

@@ -30,7 +30,7 @@ namespace AddInManager
                 {
                 }
             }
-            var text = string.Format("{0:yyyyMMdd_HHmmss_ffff}", DateTime.Now);
+            var text = $"{DateTime.Now:yyyyMMdd_HHmmss_ffff}";
             var text2 = Path.Combine(directoryInfo.FullName, prefix + text);
             var directoryInfo3 = new DirectoryInfo(text2);
             directoryInfo3.Create();
@@ -48,7 +48,7 @@ namespace AddInManager
 
         public static bool SameFile(string file1, string file2)
         {
-            return 0 == string.Compare(file1.Trim(), file2.Trim(), true);
+            return 0 == string.Compare(file1.Trim(), file2.Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         public static bool CreateFile(string filePath)
@@ -213,6 +213,7 @@ namespace AddInManager
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
@@ -233,7 +234,5 @@ namespace AddInManager
             }
             return num / 1024L / 1024L;
         }
-
-        private const string TempFolderName = "RevitAddins";
     }
 }
