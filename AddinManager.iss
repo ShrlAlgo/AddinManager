@@ -4,7 +4,7 @@
 ; 定义应用程序的名称
 #define MyAppName "RevitAddinManager"
 ; 定义应用程序的版本号
-#define MyAppVersion "2.0.0"
+#define MyAppVersion "3.0.0"
 ; 定义应用程序的发布者
 #define MyAppPublisher "ShrlAlgo"
 ; 定义应用程序的网址

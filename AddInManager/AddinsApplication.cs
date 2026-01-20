@@ -2,7 +2,7 @@
 {
     public class AddinsApplication : Addins
     {
-        public void ReadItems(IniFile file)
+        public void ReadItems(InitFile file)
         {
             var num = file.ReadInt("ExternalApplications", "EACount");
             var i = 1;
@@ -13,7 +13,7 @@
             SortAddin();
         }
 
-        private bool ReadExternalApplication(IniFile file, int nodeNumber)
+        private bool ReadExternalApplication(InitFile file, int nodeNumber)
         {
             var text = file.ReadString("ExternalApplications", $"EAClassName{nodeNumber}");
             var text2 = file.ReadString("ExternalApplications", $"EAAssembly{nodeNumber}");
@@ -30,7 +30,7 @@
             return true;
         }
 
-        public void Save(IniFile file)
+        public void Save(InitFile file)
         {
             file.WriteSection("ExternalApplications");
             file.Write("ExternalApplications", "EACount", m_maxCount);
@@ -52,7 +52,7 @@
             file.Write("ExternalApplications", "EACount", num);
         }
 
-        private bool WriteExternalApplication(IniFile file, AddinItem item, int number)
+        private bool WriteExternalApplication(InitFile file, AddinItem item, int number)
         {
             file.Write("ExternalApplications", $"EAClassName{number}", item.FullClassName);
             file.Write("ExternalApplications", $"EAAssembly{number}", item.AssemblyPath);

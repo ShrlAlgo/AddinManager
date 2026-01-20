@@ -89,8 +89,7 @@ namespace AddInManager
                     }
                     else
                     {
-                        var externalCommand = instanceObj as IExternalCommand;
-                        if (externalCommand == null)
+                        if (instanceObj is not IExternalCommand externalCommand)
                         {
                             message = $"{className} 没有实现 IExternalCommand 接口";
                             result = Result.Failed;
@@ -110,13 +109,8 @@ namespace AddInManager
             }
             finally
             {
-                // 确保清理工作安全执行
-                try
-                {
-                    assemLoader.UnhookAssemblyResolve();
-                    assemLoader.CopyGeneratedFilesBack();
-                }
-                catch { /* 忽略清理时的错误，防止掩盖主异常 */ }
+                assemLoader.UnhookAssemblyResolve();
+                assemLoader.CopyGeneratedFilesBack();
             }
             return result;
         }

@@ -17,7 +17,6 @@ namespace AddInManager
         private Dictionary<string, DateTime> m_copiedFiles;
         private bool m_parsingOnly;
 
-        // 移除硬编码的 .NET 2.0 路径，改用更通用的方式（虽然在Revit中通常不依赖这个）
         private static string m_dotnetDir = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
 
         public static string m_resolvedAssemPath = string.Empty;
@@ -30,26 +29,27 @@ namespace AddInManager
             m_copiedFiles = new Dictionary<string, DateTime>();
         }
 
-        // ... CopyGeneratedFilesBack 保持不变 ...
         public void CopyGeneratedFilesBack()
         {
-            if (string.IsNullOrEmpty(TempFolder) || !Directory.Exists(TempFolder)) return;
-
             var files = Directory.GetFiles(TempFolder, "*.*", SearchOption.AllDirectories);
-            foreach (var text in files)
+            foreach(var text in files)
             {
-                if (m_copiedFiles.ContainsKey(text))
+                if(m_copiedFiles.ContainsKey(text))
                 {
                     var dateTime = m_copiedFiles[text];
                     var fileInfo = new FileInfo(text);
-                    if (fileInfo.LastWriteTime > dateTime)
+                    if(fileInfo.LastWriteTime > dateTime)
                     {
                         var text2 = text.Remove(0, TempFolder.Length);
                         var text3 = OriginalFolder + text2;
                         FileUtils.CopyFile(text, text3);
                     }
+                } else
+                {
+                    var text4 = text.Remove(0, TempFolder.Length);
+                    var text5 = OriginalFolder + text4;
+                    FileUtils.CopyFile(text, text5);
                 }
-                // 新生成的文件不建议盲目拷回，可能会污染源目录，视需求而定
             }
         }
 
@@ -77,10 +77,6 @@ namespace AddInManager
 
             TempFolder = FileUtils.CreateTempFolder(stringBuilder.ToString());
 
-            // 【建议】在此处，除了复制主DLL，最好把同目录下的所有 .dll 都复制过去
-            // 这样可以避免 AssemblyResolve 频繁触发，解决大部分 NuGet 依赖问题
-            // CopyAllDllsToTemp(OriginalFolder, TempFolder); // 这是一个建议实现的辅助方法
-
             var assembly = CopyAndLoadAddin(originalFilePath, parsingOnly);
             if (null == assembly || !IsAPIReferenced(assembly))
             {
@@ -99,29 +95,17 @@ namespace AddInManager
                 {
                     m_refedFolders.Add(directoryName);
                 }
-
                 var list = new List<FileInfo>();
-                // 假设 FileUtils.CopyFileToFolder 会处理文件复制
-                // 关键点：如果你的 FileUtils 不支持复制子文件夹（如 zh-CN），资源加载依然会失败
                 destPath = FileUtils.CopyFileToFolder(srcFilePath, TempFolder, onlyCopyRelated, list);
-
                 if (string.IsNullOrEmpty(destPath))
                 {
                     return null;
                 }
                 foreach (var fileInfo in list)
                 {
-                    if (!m_copiedFiles.ContainsKey(fileInfo.FullName))
-                        m_copiedFiles.Add(fileInfo.FullName, fileInfo.LastWriteTime);
+                    m_copiedFiles.Add(fileInfo.FullName, fileInfo.LastWriteTime);
                 }
             }
-            else
-            {
-                // 如果文件已存在，计算目标路径
-                string fileName = Path.GetFileName(srcFilePath);
-                destPath = Path.Combine(TempFolder, fileName);
-            }
-
             return LoadAddin(destPath);
         }
 
@@ -131,10 +115,7 @@ namespace AddInManager
             try
             {
                 Monitor.Enter(this);
-                // 【关键修改 1】使用 LoadFrom 而不是 LoadFile
-                // LoadFrom 会自动在 filePath 所在的目录中查找依赖项，这解决了大部分 NuGet 包加载失败的问题
-                // LoadFile 这是一个纯粹的文件加载，不带上下文，不会去旁边找依赖
-                assembly = Assembly.LoadFrom(filePath);
+                assembly = Assembly.LoadFile(filePath);
             }
             catch (Exception ex)
             {
@@ -157,9 +138,6 @@ namespace AddInManager
                 var assemblyNameObj = new AssemblyName(args.Name);
                 var simpleName = assemblyNameObj.Name;
 
-                // 【关键修改 2】绝对不要在 AssemblyResolve 中手动处理 .resources
-                // 那个 "长度不能小于0" 的错误就是因为这里返回了错误的东西或者试图去加载主程序集
-                // 如果请求的是 .resources，直接返回 null，让 CLR 自己去临时目录的子文件夹里找
                 if (simpleName.EndsWith(".resources", StringComparison.OrdinalIgnoreCase) ||
                     args.Name.Contains(".resources"))
                 {
@@ -183,8 +161,6 @@ namespace AddInManager
                     return assembly;
                 }
 
-                // 4. 如果还没找到，处理一些特殊情况（比如 XMLSerializers）
-                // 这里的逻辑可以保留，但通常用处不大
                 if (simpleName.EndsWith(".XmlSerializers", StringComparison.OrdinalIgnoreCase))
                 {
                     // 忽略序列化程序集请求
@@ -222,14 +198,12 @@ namespace AddInManager
         {
             var extensions = new string[] { ".dll", ".exe" };
 
-            // 1. 在 .NET 框架目录找 (通常不需要，System库会自动加载，但保留也没事)
-            /*
+
             foreach (var ext in extensions)
             {
                 string path = Path.Combine(m_dotnetDir, simpleName + ext);
                 if (File.Exists(path)) return path;
             }
-            */
 
             // 2. 在所有引用过的源目录中找
             foreach (var ext in extensions)

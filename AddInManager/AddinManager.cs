@@ -28,34 +28,27 @@ namespace AddInManager
             ReadAddinsFromAimIni();
         }
 
-        public IniFile AimIniFile { get; set; }
+        public InitFile AimJsonFile { get; set; }
 
-        public IniFile RevitIniFile { get; set; }
+        public InitFile RevitIniFile { get; set; }
 
         private void GetIniFilePaths()
         {
             //var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var appFolder = Path.Combine(folderPath, Resources.AppFolder);
-            // switch from INI to JSON storage
-            var iniFilePath = Path.Combine(appFolder, "AimInternal.json");
-            AimIniFile = new IniFile(iniFilePath);
-
-            // If an old INI exists, migrate it to JSON (one-time)
+            var jsonFilePath = Path.Combine(appFolder, "AimInternal.json");
+            AimJsonFile = new InitFile(jsonFilePath);
             try
             {
                 var oldIniPath = Path.Combine(appFolder, "AimInternal.ini");
-                if (File.Exists(oldIniPath) && !File.Exists(iniFilePath))
+                if (File.Exists(oldIniPath) && !File.Exists(jsonFilePath))
                 {
-                    var oldIni = new IniFile(oldIniPath);
-                    // populate commands/applications from old INI
+                    var oldIni = new InitFile(oldIniPath);
                     Commands.ReadItems(oldIni);
                     Applications.ReadItems(oldIni);
 
-                    // save to new JSON store
-                    SaveToPersistentStore(iniFilePath);
-
-                    // backup old INI
+                    SaveToPersistentStore(jsonFilePath);
                     try
                     {
                         var backupPath = oldIniPath + ".bak";
@@ -77,16 +70,15 @@ namespace AddInManager
             var currentProcess = Process.GetCurrentProcess();
             var fileName = currentProcess.MainModule.FileName;
             var revitIniFilePath = fileName.Replace(".exe", ".ini");
-            RevitIniFile = new IniFile(revitIniFilePath);
+            RevitIniFile = new InitFile(revitIniFilePath);
         }
 
         public void ReadAddinsFromAimIni()
         {
-            // try load from persistent JSON store; if fails, fall back to legacy INI-format reader
-            if (!LoadFromPersistentStore(AimIniFile.FilePath))
+            if (!LoadFromPersistentStore(AimJsonFile.FilePath))
             {
-                Commands.ReadItems(AimIniFile);
-                Applications.ReadItems(AimIniFile);
+                Commands.ReadItems(AimJsonFile);
+                Applications.ReadItems(AimJsonFile);
             }
         }
 
@@ -152,11 +144,11 @@ namespace AddInManager
             // ensure file exists
             try
             {
-                if (!File.Exists(AimIniFile.FilePath))
+                if (!File.Exists(AimJsonFile.FilePath))
                 {
-                    new FileInfo(AimIniFile.FilePath).Directory?.Create();
-                    FileUtils.CreateFile(AimIniFile.FilePath);
-                    FileUtils.SetWriteable(AimIniFile.FilePath);
+                    new FileInfo(AimJsonFile.FilePath).Directory?.Create();
+                    FileUtils.CreateFile(AimJsonFile.FilePath);
+                    FileUtils.SetWriteable(AimJsonFile.FilePath);
                 }
             }
             catch (Exception)
@@ -165,10 +157,10 @@ namespace AddInManager
             }
 
             // save to persistent JSON store; if fails, fall back to legacy INI writer
-            if (!SaveToPersistentStore(AimIniFile.FilePath))
+            if (!SaveToPersistentStore(AimJsonFile.FilePath))
             {
-                Commands.Save(AimIniFile);
-                Applications.Save(AimIniFile);
+                Commands.Save(AimJsonFile);
+                Applications.Save(AimJsonFile);
             }
         }
 

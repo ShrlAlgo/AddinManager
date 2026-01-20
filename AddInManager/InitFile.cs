@@ -8,14 +8,14 @@ using System.Runtime.Serialization;
 
 namespace AddInManager
 {
-    public class IniFile
+    public class InitFile
     {
         public string FilePath { get; }
 
         private readonly bool m_isJson;
         private Dictionary<string, Dictionary<string, string>> m_jsonData;
 
-        public IniFile(string filePath)
+        public InitFile(string filePath)
         {
             FilePath = filePath;
             m_isJson = string.Equals(Path.GetExtension(FilePath), ".json", StringComparison.OrdinalIgnoreCase);

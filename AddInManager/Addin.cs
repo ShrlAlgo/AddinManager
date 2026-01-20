@@ -42,7 +42,7 @@ namespace AddInManager
             }
         }
 
-        public void SaveToLocalIni(IniFile file)
+        public void SaveToLocalIni(InitFile file)
         {
             if (ItemList == null || ItemList.Count == 0)
             {
@@ -74,7 +74,7 @@ namespace AddInManager
             file.Write("ExternalApplications", "EACount", num2);
         }
 
-        private void WriteExternalCommand(IniFile file, AddinItem item, int number)
+        private void WriteExternalCommand(InitFile file, AddinItem item, int number)
         {
             file.Write("ExternalCommands", $"ECName{number}", item.Name);
             file.Write("ExternalCommands", $"ECClassName{number}", item.FullClassName);
@@ -82,7 +82,7 @@ namespace AddInManager
             file.Write("ExternalCommands", $"ECDescription{number}", item.Description);
         }
 
-        private void WriteExternalApplication(IniFile file, AddinItem item, int number)
+        private void WriteExternalApplication(InitFile file, AddinItem item, int number)
         {
             file.Write("ExternalApplications", $"EAClassName{number}", item.FullClassName);
             file.Write("ExternalApplications", $"EAAssembly{number}", item.AssemblyName);
