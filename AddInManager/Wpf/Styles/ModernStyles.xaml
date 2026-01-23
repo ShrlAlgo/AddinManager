@@ -21,9 +21,63 @@
     <SolidColorBrush x:Key="SecondaryTextBrush" Color="#605E5C" />
     <SolidColorBrush x:Key="DisabledBrush" Color="#CCCCCC" />
     <SolidColorBrush x:Key="DisabledTextBrush" Color="#888888" />
+    <!--  全选  -->
+    <StreamGeometry x:Key="Geo.SelectAll">M1,1 H10 V10 H1 Z M5,5 H14 V14 H5 Z</StreamGeometry>
+
+    <!--  取消全选  -->
+    <StreamGeometry x:Key="Geo.DeselectAll">M2,2 H14 V14 H2 Z M5,5 L11,11 M11,5 L5,11</StreamGeometry>
+
+    <!--  折叠 (收起 - 减号/方框风格)  -->
+    <StreamGeometry x:Key="Geo.Collapse">M2,2 H14 V14 H2 Z M5,8 H11</StreamGeometry>
+
+    <!--  展开 (拉开 - 加号/方框风格)  -->
+    <StreamGeometry x:Key="Geo.Expand">M2,2 H14 V14 H2 Z M5,8 H11 M8,5 V11</StreamGeometry>
+
+    <!--  搜索  -->
+    <StreamGeometry x:Key="Geo.Search">M11,11 L15,15 M7,12 A5,5 0 1,1 7,2 A5,5 0 0,1 7,12</StreamGeometry>
+
+    <!--  运行  -->
+    <StreamGeometry x:Key="Geo.Run">M5,3 L13,8 L5,13 Z</StreamGeometry>
+
+    <!--  加载  -->
+    <StreamGeometry x:Key="Geo.LoadAssembly">M2,4 H8 V10 H2 Z M5,2 H11 V8 H5 Z M10,10 L15,10 M13,8 L15,10 L13,12</StreamGeometry>
+
+    <!--  重新加载  -->
+    <StreamGeometry x:Key="Geo.Reload">M13,8 A5,5 0 1,1 10.5,3.5 M10.5,1 V3.5 H13</StreamGeometry>
+
+    <!--  移除  -->
+    <StreamGeometry x:Key="Geo.Remove">M2,3 H14 M5,3 V14 H11 V3 M7,6 V11 M9,6 V11 M6,1 H10 V3 H6 Z</StreamGeometry>
+
+    <!--  保存  -->
+    <StreamGeometry x:Key="Geo.Save">M3,2 H11 L14,5 V14 H3 Z M5,2 V6 H10 V2 M5,14 V10 H11 V14</StreamGeometry>
+
+    <!--  保存到本地目录 (文件夹 + 向下箭头/盘片)  -->
+    <StreamGeometry x:Key="Geo.SaveToDirectory">M1,3 H6 L8,5 H15 V13 H1 Z M11,7 V10 M9,8 L11,10 L13,8</StreamGeometry>
+
+    <!--  保存到文件 (文档 + 磁盘)  -->
+    <StreamGeometry x:Key="Geo.SaveToFile">M3,1 H10 L13,4 V15 H3 Z M5,12 H11 M5,9 H11 M9,1 V4 H12</StreamGeometry>
+    <!--  查看信息 (i)  -->
+    <StreamGeometry x:Key="Geo.Info">M8,1 A7,7 0 1,1 8,15 A7,7 0 0,1 8,1 M8,7 V11 M8,4 V4.5</StreamGeometry>
+
+    <!--  Windows资源管理器 (文件夹)  -->
+    <StreamGeometry x:Key="Geo.Explorer">M1,3 H6 L8,5 H15 V13 H1 Z</StreamGeometry>
+
+    <!--  定义一个通用 Path 样式，省得每次写重复属性  -->
+    <Style TargetType="Path">
+        <Setter Property="Stretch" Value="Uniform" />
+        <Setter Property="Stroke" Value="{Binding RelativeSource={RelativeSource AncestorType=Control}, Path=Foreground}" />
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <Setter Property="StrokeLineJoin" Value="Round" />
+        <Setter Property="StrokeStartLineCap" Value="Round" />
+        <Setter Property="StrokeEndLineCap" Value="Round" />
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+    </Style>
     <Style TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="14" />
     </Style>
+
 
     <Style TargetType="Button">
         <Setter Property="BorderThickness" Value="0" />
@@ -51,6 +105,7 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Background" Value="{StaticResource DisabledBrush}" />
                 <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
+                <Setter Property="BorderThickness" Value="0" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -81,15 +136,13 @@
 
             <!--  当 Tag="Primary" 时，应用主要按钮颜色  -->
             <DataTrigger Binding="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" Value="Primary">
-                <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
-                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
                 <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
             </DataTrigger>
 
             <!--  当 Tag="Danger" 时，应用危险按钮颜色  -->
             <DataTrigger Binding="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" Value="Danger">
-                <Setter Property="Background" Value="{StaticResource DangerBrush}" />
-                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
                 <Setter Property="BorderBrush" Value="{StaticResource DangerBrush}" />
             </DataTrigger>
 
@@ -103,7 +156,7 @@
                     <Condition Binding="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" Value="Primary" />
                     <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
                 </MultiDataTrigger.Conditions>
-                <Setter Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource PrimaryHoverBrush}" />
             </MultiDataTrigger>
 
             <!--  当 Tag="Primary" 并且 IsPressed="True"  -->
@@ -112,7 +165,7 @@
                     <Condition Binding="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" Value="Primary" />
                     <Condition Binding="{Binding Path=IsPressed, RelativeSource={RelativeSource Self}}" Value="True" />
                 </MultiDataTrigger.Conditions>
-                <Setter Property="Background" Value="{StaticResource PrimaryPressedBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource PrimaryPressedBrush}" />
             </MultiDataTrigger>
 
             <!--  当 Tag="Danger" 并且 IsMouseOver="True"  -->
@@ -121,7 +174,7 @@
                     <Condition Binding="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" Value="Danger" />
                     <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
                 </MultiDataTrigger.Conditions>
-                <Setter Property="Background" Value="{StaticResource DangerHoverBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource DangerHoverBrush}" />
             </MultiDataTrigger>
 
             <!--  当 Tag="Danger" 并且 IsPressed="True"  -->
@@ -130,8 +183,13 @@
                     <Condition Binding="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" Value="Danger" />
                     <Condition Binding="{Binding Path=IsPressed, RelativeSource={RelativeSource Self}}" Value="True" />
                 </MultiDataTrigger.Conditions>
-                <Setter Property="Background" Value="{StaticResource DangerPressedBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource DangerPressedBrush}" />
             </MultiDataTrigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{StaticResource DisabledBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Trigger>
         </Style.Triggers>
     </Style>
     <!--  浏览按钮样式  -->
@@ -265,16 +323,10 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <!--  搜索图标  -->
-                            <TextBlock
-                                Margin="8,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe MDL2 Assets"
-                                FontSize="12"
-                                Foreground="{StaticResource SecondaryTextBrush}"
-                                IsHitTestVisible="False"
-                                Text="&#xE721;" />
-
+                            <Path
+                                Margin="4,4,0,0"
+                                Data="{StaticResource Geo.Search}"
+                                Stroke="{StaticResource SecondaryTextBrush}" />
                             <!--  这是TextBox实际输入内容的地方  -->
                             <ScrollViewer
                                 x:Name="PART_ContentHost"
@@ -288,6 +340,7 @@
                                 x:Name="Watermark"
                                 Grid.Column="1"
                                 Margin="{TemplateBinding Padding}"
+                                Padding="2,0,0,0"
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource SecondaryTextBrush}"
                                 IsHitTestVisible="False"
@@ -672,9 +725,14 @@
                                 <!--  选中状态的勾选标记  -->
                                 <Path
                                     x:Name="CheckMark"
+                                    Width="12"
+                                    Height="10"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
                                     Data="M 3,9 L 7,13 L 15,5"
                                     Fill="Transparent"
-                                    Stroke="White"
+                                    Stretch="Uniform"
+                                    Stroke="{StaticResource PrimaryBrush}"
                                     StrokeLineJoin="Round"
                                     StrokeThickness="2"
                                     Visibility="Collapsed" />
@@ -686,7 +744,7 @@
                                     Height="2"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Fill="White"
+                                    Fill="{StaticResource PrimaryBrush}"
                                     Visibility="Collapsed" />
                             </Grid>
                         </Border>
@@ -700,14 +758,14 @@
                         <!--  选中状态  -->
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryBrush}" />
+                            <!--<Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryBrush}" />-->
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
                         </Trigger>
 
                         <!--  不确定状态  -->
                         <Trigger Property="IsChecked" Value="{x:Null}">
                             <Setter TargetName="IndeterminateMark" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryBrush}" />
+                            <!--<Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryBrush}" />-->
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
                         </Trigger>
 
@@ -730,7 +788,6 @@
                                 <Condition Property="IsMouseOver" Value="True" />
                                 <Condition Property="IsChecked" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryHoverBrush}" />
                         </MultiTrigger>
 
@@ -740,13 +797,11 @@
                                 <Condition Property="IsMouseOver" Value="True" />
                                 <Condition Property="IsChecked" Value="{x:Null}" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryHoverBrush}" />
                         </MultiTrigger>
 
                         <!--  按下状态  -->
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource PrimaryPressedBrush}" />
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource PrimaryPressedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>

@@ -70,11 +70,7 @@
                                         Click="SelectAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
                                         ToolTip="选中所有命令">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Text="&#xE73E;" />
+                                        <Path Data="{StaticResource Geo.SelectAll}" />
                                     </Button>
 
                                     <Button
@@ -82,11 +78,7 @@
                                         Click="SelectNoneButton_Click"
                                         Style="{StaticResource ToolbarButton}"
                                         ToolTip="取消选中应用">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Text="&#xE739;" />
+                                        <Path Data="{StaticResource Geo.DeselectAll}" />
                                     </Button>
                                 </UniformGrid>
                                 <Rectangle
@@ -101,11 +93,7 @@
                                         Click="ExpandAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
                                         ToolTip="展开所有节点">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Text="&#xE972;" />
+                                        <Path Data="{StaticResource Geo.Expand}" />
                                     </Button>
 
                                     <Button
@@ -113,11 +101,7 @@
                                         Click="CollapseAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
                                         ToolTip="折叠所有节点">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Text="&#xE971;" />
+                                        <Path Data="{StaticResource Geo.Collapse}" />
                                     </Button>
                                 </UniformGrid>
                             </StackPanel>
@@ -140,12 +124,7 @@
                                         Click="ContextMenuRun_Click"
                                         Header="运行">
                                         <MenuItem.Icon>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe MDL2 Assets"
-                                                FontSize="14"
-                                                Text="&#xE768;" />
+                                            <Path Data="{StaticResource Geo.Run}" />
                                         </MenuItem.Icon>
                                     </MenuItem>
 
@@ -154,14 +133,9 @@
                                     <MenuItem
                                         x:Name="ContextMenuLoad"
                                         Click="ContextMenuLoad_Click"
-                                        Header="加载新插件...">
+                                        Header="加载...">
                                         <MenuItem.Icon>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe MDL2 Assets"
-                                                FontSize="14"
-                                                Text="&#xE8E5;" />
+                                            <Path Data="{StaticResource Geo.LoadAssembly}" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem
@@ -169,12 +143,7 @@
                                         Click="ContextMenuRemove_Click"
                                         Header="移除">
                                         <MenuItem.Icon>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe MDL2 Assets"
-                                                FontSize="14"
-                                                Text="&#xE74D;" />
+                                            <Path Data="{StaticResource Geo.Remove}" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem
@@ -182,12 +151,7 @@
                                         Click="ContextMenuReload_Click"
                                         Header="重新加载">
                                         <MenuItem.Icon>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe MDL2 Assets"
-                                                FontSize="14"
-                                                Text="&#xE895;" />
+                                            <Path Data="{StaticResource Geo.Reload}" />
                                         </MenuItem.Icon>
                                     </MenuItem>
 
@@ -198,12 +162,7 @@
                                         Click="ContextMenuOpenInExplorer_Click"
                                         Header="在资源管理器中显示">
                                         <MenuItem.Icon>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe MDL2 Assets"
-                                                FontSize="14"
-                                                Text="&#xE8B7;" />
+                                            <Path Data="{StaticResource Geo.Explorer}" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem
@@ -211,12 +170,7 @@
                                         Click="ContextMenuAssemblyInfo_Click"
                                         Header="查看程序集信息">
                                         <MenuItem.Icon>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Segoe MDL2 Assets"
-                                                FontSize="14"
-                                                Text="&#xE946;" />
+                                            <Path Data="{StaticResource Geo.Info}" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </ContextMenu>
@@ -238,11 +192,7 @@
                                     Click="AppSelectAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
                                     ToolTip="选中所有应用">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontFamily="Segoe MDL2 Assets"
-                                        Text="&#xE73E;" />
+                                    <Path Data="{StaticResource Geo.SelectAll}" />
                                 </Button>
 
                                 <Button
@@ -250,11 +200,7 @@
                                     Click="AppSelectNoneButton_Click"
                                     Style="{StaticResource ToolbarButton}"
                                     ToolTip="取消选中应用">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontFamily="Segoe MDL2 Assets"
-                                        Text="&#xE739;" />
+                                    <Path Data="{StaticResource Geo.DeselectAll}" />
                                 </Button>
                             </UniformGrid>
                             <Rectangle
@@ -270,11 +216,7 @@
                                     Click="AppExpandAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
                                     ToolTip="展开所有应用程序节点">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontFamily="Segoe MDL2 Assets"
-                                        Text="&#xE972;" />
+                                    <Path Data="{StaticResource Geo.Expand}" />
                                 </Button>
 
                                 <Button
@@ -282,11 +224,7 @@
                                     Click="AppCollapseAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
                                     ToolTip="折叠所有应用程序节点">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontFamily="Segoe MDL2 Assets"
-                                        Text="&#xE971;" />
+                                    <Path Data="{StaticResource Geo.Collapse}" />
                                 </Button>
                             </UniformGrid>
                         </StackPanel>
@@ -348,9 +286,10 @@
                 Margin="5"
                 Click="RunButton_Click"
                 Style="{StaticResource ActionButton}"
-                Tag="Primary">
+                Tag="Primary"
+                ToolTip="运行选中的外部命令或应用程序">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" />
+                    <Path Data="{StaticResource Geo.Run}" />
                     <TextBlock Margin="5,0,0,0" Text="运行" />
                 </StackPanel>
             </Button>
@@ -359,9 +298,10 @@
                 Margin="5"
                 Click="LoadButton_Click"
                 Style="{StaticResource ActionButton}"
-                Tag="Primary">
+                Tag="Primary"
+                ToolTip="加载程序集">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8E5;" />
+                    <Path Data="{StaticResource Geo.LoadAssembly}" />
                     <TextBlock Margin="5,0,0,0" Text="加载" />
                 </StackPanel>
             </Button>
@@ -371,38 +311,35 @@
                 Click="RemoveButton_Click"
                 LostFocus="RemoveButton_LostFocus"
                 Style="{StaticResource ActionButton}"
-                Tag="Danger">
+                Tag="Danger"
+                ToolTip="移除选中的外部命令或应用程序">
                 <StackPanel Orientation="Horizontal">
-
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" />
+                    <Path Data="{StaticResource Geo.Remove}" />
                     <TextBlock Margin="5,0,0,0" Text="移除" />
                 </StackPanel>
             </Button>
             <Button
                 x:Name="saveSplitButton"
                 Margin="5"
-                Click="SaveSplitButton_Click">
+                Click="SaveSplitButton_Click"
+                Style="{StaticResource ActionButton}"
+                Tag="Primary"
+                ToolTip="保存addin文件">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEA35;" />
+                    <Path Data="{StaticResource Geo.Save}" />
                     <TextBlock Margin="5,0,0,0" Text="保存" />
                 </StackPanel>
                 <Button.ContextMenu>
                     <ContextMenu x:Name="saveContextMenu">
                         <MenuItem Click="SaveToAddinMenuItem_Click" Header="保存选中项到 Addins 文件夹">
                             <MenuItem.Icon>
-                                <TextBlock
-                                    FontFamily="Segoe MDL2 Assets"
-                                    FontSize="14"
-                                    Text="&#xE78C;" />
+                                <Path Data="{StaticResource Geo.SaveToDirectory}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <Separator />
                         <MenuItem Click="SaveLocalMenuItem_Click" Header="保存选中项到本地 .addin 文件">
                             <MenuItem.Icon>
-                                <TextBlock
-                                    FontFamily="Segoe MDL2 Assets"
-                                    FontSize="14"
-                                    Text="&#xE792;" />
+                                <Path Data="{StaticResource Geo.SaveToFile}" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>
