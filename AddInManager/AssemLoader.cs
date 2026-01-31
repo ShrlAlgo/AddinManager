@@ -116,28 +116,14 @@ namespace AddInManager
             // 加载复制后的文件
             return LoadAddin(destPath);
         }
-
         private Assembly LoadAddin(string filePath)
         {
             Assembly assembly = null;
             try
             {
-                // 【核心修改】：使用字节流加载，而不是 LoadFile
-                // 这样可以避免文件锁定，并且每次 Load 都会视为新的程序集实例
                 if (File.Exists(filePath))
                 {
-                    byte[] assemblyBytes = File.ReadAllBytes(filePath);
-                    byte[] pdbBytes = null;
-
-                    // 尝试加载 PDB 以支持调试
-                    string pdbPath = Path.ChangeExtension(filePath, "pdb");
-                    if (File.Exists(pdbPath))
-                    {
-                        pdbBytes = File.ReadAllBytes(pdbPath);
-                    }
-
-                    // 使用 Load(bytes, pdbBytes)
-                    assembly = Assembly.Load(assemblyBytes, pdbBytes);
+                    assembly = Assembly.LoadFrom(filePath);
                 }
             }
             catch (Exception ex)
