@@ -94,7 +94,7 @@
                                         x:Name="collapseAllButton"
                                         Click="CollapseAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="折叠所有节点">
+                                        ToolTip="{x:Static props:Resources.TooltipCollapseAll}">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -123,7 +123,7 @@
                                     <MenuItem
                                         x:Name="ContextMenuRun"
                                         Click="ContextMenuRun_Click"
-                                        Header="运行">
+                                        Header="{x:Static props:Resources.ContextMenuRun}">
                                         <MenuItem.Icon>
                                             <TextBlock
                                                 HorizontalAlignment="Center"
@@ -139,7 +139,7 @@
                                     <MenuItem
                                         x:Name="ContextMenuLoad"
                                         Click="ContextMenuLoad_Click"
-                                        Header="加载新插件...">
+                                        Header="{x:Static props:Resources.ContextMenuLoad}">
                                         <MenuItem.Icon>
                                             <TextBlock
                                                 HorizontalAlignment="Center"
@@ -152,7 +152,7 @@
                                     <MenuItem
                                         x:Name="ContextMenuRemove"
                                         Click="ContextMenuRemove_Click"
-                                        Header="移除">
+                                        Header="{x:Static props:Resources.ContextMenuRemove}">
                                         <MenuItem.Icon>
                                             <TextBlock
                                                 HorizontalAlignment="Center"
@@ -165,7 +165,7 @@
                                     <MenuItem
                                         x:Name="ContextMenuReload"
                                         Click="ContextMenuReload_Click"
-                                        Header="重新加载">
+                                        Header="{x:Static props:Resources.ContextMenuReload}">
                                         <MenuItem.Icon>
                                             <TextBlock
                                                 HorizontalAlignment="Center"
@@ -181,7 +181,7 @@
                                     <MenuItem
                                         x:Name="ContextMenuOpenInExplorer"
                                         Click="ContextMenuOpenInExplorer_Click"
-                                        Header="在资源管理器中显示">
+                                        Header="{x:Static props:Resources.ContextMenuOpenInExplorer}">
                                         <MenuItem.Icon>
                                             <TextBlock
                                                 HorizontalAlignment="Center"
@@ -194,7 +194,7 @@
                                     <MenuItem
                                         x:Name="ContextMenuAssemblyInfo"
                                         Click="ContextMenuAssemblyInfo_Click"
-                                        Header="查看程序集信息">
+                                        Header="{x:Static props:Resources.ContextMenuAssemblyInfo}">
                                         <MenuItem.Icon>
                                             <TextBlock
                                                 HorizontalAlignment="Center"
@@ -209,7 +209,7 @@
                         </TreeView>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="applicationsTabPage" Header="已加载外部应用">
+                <TabItem x:Name="applicationsTabPage" Header="{x:Static props:Resources.TabApplications}">
                     <Grid Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -222,7 +222,7 @@
                                     Margin="2"
                                     Click="AppSelectAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="选中所有应用">
+                                    ToolTip="{x:Static props:Resources.TooltipSelectAllApps}">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -234,7 +234,7 @@
                                     x:Name="appSelectNoneButton"
                                     Click="AppSelectNoneButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="取消选中应用">
+                                    ToolTip="{x:Static props:Resources.TooltipDeselectApps}">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -254,7 +254,7 @@
                                     Margin="2"
                                     Click="AppExpandAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="展开所有应用程序节点">
+                                    ToolTip="{x:Static props:Resources.TooltipExpandAllApps}">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -266,7 +266,7 @@
                                     x:Name="appCollapseAllButton"
                                     Click="AppCollapseAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="折叠所有应用程序节点">
+                                    ToolTip="{x:Static props:Resources.TooltipCollapseAllApps}">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -303,13 +303,13 @@
 
             <!--  Name  -->
             <StackPanel Grid.Row="0">
-                <TextBlock Text="名称：" />
+                <TextBlock Text="{x:Static props:Resources.LabelName}" />
                 <TextBox x:Name="nametextBox" LostFocus="NameTextBox_LostFocus" />
             </StackPanel>
 
             <!--  Description  -->
             <StackPanel Grid.Row="1">
-                <TextBlock Text="描述：" />
+                <TextBlock Text="{x:Static props:Resources.LabelDescription}" />
                 <TextBox
                     x:Name="descriptionTextBox"
                     AcceptsReturn="True"
@@ -320,7 +320,7 @@
 
             <!--  Notes  -->
             <StackPanel Grid.Row="2">
-                <TextBlock Text="备注：" />
+                <TextBlock Text="{x:Static props:Resources.LabelNotes}" />
                 <TextBox x:Name="notesTextBox" IsReadOnly="True" />
             </StackPanel>
         </Grid>
@@ -339,7 +339,7 @@
                 Tag="Primary">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" />
-                    <TextBlock Margin="5,0,0,0" Text="运行" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnRun}" />
                 </StackPanel>
             </Button>
             <Button
@@ -350,7 +350,7 @@
                 Tag="Primary">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8E5;" />
-                    <TextBlock Margin="5,0,0,0" Text="加载" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnLoad}" />
                 </StackPanel>
             </Button>
             <Button
@@ -363,7 +363,7 @@
                 <StackPanel Orientation="Horizontal">
 
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" />
-                    <TextBlock Margin="5,0,0,0" Text="移除" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnRemove}" />
                 </StackPanel>
             </Button>
             <Button
@@ -372,11 +372,11 @@
                 Click="SaveSplitButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEA35;" />
-                    <TextBlock Margin="5,0,0,0" Text="保存" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnSave}" />
                 </StackPanel>
                 <Button.ContextMenu>
                     <ContextMenu x:Name="saveContextMenu">
-                        <MenuItem Click="SaveToAddinMenuItem_Click" Header="保存选中项到 Addins 文件夹">
+                        <MenuItem Click="SaveToAddinMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToAddins}">
                             <MenuItem.Icon>
                                 <TextBlock
                                     FontFamily="Segoe MDL2 Assets"
@@ -385,7 +385,7 @@
                             </MenuItem.Icon>
                         </MenuItem>
                         <Separator />
-                        <MenuItem Click="SaveLocalMenuItem_Click" Header="保存选中项到本地 .addin 文件">
+                        <MenuItem Click="SaveLocalMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToLocal}">
                             <MenuItem.Icon>
                                 <TextBlock
                                     FontFamily="Segoe MDL2 Assets"
@@ -397,5 +397,25 @@
                 </Button.ContextMenu>
             </Button>
         </UniformGrid>
+        <!--  Language Selector  -->
+        <StackPanel
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Margin="0,5,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <TextBlock
+                VerticalAlignment="Center"
+                Margin="0,0,5,0"
+                Text="{x:Static props:Resources.LangMenu}" />
+            <ComboBox
+                x:Name="languageComboBox"
+                Width="120"
+                SelectionChanged="LanguageComboBox_SelectionChanged">
+                <ComboBoxItem Tag="zh-CN" Content="{x:Static props:Resources.LangChinese}" />
+                <ComboBoxItem Tag="en-US" Content="{x:Static props:Resources.LangEnglish}" />
+                <ComboBoxItem Tag="ja-JP" Content="{x:Static props:Resources.LangJapanese}" />
+            </ComboBox>
+        </StackPanel>
     </Grid>
 </Window>

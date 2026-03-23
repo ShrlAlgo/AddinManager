@@ -41,8 +41,9 @@ namespace AddInManager.Wpf
             aim.AddinManager.ReadAddinsFromAimIni();
 
             InitializeComponent();
+            // Initialize language selector
+            InitializeLanguageSelector();
             m_aim = aim;
-            Title = Properties.Resources.WindowTitle;
             Loaded += MainWindow_Loaded;
             m_allCommandItems = new List<TreeViewItem>();
 
@@ -1364,6 +1365,36 @@ namespace AddInManager.Wpf
                     return;
                 }
                 dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+            }
+        }
+
+        private void InitializeLanguageSelector()
+        {
+            foreach (ComboBoxItem item in languageComboBox.Items)
+            {
+                if (item.Tag?.ToString() == LanguageManager.CurrentCultureName)
+                {
+                    languageComboBox.SelectedItem = item;
+                    break;
+                }
+            }
+        }
+
+        private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (languageComboBox.SelectedItem is ComboBoxItem selected)
+            {
+                var cultureName = selected.Tag?.ToString();
+                if (!string.IsNullOrEmpty(cultureName) && cultureName != LanguageManager.CurrentCultureName)
+                {
+                    LanguageManager.SetLanguage(cultureName);
+                    MessageBox.Show(
+                        Properties.Resources.LangChangeMessage,
+                        Properties.Resources.LangChangeTitle,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                    Close();
+                }
             }
         }
     }

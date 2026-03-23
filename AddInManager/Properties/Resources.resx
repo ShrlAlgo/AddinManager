@@ -162,7 +162,7 @@
     <value>选中所有命令</value>
   </data>
   <data name="TooltipDeselectCommands" xml:space="preserve">
-    <value>取消选中应用</value>
+    <value>取消选中命令</value>
   </data>
   <data name="TooltipExpandAll" xml:space="preserve">
     <value>展开所有节点</value>

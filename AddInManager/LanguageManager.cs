@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using System.Text;
 using System.Threading;
 
 namespace AddInManager
@@ -14,8 +13,8 @@ namespace AddInManager
     /// </summary>
     public static class LanguageManager
     {
-        private const string SettingsSection = "Language";
         private const string DefaultCulture = "zh-CN";
+        private const string AppFolderName = "AddinData";
 
         /// <summary>
         /// Set to true when the user requests a language change so callers can reopen the window.
@@ -69,15 +68,18 @@ namespace AddInManager
             }
             catch (Exception)
             {
-                // Invalid culture name; fall back to default
+                // Invalid culture name; fall back to default and apply it to the thread
                 CurrentCultureName = DefaultCulture;
+                var defaultCulture = new CultureInfo(DefaultCulture);
+                Thread.CurrentThread.CurrentUICulture = defaultCulture;
+                Thread.CurrentThread.CurrentCulture = defaultCulture;
             }
         }
 
         private static string GetSettingsFilePath()
         {
             var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var dataFolder = Path.Combine(dir, Properties.Resources.AppFolder);
+            var dataFolder = Path.Combine(dir, AppFolderName);
             return Path.Combine(dataFolder, "ui-settings.json");
         }
 
