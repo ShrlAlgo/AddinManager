@@ -30,13 +30,19 @@ namespace AddInManager
         public Result OnStartup(UIControlledApplication application)
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            DebugTools.DebugLogger.Instance.Info("AddinManager 启动");
             CreateRibbonPanel(application);
             return Result.Succeeded;
         }
+
         public Result OnShutdown(UIControlledApplication application)
         {
+            DebugTools.DebugLogger.Instance.Info("AddinManager 关闭");
+            AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
             return Result.Cancelled;
         }
+
         private static void CreateRibbonPanel(UIControlledApplication application)
         {
             RevitVersion = application.ControlledApplication.VersionNumber;
@@ -48,12 +54,14 @@ namespace AddInManager
             AddPushButton(pulldownButton, typeof(CAddInManagerManual), "插件管理(手动模式)");
             AddPushButton(pulldownButton, typeof(CAddInManagerFaceless), "插件管理(手动模式,无界面)");
             AddPushButton(pulldownButton, typeof(CAddInManagerReadOnly), "插件管理(只读模式)");
+            pulldownButton.AddSeparator();
+            AddPushButton(pulldownButton, typeof(DebugTools.CDebugLogViewer), "调试日志查看器");
+            AddPushButton(pulldownButton, typeof(DebugTools.CDebugDependencyGraph), "插件依赖分析");
             var tab = ComponentManager.Ribbon.FindTab("Modify");
             if (tab == null) return;
             var adwPanel = new Autodesk.Windows.RibbonPanel();
             adwPanel.CopyFrom(GetRibbonPanel(ribbonPanel));
             tab.Panels.Add(adwPanel);
-
         }
         internal static BitmapImage ToImageSource(Bitmap bitmap)
         {
@@ -80,6 +88,22 @@ namespace AddInManager
             pullDownButton.AddPushButton(buttonData);
         }
 
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = e.ExceptionObject as Exception;
+            DebugTools.DebugLogger.Instance.Error(ex ?? new Exception(e.ExceptionObject?.ToString() ?? "Unknown error"),
+                "UnhandledException");
+            try
+            {
+                var dialog = new Wpf.UnhandledExceptionDialog(ex);
+                dialog.ShowDialog();
+            }
+            catch
+            {
+                // If the dialog itself fails, at least we logged it above
+            }
+        }
+
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             var requestedAssemblyName = new AssemblyName(args.Name).Name;
@@ -99,7 +123,7 @@ namespace AddInManager
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex.Message);
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
 
