@@ -42,7 +42,7 @@ namespace AddInManager.Wpf
 
             InitializeComponent();
             m_aim = aim;
-            Title = Properties.Resources.AppName;
+            Title = Properties.Resources.WindowTitle;
             Loaded += MainWindow_Loaded;
             m_allCommandItems = new List<TreeViewItem>();
 
@@ -289,7 +289,7 @@ namespace AddInManager.Wpf
             // 保存更改
             m_aim.AddinManager.SaveToAimIni();
 
-            ShowStatusLabel(isSelected ? "已选择所有可见项目" : "已取消选择所有项目");
+            ShowStatusLabel(isSelected ? Properties.Resources.StatusSelectedAll : Properties.Resources.StatusDeselectedAll);
         }
 
         private void InvertAllItemsSelection()
@@ -327,7 +327,7 @@ namespace AddInManager.Wpf
             // 保存更改
             m_aim.AddinManager.SaveToAimIni();
 
-            ShowStatusLabel("已反转所有可见项目的选择状态");
+            ShowStatusLabel(Properties.Resources.StatusInvertedSelection);
         }
 
         private void SetItemCheckBox(TreeViewItem item, bool isChecked)
@@ -503,7 +503,7 @@ namespace AddInManager.Wpf
 
             // Disable load button and show progress while reflection-based loading runs in background
             loadButton.IsEnabled = false;
-            ShowStatusLabel($"正在加载: {Path.GetFileName(fileName)}");
+            ShowStatusLabel(string.Format(Properties.Resources.StatusLoading, Path.GetFileName(fileName)));
 
             AddinType addinType;
             try
@@ -513,7 +513,7 @@ namespace AddInManager.Wpf
             catch (Exception ex)
             {
                 loadButton.IsEnabled = true;
-                ShowStatusError($"加载时发生错误: {ex.Message}");
+                ShowStatusError(string.Format(Properties.Resources.StatusLoadError, ex.Message));
                 return;
             }
             finally
@@ -688,7 +688,7 @@ namespace AddInManager.Wpf
             {
                 if (m_aim.ActiveCmdItem == null)
                 {
-                    ShowStatusError("没有选中可执行的命令");
+                    ShowStatusError(Properties.Resources.StatusNoCommandSelected);
                     return;
                 }
 
@@ -698,7 +698,7 @@ namespace AddInManager.Wpf
             }
             catch (Exception ex)
             {
-                ShowStatusError($"准备执行命令时发生错误: {ex.Message}");
+                ShowStatusError(string.Format(Properties.Resources.StatusRunError, ex.Message));
             }
         }
 
@@ -903,7 +903,7 @@ namespace AddInManager.Wpf
                 }
                 else
                 {
-                    ShowStatusError("选中的项目不是可执行的命令");
+                    ShowStatusError(Properties.Resources.StatusNotExecutableCommand);
                 }
             }
             // 如果双击的是空白区域或父节点，则不执行任何操作
@@ -932,7 +932,7 @@ namespace AddInManager.Wpf
             }
             var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
             m_aim.AddinManager.SaveToAllUserManifest(typeToSave);
-            ShowStatusLabel("保存成功，请关闭窗口加载插件");
+            ShowStatusLabel(Properties.Resources.StatusSaveSuccessReload);
         }
 
         private void SaveLocalMenuItem_Click(object sender, RoutedEventArgs e)
@@ -944,7 +944,7 @@ namespace AddInManager.Wpf
             }
             var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
             m_aim.AddinManager.SaveToLocal(typeToSave);
-            ShowStatusLabel("保存成功");
+            ShowStatusLabel(Properties.Resources.StatusSaveSuccess);
         }
 
         private void ShowStatusLabel(string msg)
@@ -1195,14 +1195,14 @@ namespace AddInManager.Wpf
 
             if (addinToReload == null)
             {
-                ShowStatusError("无法找到插件信息进行重新加载。");
+                ShowStatusError(Properties.Resources.StatusReloadNotFound);
                 return;
             }
 
             var filePath = addinToReload.FilePath;
             if (!File.Exists(filePath))
             {
-                ShowStatusError($"插件文件不存在，无法重新加载: {filePath}");
+                ShowStatusError(string.Format(Properties.Resources.StatusReloadFileNotFound, filePath));
                 return;
             }
 
@@ -1212,7 +1212,7 @@ namespace AddInManager.Wpf
 
             // 2. 异步重新加载该文件，避免反射操作阻塞UI
             loadButton.IsEnabled = false;
-            ShowStatusLabel($"正在重新加载: {Path.GetFileName(filePath)}");
+            ShowStatusLabel(string.Format(Properties.Resources.StatusReloading, Path.GetFileName(filePath)));
 
             AddinType addinType;
             try
@@ -1222,7 +1222,7 @@ namespace AddInManager.Wpf
             catch (Exception ex)
             {
                 loadButton.IsEnabled = true;
-                ShowStatusError($"重新加载时发生错误: {ex.Message}");
+                ShowStatusError(string.Format(Properties.Resources.StatusReloadError, ex.Message));
                 return;
             }
             finally
@@ -1236,11 +1236,11 @@ namespace AddInManager.Wpf
 
             if (addinType == AddinType.Invalid)
             {
-                ShowStatusError($"重新加载失败: {filePath}");
+                ShowStatusError(string.Format(Properties.Resources.StatusReloadFailed, filePath));
             }
             else
             {
-                ShowStatusLabel($"重新加载成功: {filePath}");
+                ShowStatusLabel(string.Format(Properties.Resources.StatusReloadSuccess, filePath));
             }
         }
 
@@ -1269,12 +1269,12 @@ namespace AddInManager.Wpf
                 }
                 catch (Exception ex)
                 {
-                    ShowStatusError($"无法打开文件位置: {ex.Message}");
+                    ShowStatusError(string.Format(Properties.Resources.StatusOpenLocationError, ex.Message));
                 }
             }
             else
             {
-                ShowStatusError("文件路径无效或文件不存在。");
+                ShowStatusError(Properties.Resources.StatusInvalidPath);
             }
         }
 
@@ -1286,7 +1286,7 @@ namespace AddInManager.Wpf
                 var filePath = addinItem.AssemblyPath;
                 if (!File.Exists(filePath))
                 {
-                    ShowStatusError($"程序集文件不存在: {filePath}");
+                    ShowStatusError(string.Format(Properties.Resources.StatusAssemblyNotFound, filePath));
                     return;
                 }
 
@@ -1298,23 +1298,21 @@ namespace AddInManager.Wpf
                     var referencedAssemblies = assembly.GetReferencedAssemblies();
 
                     var info = new System.Text.StringBuilder();
-                    info.AppendLine($"程序集: {assemblyName.Name}");
-                    info.AppendLine($"版本: {assemblyName.Version}");
-                    info.AppendLine($"完整名称: {assembly.FullName}");
-                    info.AppendLine("\n--- 依赖项 ---");
+                    info.AppendLine(string.Format(Properties.Resources.AssemblyInfoAssembly, assemblyName.Name));
+                    info.AppendLine(string.Format(Properties.Resources.AssemblyInfoVersion, assemblyName.Version));
+                    info.AppendLine(string.Format(Properties.Resources.AssemblyInfoFullName, assembly.FullName));
+                    info.AppendLine(Properties.Resources.AssemblyInfoDependencies);
 
                     foreach (var refAssembly in referencedAssemblies)
                     {
                         info.AppendLine(refAssembly.FullName);
                     }
 
-                    // 这里我们用MessageBox来显示信息。
-                    // 在实际项目中，您可能想创建一个新的窗口来更友好地展示这些信息。
-                    MessageBox.Show(info.ToString(), "程序集信息", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(info.ToString(), Properties.Resources.AssemblyInfoTitle, MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    ShowStatusError($"无法加载程序集信息: {ex.Message}");
+                    ShowStatusError(string.Format(Properties.Resources.StatusAssemblyLoadError, ex.Message));
                 }
             }
         }

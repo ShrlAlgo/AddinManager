@@ -81,7 +81,7 @@ namespace AddInManager.Wpf
             var total    = _logger.Entries.Count;
             var errors   = _logger.Entries.Count(e => e.Level == LogLevel.Error);
             var warnings = _logger.Entries.Count(e => e.Level == LogLevel.Warning);
-            statusText.Text = $"共 {total} 条记录  |  错误: {errors}  |  警告: {warnings}";
+            statusText.Text = string.Format(Properties.Resources.LogStatusFormat, total, errors, warnings);
         }
 
         private void Filter_Changed(object sender, RoutedEventArgs e)
@@ -101,8 +101,8 @@ namespace AddInManager.Wpf
         {
             var dlg = new SaveFileDialog
             {
-                Title = "导出日志",
-                Filter = "文本文件 (*.txt)|*.txt|所有文件 (*.*)|*.*",
+                Title = Properties.Resources.LogExportTitle,
+                Filter = Properties.Resources.LogExportFilter,
                 FileName = $"AddinManager_Log_{DateTime.Now:yyyyMMdd_HHmmss}.txt"
             };
 
@@ -114,12 +114,14 @@ namespace AddInManager.Wpf
                 foreach (var entry in _logger.Entries)
                     sb.AppendLine(entry.ToString());
                 File.WriteAllText(dlg.FileName, sb.ToString(), Encoding.UTF8);
-                MessageBox.Show($"日志已导出至:\n{dlg.FileName}", "导出成功",
+                MessageBox.Show(string.Format(Properties.Resources.LogExportedTo, dlg.FileName),
+                    Properties.Resources.LogExportSuccess,
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"导出失败: {ex.Message}", "错误",
+                MessageBox.Show(string.Format(Properties.Resources.LogExportFailed, ex.Message),
+                    Properties.Resources.ErrorTitle,
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

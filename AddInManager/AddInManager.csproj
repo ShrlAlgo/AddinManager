@@ -47,6 +47,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.en-US.resx">
+      <Culture>en-US</Culture>
+      <ManifestResourceName>AddInManager.Properties.Resources</ManifestResourceName>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.ja-JP.resx">
+      <Culture>ja-JP</Culture>
+      <ManifestResourceName>AddInManager.Properties.Resources</ManifestResourceName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Update="Contents\2016\RevitAddinManager.addin">

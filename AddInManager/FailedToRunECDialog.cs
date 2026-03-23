@@ -8,7 +8,7 @@ namespace AddInManager
     {
         public static MessageBoxResult Show(string ecName)
         {
-            var text = $"选中外部命令 [{ecName}] 返回 \"Result.Failed\",请检查测试脚本";
+            var text = string.Format(Resources.FailedToRunEC, ecName);
             return MessageBox.Show(text, Resources.AppName, MessageBoxButton.OK);
         }
     }

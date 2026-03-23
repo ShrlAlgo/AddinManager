@@ -5,7 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    Title="插件管理器"
+    xmlns:props="clr-namespace:AddInManager.Properties"
+    Title="{x:Static props:Resources.WindowTitle}"
     Width="580"
     Height="520"
     Background="{DynamicResource BackgroundBrush}"
@@ -40,7 +41,7 @@
             Margin="0,0,0,5"
             Style="{StaticResource ContentContainer}">
             <TabControl x:Name="externalToolsTabControl" SelectionChanged="ExternalToolsTabControl_SelectionChanged">
-                <TabItem x:Name="commandsTabPage" Header="已加载外部命令">
+                <TabItem x:Name="commandsTabPage" Header="{x:Static props:Resources.TabCommands}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -58,7 +59,7 @@
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource SearchTextBox}"
-                                Tag="搜索命令..."
+                                Tag="{x:Static props:Resources.SearchWatermark}"
                                 TextChanged="SearchTextBox_TextChanged" />
                             <!--  工具栏  -->
                             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
@@ -69,7 +70,7 @@
                                         Margin="2"
                                         Click="SelectAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="选中所有命令">
+                                        ToolTip="{x:Static props:Resources.TooltipSelectAllCommands}">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -81,26 +82,7 @@
                                         x:Name="selectNoneButton"
                                         Click="SelectNoneButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="取消选中应用">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Text="&#xE739;" />
-                                    </Button>
-                                </UniformGrid>
-                                <Rectangle
-                                    Width="1"
-                                    Height="16"
-                                    Margin="4,0"
-                                    Fill="{StaticResource BorderBrush}" />
-                                <UniformGrid Rows="1">
-                                    <Button
-                                        x:Name="expandAllButton"
-                                        Margin="2"
-                                        Click="ExpandAllButton_Click"
-                                        Style="{StaticResource ToolbarButton}"
-                                        ToolTip="展开所有节点">
+                                        ToolTip="{x:Static props:Resources.TooltipDeselectCommands}">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"

@@ -31,6 +31,7 @@ namespace AddInManager
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            LanguageManager.ApplySavedLanguage();
             DebugTools.DebugLogger.Instance.Info("AddinManager 启动");
             CreateRibbonPanel(application);
             return Result.Succeeded;

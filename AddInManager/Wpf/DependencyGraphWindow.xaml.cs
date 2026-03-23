@@ -63,7 +63,7 @@ namespace AddInManager.Wpf
             foreach (var node in nodes)
                 addinListView.Items.Add(new DependencyNodeViewModel(node));
 
-            statusText.Text = $"共分析 {nodes.Count} 个插件";
+            statusText.Text = string.Format(Properties.Resources.DependencyAnalyzed, nodes.Count);
             DebugLogger.Instance.Info($"[DependencyAnalyzer] 已分析 {nodes.Count} 个插件");
         }
 
@@ -71,7 +71,7 @@ namespace AddInManager.Wpf
         {
             if (addinListView.SelectedItem is DependencyNodeViewModel vm)
             {
-                detailHeader.Text = $"{vm.Name} — 引用的程序集 ({vm.ReferencedAssemblies.Count})";
+                detailHeader.Text = string.Format(Properties.Resources.DependencyDetailHeader, vm.Name, vm.ReferencedAssemblies.Count);
                 filePathText.Text = vm.FilePath;
 
                 depsListView.Items.Clear();

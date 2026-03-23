@@ -1,64 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -117,333 +58,323 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppFolder" xml:space="preserve">
-    <value>AddinData</value>
-  </data>
   <data name="AppName" xml:space="preserve">
-    <value>插件管理</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Develop_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Develop_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Develop_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Develop_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>アドイン管理</value>
   </data>
   <data name="LoadCancelled" xml:space="preserve">
-    <value>取消加载</value>
+    <value>読み込みをキャンセルしました</value>
   </data>
   <data name="LoadFailed" xml:space="preserve">
-    <value>加载失败</value>
+    <value>読み込みに失敗しました</value>
   </data>
   <data name="LoadFileFilter" xml:space="preserve">
-    <value>外部程序集(*.dll)|*.dll</value>
+    <value>外部アセンブリ (*.dll)|*.dll</value>
   </data>
   <data name="LoadSucceed" xml:space="preserve">
-    <value>加载成功</value>
+    <value>読み込みが完了しました</value>
   </data>
   <data name="NoItemsSelected" xml:space="preserve">
-    <value>未选中项</value>
+    <value>選択されていません</value>
   </data>
   <!-- MainWindow strings -->
   <data name="WindowTitle" xml:space="preserve">
-    <value>插件管理器</value>
+    <value>アドインマネージャー</value>
   </data>
   <data name="TabCommands" xml:space="preserve">
-    <value>已加载外部命令</value>
+    <value>読み込まれた外部コマンド</value>
   </data>
   <data name="TabApplications" xml:space="preserve">
-    <value>已加载外部应用</value>
+    <value>読み込まれた外部アプリケーション</value>
   </data>
   <data name="SearchWatermark" xml:space="preserve">
-    <value>搜索命令...</value>
+    <value>コマンドを検索...</value>
   </data>
   <data name="TooltipSelectAllCommands" xml:space="preserve">
-    <value>选中所有命令</value>
+    <value>すべてのコマンドを選択</value>
   </data>
   <data name="TooltipDeselectCommands" xml:space="preserve">
-    <value>取消选中应用</value>
+    <value>コマンドの選択を解除</value>
   </data>
   <data name="TooltipExpandAll" xml:space="preserve">
-    <value>展开所有节点</value>
+    <value>すべてのノードを展開</value>
   </data>
   <data name="TooltipCollapseAll" xml:space="preserve">
-    <value>折叠所有节点</value>
+    <value>すべてのノードを折りたたむ</value>
   </data>
   <data name="TooltipSelectAllApps" xml:space="preserve">
-    <value>选中所有应用</value>
+    <value>すべてのアプリを選択</value>
   </data>
   <data name="TooltipDeselectApps" xml:space="preserve">
-    <value>取消选中应用</value>
+    <value>アプリの選択を解除</value>
   </data>
   <data name="TooltipExpandAllApps" xml:space="preserve">
-    <value>展开所有应用程序节点</value>
+    <value>すべてのアプリノードを展開</value>
   </data>
   <data name="TooltipCollapseAllApps" xml:space="preserve">
-    <value>折叠所有应用程序节点</value>
+    <value>すべてのアプリノードを折りたたむ</value>
   </data>
   <data name="ContextMenuRun" xml:space="preserve">
-    <value>运行</value>
+    <value>実行</value>
   </data>
   <data name="ContextMenuLoad" xml:space="preserve">
-    <value>加载新插件...</value>
+    <value>新しいアドインを読み込む...</value>
   </data>
   <data name="ContextMenuRemove" xml:space="preserve">
-    <value>移除</value>
+    <value>削除</value>
   </data>
   <data name="ContextMenuReload" xml:space="preserve">
-    <value>重新加载</value>
+    <value>再読み込み</value>
   </data>
   <data name="ContextMenuOpenInExplorer" xml:space="preserve">
-    <value>在资源管理器中显示</value>
+    <value>エクスプローラーで表示</value>
   </data>
   <data name="ContextMenuAssemblyInfo" xml:space="preserve">
-    <value>查看程序集信息</value>
+    <value>アセンブリ情報を表示</value>
   </data>
   <data name="LabelName" xml:space="preserve">
-    <value>名称：</value>
+    <value>名前：</value>
   </data>
   <data name="LabelDescription" xml:space="preserve">
-    <value>描述：</value>
+    <value>説明：</value>
   </data>
   <data name="LabelNotes" xml:space="preserve">
-    <value>备注：</value>
+    <value>備考：</value>
   </data>
   <data name="BtnRun" xml:space="preserve">
-    <value>运行</value>
+    <value>実行</value>
   </data>
   <data name="BtnLoad" xml:space="preserve">
-    <value>加载</value>
+    <value>読み込む</value>
   </data>
   <data name="BtnRemove" xml:space="preserve">
-    <value>移除</value>
+    <value>削除</value>
   </data>
   <data name="BtnSave" xml:space="preserve">
     <value>保存</value>
   </data>
   <data name="MenuSaveToAddins" xml:space="preserve">
-    <value>保存选中项到 Addins 文件夹</value>
+    <value>選択項目をAddinsフォルダーに保存</value>
   </data>
   <data name="MenuSaveToLocal" xml:space="preserve">
-    <value>保存选中项到本地 .addin 文件</value>
+    <value>選択項目をローカル .addin ファイルに保存</value>
   </data>
   <!-- Status messages -->
   <data name="StatusSelectedAll" xml:space="preserve">
-    <value>已选择所有可见项目</value>
+    <value>表示されているすべての項目を選択しました</value>
   </data>
   <data name="StatusDeselectedAll" xml:space="preserve">
-    <value>已取消选择所有项目</value>
+    <value>すべての項目の選択を解除しました</value>
   </data>
   <data name="StatusInvertedSelection" xml:space="preserve">
-    <value>已反转所有可见项目的选择状态</value>
+    <value>表示されているすべての項目の選択を反転しました</value>
   </data>
   <data name="StatusLoading" xml:space="preserve">
-    <value>正在加载: {0}</value>
+    <value>読み込み中: {0}</value>
   </data>
   <data name="StatusLoadError" xml:space="preserve">
-    <value>加载时发生错误: {0}</value>
+    <value>読み込みエラー: {0}</value>
   </data>
   <data name="StatusNoCommandSelected" xml:space="preserve">
-    <value>没有选中可执行的命令</value>
+    <value>実行可能なコマンドが選択されていません</value>
   </data>
   <data name="StatusRunError" xml:space="preserve">
-    <value>准备执行命令时发生错误: {0}</value>
+    <value>コマンドの準備中にエラーが発生しました: {0}</value>
   </data>
   <data name="StatusNotExecutableCommand" xml:space="preserve">
-    <value>选中的项目不是可执行的命令</value>
+    <value>選択した項目は実行可能なコマンドではありません</value>
   </data>
   <data name="StatusSaveSuccessReload" xml:space="preserve">
-    <value>保存成功，请关闭窗口加载插件</value>
+    <value>保存しました。ダイアログを再度開いてアドインを読み込んでください。</value>
   </data>
   <data name="StatusSaveSuccess" xml:space="preserve">
-    <value>保存成功</value>
+    <value>保存しました</value>
   </data>
   <data name="StatusReloadNotFound" xml:space="preserve">
-    <value>无法找到插件信息进行重新加载。</value>
+    <value>再読み込みのためのアドイン情報が見つかりません。</value>
   </data>
   <data name="StatusReloadFileNotFound" xml:space="preserve">
-    <value>插件文件不存在，无法重新加载: {0}</value>
+    <value>アドインファイルが見つかりません。再読み込みできません: {0}</value>
   </data>
   <data name="StatusReloading" xml:space="preserve">
-    <value>正在重新加载: {0}</value>
+    <value>再読み込み中: {0}</value>
   </data>
   <data name="StatusReloadError" xml:space="preserve">
-    <value>重新加载时发生错误: {0}</value>
+    <value>再読み込みエラー: {0}</value>
   </data>
   <data name="StatusReloadFailed" xml:space="preserve">
-    <value>重新加载失败: {0}</value>
+    <value>再読み込みに失敗しました: {0}</value>
   </data>
   <data name="StatusReloadSuccess" xml:space="preserve">
-    <value>重新加载成功: {0}</value>
+    <value>再読み込みが完了しました: {0}</value>
   </data>
   <data name="StatusOpenLocationError" xml:space="preserve">
-    <value>无法打开文件位置: {0}</value>
+    <value>ファイルの場所を開けません: {0}</value>
   </data>
   <data name="StatusInvalidPath" xml:space="preserve">
-    <value>文件路径无效或文件不存在。</value>
+    <value>ファイルパスが無効か、ファイルが存在しません。</value>
   </data>
   <data name="StatusAssemblyNotFound" xml:space="preserve">
-    <value>程序集文件不存在: {0}</value>
+    <value>アセンブリファイルが見つかりません: {0}</value>
   </data>
   <data name="StatusAssemblyLoadError" xml:space="preserve">
-    <value>无法加载程序集信息: {0}</value>
+    <value>アセンブリ情報を読み込めません: {0}</value>
   </data>
   <!-- Assembly info dialog -->
   <data name="AssemblyInfoTitle" xml:space="preserve">
-    <value>程序集信息</value>
+    <value>アセンブリ情報</value>
   </data>
   <data name="AssemblyInfoAssembly" xml:space="preserve">
-    <value>程序集: {0}</value>
+    <value>アセンブリ: {0}</value>
   </data>
   <data name="AssemblyInfoVersion" xml:space="preserve">
-    <value>版本: {0}</value>
+    <value>バージョン: {0}</value>
   </data>
   <data name="AssemblyInfoFullName" xml:space="preserve">
-    <value>完整名称: {0}</value>
+    <value>フルネーム: {0}</value>
   </data>
   <data name="AssemblyInfoDependencies" xml:space="preserve">
     <value>
---- 依赖项 ---</value>
+--- 依存関係 ---</value>
   </data>
   <!-- AssemblySelectorWindow strings -->
   <data name="AssemblySelectorTitle" xml:space="preserve">
-    <value>程序集文件选择器</value>
+    <value>アセンブリファイルセレクター</value>
   </data>
   <data name="AssemblySelectorPrompt1" xml:space="preserve">
-    <value>以下程序集名称无法自动解析：</value>
+    <value>以下のアセンブリ名は自動的に解決できません：</value>
   </data>
   <data name="AssemblySelectorPrompt2" xml:space="preserve">
-    <value>请手动选择程序集文件：</value>
+    <value>アセンブリファイルを手動で選択してください：</value>
   </data>
   <data name="BtnBrowse" xml:space="preserve">
-    <value>浏览...</value>
+    <value>参照...</value>
   </data>
   <data name="BtnOk" xml:space="preserve">
-    <value>确定</value>
+    <value>OK</value>
   </data>
   <data name="BtnCancel" xml:space="preserve">
-    <value>取消</value>
+    <value>キャンセル</value>
   </data>
   <!-- DependencyGraphWindow strings -->
   <data name="DependencyTitle" xml:space="preserve">
-    <value>插件依赖分析</value>
+    <value>アドイン依存関係分析</value>
   </data>
   <data name="BtnRefreshAnalysis" xml:space="preserve">
-    <value>刷新分析</value>
+    <value>分析を更新</value>
   </data>
   <data name="DependencyHelpText" xml:space="preserve">
-    <value>选择左侧插件查看其引用的程序集列表。</value>
+    <value>左側のアドインを選択して、参照されているアセンブリを表示します。</value>
   </data>
   <data name="DependencyLoadedPlugins" xml:space="preserve">
-    <value>已加载的插件</value>
+    <value>読み込まれたアドイン</value>
   </data>
   <data name="DependencyReferencedAssemblies" xml:space="preserve">
-    <value>引用的程序集</value>
+    <value>参照されたアセンブリ</value>
   </data>
   <data name="DependencyReady" xml:space="preserve">
-    <value>就绪</value>
+    <value>準備完了</value>
   </data>
   <data name="DependencyAnalyzed" xml:space="preserve">
-    <value>共分析 {0} 个插件</value>
+    <value>{0} 個のアドインを分析しました</value>
   </data>
   <data name="DependencyDetailHeader" xml:space="preserve">
-    <value>{0} — 引用的程序集 ({1})</value>
+    <value>{0} — 参照されたアセンブリ ({1})</value>
   </data>
   <!-- UnhandledExceptionDialog strings -->
   <data name="ExceptionTitle" xml:space="preserve">
-    <value>未处理的异常</value>
+    <value>未処理の例外</value>
   </data>
   <data name="ExceptionHeader" xml:space="preserve">
-    <value>应用程序遇到未处理的异常</value>
+    <value>アプリケーションで未処理の例外が発生しました</value>
   </data>
   <data name="ExceptionStackTrace" xml:space="preserve">
-    <value>堆栈跟踪</value>
+    <value>スタックトレース</value>
   </data>
   <data name="BtnCopyDetails" xml:space="preserve">
-    <value>复制详情</value>
+    <value>詳細をコピー</value>
   </data>
   <data name="BtnClose" xml:space="preserve">
-    <value>关闭</value>
+    <value>閉じる</value>
   </data>
   <data name="CopiedTitle" xml:space="preserve">
-    <value>已复制</value>
+    <value>コピーしました</value>
   </data>
   <data name="CopiedMessage" xml:space="preserve">
-    <value>异常详情已复制到剪贴板。</value>
+    <value>例外の詳細をクリップボードにコピーしました。</value>
   </data>
   <!-- LogViewerWindow strings -->
   <data name="LogViewerTitle" xml:space="preserve">
-    <value>调试日志查看器</value>
+    <value>デバッグログビューアー</value>
   </data>
   <data name="BtnClearLog" xml:space="preserve">
-    <value>清空日志</value>
+    <value>ログをクリア</value>
   </data>
   <data name="BtnExport" xml:space="preserve">
-    <value>导出…</value>
+    <value>エクスポート…</value>
   </data>
   <data name="ChkAutoScroll" xml:space="preserve">
-    <value>自动滚动</value>
+    <value>自動スクロール</value>
   </data>
   <data name="ColTime" xml:space="preserve">
-    <value>时间</value>
+    <value>時刻</value>
   </data>
   <data name="ColLevel" xml:space="preserve">
-    <value>级别</value>
+    <value>レベル</value>
   </data>
   <data name="ColMessage" xml:space="preserve">
-    <value>消息</value>
+    <value>メッセージ</value>
   </data>
   <data name="StatusReady" xml:space="preserve">
-    <value>就绪</value>
+    <value>準備完了</value>
   </data>
   <data name="LogStatusFormat" xml:space="preserve">
-    <value>共 {0} 条记录  |  错误: {1}  |  警告: {2}</value>
+    <value>合計 {0}  |  エラー: {1}  |  警告: {2}</value>
   </data>
   <data name="LogExportTitle" xml:space="preserve">
-    <value>导出日志</value>
+    <value>ログをエクスポート</value>
   </data>
   <data name="LogExportFilter" xml:space="preserve">
-    <value>文本文件 (*.txt)|*.txt|所有文件 (*.*)|*.*</value>
+    <value>テキストファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*</value>
   </data>
   <data name="LogExportedTo" xml:space="preserve">
-    <value>日志已导出至:
+    <value>ログをエクスポートしました:
 {0}</value>
   </data>
   <data name="LogExportSuccess" xml:space="preserve">
-    <value>导出成功</value>
+    <value>エクスポートしました</value>
   </data>
   <data name="LogExportFailed" xml:space="preserve">
-    <value>导出失败: {0}</value>
+    <value>エクスポートに失敗しました: {0}</value>
   </data>
   <data name="ErrorTitle" xml:space="preserve">
-    <value>错误</value>
+    <value>エラー</value>
   </data>
   <!-- FolderTooBigDialog strings -->
   <data name="FolderTooBigLine1" xml:space="preserve">
-    <value>文件夹[{0}]</value>
+    <value>フォルダー [{0}]</value>
   </data>
   <data name="FolderTooBigLine2" xml:space="preserve">
-    <value>有{0}MB大小</value>
+    <value>のサイズは {0} MB です</value>
   </data>
   <data name="FolderTooBigLine3" xml:space="preserve">
-    <value>AddinManager尝试复制所有文件到临时文件夹</value>
+    <value>AddinManagerはすべてのファイルを一時フォルダーにコピーします</value>
   </data>
   <data name="FolderTooBigLine4" xml:space="preserve">
-    <value>选择[是(Y)]复制所有文件到临时文件夹</value>
+    <value>[はい(Y)]を選択してすべてのファイルを一時フォルダーにコピー</value>
   </data>
   <data name="FolderTooBigLine5" xml:space="preserve">
-    <value>选择[否(N)]仅复制测试DLL文件到临时文件夹</value>
+    <value>[いいえ(N)]を選択してテストDLLのみを一時フォルダーにコピー</value>
   </data>
   <data name="FolderTooBigLine6" xml:space="preserve">
-    <value>选择[取消]取消操作</value>
+    <value>[キャンセル]を選択して操作をキャンセル</value>
   </data>
   <!-- FailedToRunECDialog strings -->
   <data name="FailedToRunEC" xml:space="preserve">
-    <value>选中外部命令 [{0}] 返回 "Result.Failed",请检查测试脚本</value>
+    <value>選択された外部コマンド [{0}] が "Result.Failed" を返しました。テストスクリプトを確認してください。</value>
   </data>
   <!-- Language switcher strings -->
   <data name="LangMenu" xml:space="preserve">
-    <value>语言</value>
+    <value>言語</value>
   </data>
   <data name="LangChinese" xml:space="preserve">
     <value>中文</value>
@@ -455,9 +386,9 @@
     <value>日本語</value>
   </data>
   <data name="LangChangeTitle" xml:space="preserve">
-    <value>语言已更改</value>
+    <value>言語が変更されました</value>
   </data>
   <data name="LangChangeMessage" xml:space="preserve">
-    <value>语言设置已保存，将在重新打开窗口后生效。</value>
+    <value>言語設定が保存されました。ウィンドウを再度開くと有効になります。</value>
   </data>
 </root>
