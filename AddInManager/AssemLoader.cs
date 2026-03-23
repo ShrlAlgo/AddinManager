@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 
-using AddInManager.Debug;
+using AddInManager.DebugTools;
+
+using DiagDebug = System.Diagnostics.Debug;
 
 namespace AddInManager
 {
@@ -145,7 +146,7 @@ namespace AddInManager
             catch (Exception ex)
             {
                 // 增加简单的错误输出，方便调试
-                System.Diagnostics.Debug.WriteLine($"LoadAddin Failed: {filePath}, Error: {ex.Message}");
+                DiagDebug.WriteLine($"LoadAddin Failed: {filePath}, Error: {ex.Message}");
                 DebugLogger.Instance.Error(ex, $"AssemLoader.LoadAddin: {System.IO.Path.GetFileName(filePath)}");
                 throw;
             }

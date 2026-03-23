@@ -31,14 +31,14 @@ namespace AddInManager
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Debug.DebugLogger.Instance.Info("AddinManager 启动");
+            DebugTools.DebugLogger.Instance.Info("AddinManager 启动");
             CreateRibbonPanel(application);
             return Result.Succeeded;
         }
 
         public Result OnShutdown(UIControlledApplication application)
         {
-            Debug.DebugLogger.Instance.Info("AddinManager 关闭");
+            DebugTools.DebugLogger.Instance.Info("AddinManager 关闭");
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
             return Result.Cancelled;
         }
@@ -55,8 +55,8 @@ namespace AddInManager
             AddPushButton(pulldownButton, typeof(CAddInManagerFaceless), "插件管理(手动模式,无界面)");
             AddPushButton(pulldownButton, typeof(CAddInManagerReadOnly), "插件管理(只读模式)");
             pulldownButton.AddSeparator();
-            AddPushButton(pulldownButton, typeof(Debug.CDebugLogViewer), "调试日志查看器");
-            AddPushButton(pulldownButton, typeof(Debug.CDebugDependencyGraph), "插件依赖分析");
+            AddPushButton(pulldownButton, typeof(DebugTools.CDebugLogViewer), "调试日志查看器");
+            AddPushButton(pulldownButton, typeof(DebugTools.CDebugDependencyGraph), "插件依赖分析");
             var tab = ComponentManager.Ribbon.FindTab("Modify");
             if (tab == null) return;
             var adwPanel = new Autodesk.Windows.RibbonPanel();
@@ -91,7 +91,7 @@ namespace AddInManager
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = e.ExceptionObject as Exception;
-            Debug.DebugLogger.Instance.Error(ex ?? new Exception(e.ExceptionObject?.ToString() ?? "Unknown error"),
+            DebugTools.DebugLogger.Instance.Error(ex ?? new Exception(e.ExceptionObject?.ToString() ?? "Unknown error"),
                 "UnhandledException");
             try
             {

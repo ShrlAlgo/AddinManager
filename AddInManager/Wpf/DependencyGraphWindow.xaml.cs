@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
-using AddInManager.Debug;
+using AddInManager.DebugTools;
 
 namespace AddInManager.Wpf
 {
@@ -20,7 +20,18 @@ namespace AddInManager.Wpf
         public string Name      => _node.Name;
         public string FilePath  => _node.FilePath;
         public AddinType AddinType => _node.AddinType;
-        public string AddinTypeLabel => _node.AddinType == AddinType.Command ? "[Cmd]" : "[App]";
+        public string AddinTypeLabel
+        {
+            get
+            {
+                switch (_node.AddinType)
+                {
+                    case AddinType.Command:     return "[Cmd]";
+                    case AddinType.Application: return "[App]";
+                    default:                    return $"[{_node.AddinType}]";
+                }
+            }
+        }
         public List<string> ReferencedAssemblies => _node.ReferencedAssemblies;
     }
 

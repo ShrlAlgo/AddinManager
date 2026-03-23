@@ -21,14 +21,18 @@ namespace AddInManager.Wpf
             stackTraceText.Text    = _exception?.StackTrace ?? string.Empty;
         }
 
+        private string FormatExceptionDetail()
+        {
+            return _exception == null
+                ? "(no exception details)"
+                : $"{_exception.GetType().FullName}: {_exception.Message}{Environment.NewLine}{_exception.StackTrace}";
+        }
+
         private void BtnCopy_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var detail = _exception == null
-                    ? "(no exception details)"
-                    : $"{_exception.GetType().FullName}: {_exception.Message}{Environment.NewLine}{_exception.StackTrace}";
-                System.Windows.Clipboard.SetDataObject(detail, true);
+                System.Windows.Clipboard.SetDataObject(FormatExceptionDetail(), true);
                 MessageBox.Show("异常详情已复制到剪贴板。", "已复制",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
 using System.Text;
-using AddInManager.Debug;
+using AddInManager.DebugTools;
 using AddInManager.Properties;
 
 namespace AddInManager
@@ -110,7 +110,6 @@ namespace AddInManager
                 return addinType;
             }
             DebugLogger.Instance.Info($"LoadAddin: 加载 {filePath}");
-            Path.GetFileName(filePath);
             var assemLoader = new AssemLoader();
             List<AddinItem> cmdItems = null;
             List<AddinItem> appItems = null;

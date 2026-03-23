@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-using AddInManager.Debug;
+using AddInManager.DebugTools;
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;

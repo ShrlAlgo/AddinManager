@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-using AddInManager.Debug;
+using AddInManager.DebugTools;
 
 using Microsoft.Win32;
 
@@ -33,6 +33,12 @@ namespace AddInManager.Wpf
             _logger.EntryAdded -= OnEntryAdded;
         }
 
+        private void ScrollToBottom()
+        {
+            if (chkAutoScroll.IsChecked == true && logListView.Items.Count > 0)
+                logListView.ScrollIntoView(logListView.Items[logListView.Items.Count - 1]);
+        }
+
         private void OnEntryAdded(object sender, LogEntry entry)
         {
             // EntryAdded is raised on the logger's caller thread; marshal to UI thread.
@@ -45,8 +51,7 @@ namespace AddInManager.Wpf
             if (PassesFilter(entry))
             {
                 logListView.Items.Add(entry);
-                if (chkAutoScroll.IsChecked == true && logListView.Items.Count > 0)
-                    logListView.ScrollIntoView(logListView.Items[logListView.Items.Count - 1]);
+                ScrollToBottom();
             }
 
             UpdateStatus();
@@ -68,9 +73,7 @@ namespace AddInManager.Wpf
             logListView.Items.Clear();
             foreach (var entry in _logger.Entries.Where(PassesFilter))
                 logListView.Items.Add(entry);
-
-            if (chkAutoScroll.IsChecked == true && logListView.Items.Count > 0)
-                logListView.ScrollIntoView(logListView.Items[logListView.Items.Count - 1]);
+            ScrollToBottom();
         }
 
         private void UpdateStatus()
