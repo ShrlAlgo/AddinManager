@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 
+using AddInManager.Debug;
+
 namespace AddInManager
 {
     public class AssemLoader
@@ -67,8 +69,10 @@ namespace AddInManager
         {
             if (string.IsNullOrEmpty(originalFilePath) || originalFilePath.StartsWith("\\") || !File.Exists(originalFilePath))
             {
+                DebugLogger.Instance.Warning($"AssemLoader: 无效文件路径: {originalFilePath}");
                 return null;
             }
+            DebugLogger.Instance.Info($"AssemLoader: 加载 {System.IO.Path.GetFileName(originalFilePath)} (仅解析: {parsingOnly})");
             m_parsingOnly = parsingOnly;
             OriginalFolder = Path.GetDirectoryName(originalFilePath);
 
@@ -84,6 +88,7 @@ namespace AddInManager
             var assembly = CopyAndLoadAddin(originalFilePath, parsingOnly);
             if (null == assembly || !IsAPIReferenced(assembly))
             {
+                DebugLogger.Instance.Warning($"AssemLoader: 程序集不包含 Revit API 引用或加载失败: {System.IO.Path.GetFileName(originalFilePath)}");
                 return null;
             }
             return assembly;
@@ -135,11 +140,13 @@ namespace AddInManager
                 // LoadFrom 会自动在 filePath 所在的目录中查找依赖项，这解决了大部分 NuGet 包加载失败的问题
                 // LoadFile 这是一个纯粹的文件加载，不带上下文，不会去旁边找依赖
                 assembly = Assembly.LoadFrom(filePath);
+                DebugLogger.Instance.Info($"AssemLoader: 成功加载程序集: {System.IO.Path.GetFileName(filePath)}");
             }
             catch (Exception ex)
             {
                 // 增加简单的错误输出，方便调试
-                Debug.WriteLine($"LoadAddin Failed: {filePath}, Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"LoadAddin Failed: {filePath}, Error: {ex.Message}");
+                DebugLogger.Instance.Error(ex, $"AssemLoader.LoadAddin: {System.IO.Path.GetFileName(filePath)}");
                 throw;
             }
             finally

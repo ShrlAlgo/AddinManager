@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 
+using AddInManager.Debug;
+
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
@@ -14,12 +16,14 @@ namespace AddInManager
             {
                 return RunActiveCommand(data, ref message, elements);
             }
-            
+
+            DebugLogger.Instance.Info("打开主窗口");
             var mainWindow = new Wpf.MainWindow(this);
             var dialogResult = mainWindow.ShowDialog();
 
             if (dialogResult != true)
             {
+                DebugLogger.Instance.Info("用户取消，主窗口已关闭");
                 return Result.Cancelled;
             }
 
@@ -37,6 +41,7 @@ namespace AddInManager
         private Result RunActiveCommand(ExternalCommandData data, ref string message, ElementSet elements)
         {
             var filePath = ActiveCmd.FilePath;
+            DebugLogger.Instance.Info($"执行命令: {ActiveCmdItem?.FullClassName} ({filePath})");
             var assemLoader = new AssemLoader();
             Result result;
             try
@@ -45,6 +50,7 @@ namespace AddInManager
                 var assembly = assemLoader.LoadAddinsToTempFolder(filePath, false);
                 if (null == assembly)
                 {
+                    DebugLogger.Instance.Error($"程序集加载失败: {filePath}");
                     result = Result.Failed;
                 }
                 else
@@ -53,17 +59,20 @@ namespace AddInManager
                     var externalCommand = assembly.CreateInstance(ActiveCmdItem.FullClassName) as IExternalCommand;
                     if (externalCommand == null)
                     {
+                        DebugLogger.Instance.Error($"无法创建命令实例: {ActiveCmdItem.FullClassName}");
                         result = Result.Failed;
                     }
                     else
                     {
                         ActiveEC = externalCommand;
                         result = ActiveEC.Execute(data, ref message, elements);
+                        DebugLogger.Instance.Info($"命令执行完成，结果: {result}");
                     }
                 }
             }
             catch (Exception ex)
             {
+                DebugLogger.Instance.Error(ex, "RunActiveCommand");
                 MessageBox.Show(ex.ToString());
                 result = Result.Failed;
             }
