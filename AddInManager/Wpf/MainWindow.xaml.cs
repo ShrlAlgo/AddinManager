@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 using Microsoft.Win32;
 
@@ -16,6 +18,21 @@ namespace AddInManager.Wpf
     {
         private readonly AIM m_aim;
         private List<TreeViewItem> m_allCommandItems; // 存储所有命令项用于搜索
+        private DispatcherTimer m_searchDebounceTimer;
+
+        // Reusable virtualizing ItemsPanelTemplate for child nodes, created once to avoid per-node allocation
+        private static readonly ItemsPanelTemplate s_virtualizingItemsPanel = CreateVirtualizingItemsPanel();
+
+        private static ItemsPanelTemplate CreateVirtualizingItemsPanel()
+        {
+            var factory = new FrameworkElementFactory(typeof(VirtualizingStackPanel));
+            factory.SetValue(VirtualizingPanel.IsVirtualizingProperty, true);
+            factory.SetValue(VirtualizingPanel.VirtualizationModeProperty, VirtualizationMode.Recycling);
+            factory.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            var template = new ItemsPanelTemplate { VisualTree = factory };
+            template.Seal();
+            return template;
+        }
 
         public MainWindow(AIM aim)
         {
@@ -28,6 +45,13 @@ namespace AddInManager.Wpf
             Title = Properties.Resources.AppName;
             Loaded += MainWindow_Loaded;
             m_allCommandItems = new List<TreeViewItem>();
+
+            // Debounce timer: filters the tree 300 ms after the user stops typing
+            m_searchDebounceTimer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromMilliseconds(300)
+            };
+            m_searchDebounceTimer.Tick += OnSearchDebounceTimerTick;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -60,6 +84,14 @@ namespace AddInManager.Wpf
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            // Restart the debounce timer so filtering only fires after the user pauses typing
+            m_searchDebounceTimer.Stop();
+            m_searchDebounceTimer.Start();
+        }
+
+        private void OnSearchDebounceTimerTick(object sender, EventArgs e)
+        {
+            m_searchDebounceTimer.Stop();
             var searchText = searchTextBox.Text?.Trim().ToLower();
 
             if (string.IsNullOrEmpty(searchText))
@@ -454,7 +486,7 @@ namespace AddInManager.Wpf
         }
         #endregion
 
-        private void LoadButton_Click(object sender, RoutedEventArgs e)
+        private async void LoadButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -468,7 +500,26 @@ namespace AddInManager.Wpf
             }
 
             var fileName = openFileDialog.FileName;
-            var addinType = m_aim.AddinManager.LoadAddin(fileName);
+
+            // Disable load button and show progress while reflection-based loading runs in background
+            loadButton.IsEnabled = false;
+            ShowStatusLabel($"正在加载: {Path.GetFileName(fileName)}");
+
+            AddinType addinType;
+            try
+            {
+                addinType = await Task.Run(() => m_aim.AddinManager.LoadAddin(fileName));
+            }
+            catch (Exception ex)
+            {
+                loadButton.IsEnabled = true;
+                ShowStatusError($"加载时发生错误: {ex.Message}");
+                return;
+            }
+            finally
+            {
+                loadButton.IsEnabled = true;
+            }
 
             if (addinType == AddinType.Invalid)
             {
@@ -939,7 +990,10 @@ namespace AddInManager.Wpf
                 var node = new TreeViewItem
                 {
                     Tag = value,
-                    IsExpanded = true // 默认展开
+                    IsExpanded = true, // 默认展开
+                    // Use a VirtualizingStackPanel so child items are rendered on demand
+                    // rather than all at once, which significantly reduces lag with large lists
+                    ItemsPanel = s_virtualizingItemsPanel
                 };
 
                 // 创建带CheckBox的Header
@@ -1114,7 +1168,7 @@ namespace AddInManager.Wpf
         }
 
         // (重写) 重新加载
-        private void ContextMenuReload_Click(object sender, RoutedEventArgs e)
+        private async void ContextMenuReload_Click(object sender, RoutedEventArgs e)
         {
             if (commandsTreeView.SelectedItem is not TreeViewItem selectedItem) return;
 
@@ -1156,8 +1210,25 @@ namespace AddInManager.Wpf
             m_aim.AddinManager.Commands.RemoveAddIn(addinToReload);
             m_aim.AddinManager.SaveToAimIni();
 
-            // 2. 重新加载该文件
-            var addinType = m_aim.AddinManager.LoadAddin(filePath);
+            // 2. 异步重新加载该文件，避免反射操作阻塞UI
+            loadButton.IsEnabled = false;
+            ShowStatusLabel($"正在重新加载: {Path.GetFileName(filePath)}");
+
+            AddinType addinType;
+            try
+            {
+                addinType = await Task.Run(() => m_aim.AddinManager.LoadAddin(filePath));
+            }
+            catch (Exception ex)
+            {
+                loadButton.IsEnabled = true;
+                ShowStatusError($"重新加载时发生错误: {ex.Message}");
+                return;
+            }
+            finally
+            {
+                loadButton.IsEnabled = true;
+            }
 
             // 3. 刷新整个UI
             CommandsTreeView_RefreshData();
