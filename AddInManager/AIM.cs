@@ -18,10 +18,15 @@ namespace AddInManager
             }
 
             DebugLogger.Instance.Info("打开主窗口");
-            var mainWindow = new Wpf.MainWindow(this);
-            var dialogResult = mainWindow.ShowDialog();
+            bool dialogResult;
+            do
+            {
+                LanguageManager.RestartRequested = false;
+                var mainWindow = new Wpf.MainWindow(this);
+                dialogResult = mainWindow.ShowDialog() == true;
+            } while (LanguageManager.RestartRequested);
 
-            if (dialogResult != true)
+            if (!dialogResult)
             {
                 DebugLogger.Instance.Info("用户取消，主窗口已关闭");
                 return Result.Cancelled;

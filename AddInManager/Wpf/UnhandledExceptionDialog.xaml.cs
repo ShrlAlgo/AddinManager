@@ -33,7 +33,7 @@ namespace AddInManager.Wpf
             try
             {
                 System.Windows.Clipboard.SetDataObject(FormatExceptionDetail(), true);
-                MessageBox.Show("异常详情已复制到剪贴板。", "已复制",
+                MessageBox.Show(Properties.Resources.CopiedMessage, Properties.Resources.CopiedTitle,
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch
