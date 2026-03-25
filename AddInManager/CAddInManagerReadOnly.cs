@@ -14,12 +14,15 @@ namespace AddInManager
             try
             {
                 var aim = AIM.Instance;
-
-                var window = new Wpf.MainWindow(aim)
+                do
                 {
-                    WindowStartupLocation = WindowStartupLocation.CenterScreen
-                };
-                window.ShowDialog();
+                    LanguageManager.RestartRequested = false;
+                    var window = new Wpf.MainWindow(aim)
+                    {
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen
+                    };
+                    window.ShowDialog();
+                } while (LanguageManager.RestartRequested);
 
                 return Result.Succeeded;
             }

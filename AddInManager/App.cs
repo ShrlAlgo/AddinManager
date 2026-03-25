@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -9,6 +8,7 @@ using System.Reflection;
 using System.Windows.Media.Imaging;
 
 using AddInManager.Properties;
+
 using Autodesk.Revit.UI;
 using Autodesk.Windows;
 
@@ -18,6 +18,14 @@ namespace AddInManager
     internal class App : IExternalApplication
     {
         public static string RevitVersion { get; set; }
+        private const string RibbonPulldownInternalName = "AddinManager.Options";
+        private static Autodesk.Revit.UI.RibbonPanel s_ribbonPanel;
+        private static PulldownButton s_pulldownButton;
+        private static PushButton s_manualButton;
+        private static PushButton s_facelessButton;
+        private static PushButton s_readOnlyButton;
+        private static PushButton s_logViewerButton;
+        private static PushButton s_dependencyGraphButton;
         private static readonly Dictionary<string, string> KnownAssemblies = new Dictionary<string, string>(
             StringComparer.Ordinal)
         {
@@ -30,31 +38,41 @@ namespace AddInManager
         public Result OnStartup(UIControlledApplication application)
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            LanguageManager.ApplySavedLanguage();
+            DebugTools.DebugLogger.Instance.Info("AddinManager 启动");
             CreateRibbonPanel(application);
             return Result.Succeeded;
         }
+
         public Result OnShutdown(UIControlledApplication application)
         {
+            DebugTools.DebugLogger.Instance.Info("AddinManager 关闭");
+            AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
             return Result.Cancelled;
         }
+
         private static void CreateRibbonPanel(UIControlledApplication application)
         {
             RevitVersion = application.ControlledApplication.VersionNumber;
-            var ribbonPanel = application.CreateRibbonPanel("开发工具");
-            var pulldownButtonData = new PulldownButtonData("选项", "插件管理");
-            var pulldownButton = (PulldownButton)ribbonPanel.AddItem(pulldownButtonData);
-            pulldownButton.Image = ToImageSource(Resources.Develop_16);
-            pulldownButton.LargeImage = ToImageSource(Resources.Develop_32);
-            AddPushButton(pulldownButton, typeof(CAddInManagerManual), "插件管理(手动模式)");
-            AddPushButton(pulldownButton, typeof(CAddInManagerFaceless), "插件管理(手动模式,无界面)");
-            AddPushButton(pulldownButton, typeof(CAddInManagerReadOnly), "插件管理(只读模式)");
+            s_ribbonPanel = application.CreateRibbonPanel(Resources.RibbonPanelName);
+            var pulldownButtonData = new PulldownButtonData(RibbonPulldownInternalName, Resources.RibbonPulldownDisplayName);
+            s_pulldownButton = (PulldownButton)s_ribbonPanel.AddItem(pulldownButtonData);
+            s_pulldownButton.Image = ToImageSource(Resources.Develop_16);
+            s_pulldownButton.LargeImage = ToImageSource(Resources.Develop_32);
+            s_manualButton = AddPushButton(s_pulldownButton, typeof(CAddInManagerManual), Resources.RibbonManualMode);
+            s_facelessButton = AddPushButton(s_pulldownButton, typeof(CAddInManagerFaceless), Resources.RibbonManualModeFaceless);
+            s_readOnlyButton = AddPushButton(s_pulldownButton, typeof(CAddInManagerReadOnly), Resources.RibbonReadOnlyMode);
+            s_pulldownButton.AddSeparator();
+            s_logViewerButton = AddPushButton(s_pulldownButton, typeof(DebugTools.CDebugLogViewer), Resources.RibbonDebugLogViewer);
+            s_dependencyGraphButton = AddPushButton(s_pulldownButton, typeof(DebugTools.CDebugDependencyGraph), Resources.RibbonDependencyAnalyzer);
             var tab = ComponentManager.Ribbon.FindTab("Modify");
             if (tab == null) return;
             var adwPanel = new Autodesk.Windows.RibbonPanel();
-            adwPanel.CopyFrom(GetRibbonPanel(ribbonPanel));
+            adwPanel.CopyFrom(GetRibbonPanel(s_ribbonPanel));
             tab.Panels.Add(adwPanel);
-
         }
+
         internal static BitmapImage ToImageSource(Bitmap bitmap)
         {
             var ms = new MemoryStream();
@@ -74,10 +92,26 @@ namespace AddInManager
             return RibbonPanelField.GetValue(panel) as Autodesk.Windows.RibbonPanel;
         }
 
-        private static void AddPushButton(PulldownButton pullDownButton, Type command, string buttonText)
+        private static PushButton AddPushButton(PulldownButton pullDownButton, Type command, string buttonText)
         {
             var buttonData = new PushButtonData(command.FullName, buttonText, Assembly.GetAssembly(command).Location, command.FullName);
-            pullDownButton.AddPushButton(buttonData);
+            return pullDownButton.AddPushButton(buttonData);
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = e.ExceptionObject as Exception;
+            DebugTools.DebugLogger.Instance.Error(ex ?? new Exception(e.ExceptionObject?.ToString() ?? "Unknown error"),
+                "UnhandledException");
+            try
+            {
+                var dialog = new Wpf.UnhandledExceptionDialog(ex);
+                dialog.ShowDialog();
+            }
+            catch
+            {
+                // If the dialog itself fails, at least we logged it above
+            }
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -99,12 +133,28 @@ namespace AddInManager
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine(ex.Message);
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
 
             return null;
         }
 
+        internal static void RefreshRibbonLanguage()
+        {
+            if (s_pulldownButton == null)
+            {
+                return;
+            }
+
+            s_pulldownButton.ItemText = Resources.RibbonPulldownDisplayName;
+
+            s_ribbonPanel?.Title = Resources.RibbonPanelName;
+            s_manualButton?.ItemText = Resources.RibbonManualMode;
+            s_facelessButton?.ItemText = Resources.RibbonManualModeFaceless;
+            s_readOnlyButton?.ItemText = Resources.RibbonReadOnlyMode;
+            s_logViewerButton?.ItemText = Resources.RibbonDebugLogViewer;
+            s_dependencyGraphButton?.ItemText = Resources.RibbonDependencyAnalyzer;
+        }
     }
 }

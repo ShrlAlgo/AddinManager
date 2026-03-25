@@ -22,7 +22,7 @@ namespace AddInManager.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace AddInManager.Properties {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AddInManager.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace AddInManager.Properties {
         ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace AddInManager.Properties {
         /// <summary>
         ///   查找类似 AddinData 的本地化字符串。
         /// </summary>
-        internal static string AppFolder {
+        public static string AppFolder {
             get {
                 return ResourceManager.GetString("AppFolder", resourceCulture);
             }
@@ -72,16 +72,367 @@ namespace AddInManager.Properties {
         /// <summary>
         ///   查找类似 插件管理 的本地化字符串。
         /// </summary>
-        internal static string AppName {
+        public static string AppName {
             get {
                 return ResourceManager.GetString("AppName", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   查找类似 程序集: {0} 的本地化字符串。
+        /// </summary>
+        public static string AssemblyInfoAssembly {
+            get {
+                return ResourceManager.GetString("AssemblyInfoAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 --- 依赖项 --- 的本地化字符串。
+        /// </summary>
+        public static string AssemblyInfoDependencies {
+            get {
+                return ResourceManager.GetString("AssemblyInfoDependencies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 完整名称: {0} 的本地化字符串。
+        /// </summary>
+        public static string AssemblyInfoFullName {
+            get {
+                return ResourceManager.GetString("AssemblyInfoFullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 程序集信息 的本地化字符串。
+        /// </summary>
+        public static string AssemblyInfoTitle {
+            get {
+                return ResourceManager.GetString("AssemblyInfoTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 版本: {0} 的本地化字符串。
+        /// </summary>
+        public static string AssemblyInfoVersion {
+            get {
+                return ResourceManager.GetString("AssemblyInfoVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 以下程序集名称无法自动解析： 的本地化字符串。
+        /// </summary>
+        public static string AssemblySelectorPrompt1 {
+            get {
+                return ResourceManager.GetString("AssemblySelectorPrompt1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 请手动选择程序集文件： 的本地化字符串。
+        /// </summary>
+        public static string AssemblySelectorPrompt2 {
+            get {
+                return ResourceManager.GetString("AssemblySelectorPrompt2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 程序集文件选择器 的本地化字符串。
+        /// </summary>
+        public static string AssemblySelectorTitle {
+            get {
+                return ResourceManager.GetString("AssemblySelectorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 浏览... 的本地化字符串。
+        /// </summary>
+        public static string BtnBrowse {
+            get {
+                return ResourceManager.GetString("BtnBrowse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 取消 的本地化字符串。
+        /// </summary>
+        public static string BtnCancel {
+            get {
+                return ResourceManager.GetString("BtnCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 清空日志 的本地化字符串。
+        /// </summary>
+        public static string BtnClearLog {
+            get {
+                return ResourceManager.GetString("BtnClearLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 关闭 的本地化字符串。
+        /// </summary>
+        public static string BtnClose {
+            get {
+                return ResourceManager.GetString("BtnClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 复制详情 的本地化字符串。
+        /// </summary>
+        public static string BtnCopyDetails {
+            get {
+                return ResourceManager.GetString("BtnCopyDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 导出… 的本地化字符串。
+        /// </summary>
+        public static string BtnExport {
+            get {
+                return ResourceManager.GetString("BtnExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 加载 的本地化字符串。
+        /// </summary>
+        public static string BtnLoad {
+            get {
+                return ResourceManager.GetString("BtnLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 确定 的本地化字符串。
+        /// </summary>
+        public static string BtnOk {
+            get {
+                return ResourceManager.GetString("BtnOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 刷新分析 的本地化字符串。
+        /// </summary>
+        public static string BtnRefreshAnalysis {
+            get {
+                return ResourceManager.GetString("BtnRefreshAnalysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 移除 的本地化字符串。
+        /// </summary>
+        public static string BtnRemove {
+            get {
+                return ResourceManager.GetString("BtnRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 运行 的本地化字符串。
+        /// </summary>
+        public static string BtnRun {
+            get {
+                return ResourceManager.GetString("BtnRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存 的本地化字符串。
+        /// </summary>
+        public static string BtnSave {
+            get {
+                return ResourceManager.GetString("BtnSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 自动滚动 的本地化字符串。
+        /// </summary>
+        public static string ChkAutoScroll {
+            get {
+                return ResourceManager.GetString("ChkAutoScroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 级别 的本地化字符串。
+        /// </summary>
+        public static string ColLevel {
+            get {
+                return ResourceManager.GetString("ColLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 消息 的本地化字符串。
+        /// </summary>
+        public static string ColMessage {
+            get {
+                return ResourceManager.GetString("ColMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 时间 的本地化字符串。
+        /// </summary>
+        public static string ColTime {
+            get {
+                return ResourceManager.GetString("ColTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 查看程序集信息 的本地化字符串。
+        /// </summary>
+        public static string ContextMenuAssemblyInfo {
+            get {
+                return ResourceManager.GetString("ContextMenuAssemblyInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 加载新插件... 的本地化字符串。
+        /// </summary>
+        public static string ContextMenuLoad {
+            get {
+                return ResourceManager.GetString("ContextMenuLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 在资源管理器中显示 的本地化字符串。
+        /// </summary>
+        public static string ContextMenuOpenInExplorer {
+            get {
+                return ResourceManager.GetString("ContextMenuOpenInExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 重新加载 的本地化字符串。
+        /// </summary>
+        public static string ContextMenuReload {
+            get {
+                return ResourceManager.GetString("ContextMenuReload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 移除 的本地化字符串。
+        /// </summary>
+        public static string ContextMenuRemove {
+            get {
+                return ResourceManager.GetString("ContextMenuRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 运行 的本地化字符串。
+        /// </summary>
+        public static string ContextMenuRun {
+            get {
+                return ResourceManager.GetString("ContextMenuRun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 异常详情已复制到剪贴板。 的本地化字符串。
+        /// </summary>
+        public static string CopiedMessage {
+            get {
+                return ResourceManager.GetString("CopiedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已复制 的本地化字符串。
+        /// </summary>
+        public static string CopiedTitle {
+            get {
+                return ResourceManager.GetString("CopiedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 共分析 {0} 个插件 的本地化字符串。
+        /// </summary>
+        public static string DependencyAnalyzed {
+            get {
+                return ResourceManager.GetString("DependencyAnalyzed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 {0} — 引用的程序集 ({1}) 的本地化字符串。
+        /// </summary>
+        public static string DependencyDetailHeader {
+            get {
+                return ResourceManager.GetString("DependencyDetailHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选择左侧插件查看其引用的程序集列表。 的本地化字符串。
+        /// </summary>
+        public static string DependencyHelpText {
+            get {
+                return ResourceManager.GetString("DependencyHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已加载的插件 的本地化字符串。
+        /// </summary>
+        public static string DependencyLoadedPlugins {
+            get {
+                return ResourceManager.GetString("DependencyLoadedPlugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 就绪 的本地化字符串。
+        /// </summary>
+        public static string DependencyReady {
+            get {
+                return ResourceManager.GetString("DependencyReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 引用的程序集 的本地化字符串。
+        /// </summary>
+        public static string DependencyReferencedAssemblies {
+            get {
+                return ResourceManager.GetString("DependencyReferencedAssemblies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件依赖分析 的本地化字符串。
+        /// </summary>
+        public static string DependencyTitle {
+            get {
+                return ResourceManager.GetString("DependencyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap Develop_16 {
+        public static System.Drawing.Bitmap Develop_16 {
             get {
                 object obj = ResourceManager.GetObject("Develop_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -91,7 +442,7 @@ namespace AddInManager.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap Develop_32 {
+        public static System.Drawing.Bitmap Develop_32 {
             get {
                 object obj = ResourceManager.GetObject("Develop_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -99,9 +450,180 @@ namespace AddInManager.Properties {
         }
         
         /// <summary>
+        ///   查找类似 错误 的本地化字符串。
+        /// </summary>
+        public static string ErrorTitle {
+            get {
+                return ResourceManager.GetString("ErrorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 应用程序遇到未处理的异常 的本地化字符串。
+        /// </summary>
+        public static string ExceptionHeader {
+            get {
+                return ResourceManager.GetString("ExceptionHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 堆栈跟踪 的本地化字符串。
+        /// </summary>
+        public static string ExceptionStackTrace {
+            get {
+                return ResourceManager.GetString("ExceptionStackTrace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 未处理的异常 的本地化字符串。
+        /// </summary>
+        public static string ExceptionTitle {
+            get {
+                return ResourceManager.GetString("ExceptionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选中外部命令 [{0}] 返回 &quot;Result.Failed&quot;,请检查测试脚本 的本地化字符串。
+        /// </summary>
+        public static string FailedToRunEC {
+            get {
+                return ResourceManager.GetString("FailedToRunEC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 文件夹[{0}] 的本地化字符串。
+        /// </summary>
+        public static string FolderTooBigLine1 {
+            get {
+                return ResourceManager.GetString("FolderTooBigLine1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 有{0}MB大小 的本地化字符串。
+        /// </summary>
+        public static string FolderTooBigLine2 {
+            get {
+                return ResourceManager.GetString("FolderTooBigLine2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件管理器尝试复制所有文件到临时文件夹 的本地化字符串。
+        /// </summary>
+        public static string FolderTooBigLine3 {
+            get {
+                return ResourceManager.GetString("FolderTooBigLine3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选择[是(Y)]复制所有文件到临时文件夹 的本地化字符串。
+        /// </summary>
+        public static string FolderTooBigLine4 {
+            get {
+                return ResourceManager.GetString("FolderTooBigLine4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选择[否(N)]仅复制测试DLL文件到临时文件夹 的本地化字符串。
+        /// </summary>
+        public static string FolderTooBigLine5 {
+            get {
+                return ResourceManager.GetString("FolderTooBigLine5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选择[取消]取消操作 的本地化字符串。
+        /// </summary>
+        public static string FolderTooBigLine6 {
+            get {
+                return ResourceManager.GetString("FolderTooBigLine6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 描述： 的本地化字符串。
+        /// </summary>
+        public static string LabelDescription {
+            get {
+                return ResourceManager.GetString("LabelDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 名称： 的本地化字符串。
+        /// </summary>
+        public static string LabelName {
+            get {
+                return ResourceManager.GetString("LabelName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 备注： 的本地化字符串。
+        /// </summary>
+        public static string LabelNotes {
+            get {
+                return ResourceManager.GetString("LabelNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 语言已更改 的本地化字符串。
+        /// </summary>
+        public static string LangChangeTitle {
+            get {
+                return ResourceManager.GetString("LangChangeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 中文 的本地化字符串。
+        /// </summary>
+        public static string LangChinese {
+            get {
+                return ResourceManager.GetString("LangChinese", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 English 的本地化字符串。
+        /// </summary>
+        public static string LangEnglish {
+            get {
+                return ResourceManager.GetString("LangEnglish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 日本語 的本地化字符串。
+        /// </summary>
+        public static string LangJapanese {
+            get {
+                return ResourceManager.GetString("LangJapanese", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 语言 的本地化字符串。
+        /// </summary>
+        public static string LangMenu {
+            get {
+                return ResourceManager.GetString("LangMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 取消加载 的本地化字符串。
         /// </summary>
-        internal static string LoadCancelled {
+        public static string LoadCancelled {
             get {
                 return ResourceManager.GetString("LoadCancelled", resourceCulture);
             }
@@ -110,7 +632,7 @@ namespace AddInManager.Properties {
         /// <summary>
         ///   查找类似 加载失败 的本地化字符串。
         /// </summary>
-        internal static string LoadFailed {
+        public static string LoadFailed {
             get {
                 return ResourceManager.GetString("LoadFailed", resourceCulture);
             }
@@ -119,7 +641,7 @@ namespace AddInManager.Properties {
         /// <summary>
         ///   查找类似 外部程序集(*.dll)|*.dll 的本地化字符串。
         /// </summary>
-        internal static string LoadFileFilter {
+        public static string LoadFileFilter {
             get {
                 return ResourceManager.GetString("LoadFileFilter", resourceCulture);
             }
@@ -128,18 +650,469 @@ namespace AddInManager.Properties {
         /// <summary>
         ///   查找类似 加载成功 的本地化字符串。
         /// </summary>
-        internal static string LoadSucceed {
+        public static string LoadSucceed {
             get {
                 return ResourceManager.GetString("LoadSucceed", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   查找类似 日志已导出至:
+        ///{0} 的本地化字符串。
+        /// </summary>
+        public static string LogExportedTo {
+            get {
+                return ResourceManager.GetString("LogExportedTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 导出失败: {0} 的本地化字符串。
+        /// </summary>
+        public static string LogExportFailed {
+            get {
+                return ResourceManager.GetString("LogExportFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 文本文件 (*.txt)|*.txt|所有文件 (*.*)|*.* 的本地化字符串。
+        /// </summary>
+        public static string LogExportFilter {
+            get {
+                return ResourceManager.GetString("LogExportFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 导出成功 的本地化字符串。
+        /// </summary>
+        public static string LogExportSuccess {
+            get {
+                return ResourceManager.GetString("LogExportSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 导出日志 的本地化字符串。
+        /// </summary>
+        public static string LogExportTitle {
+            get {
+                return ResourceManager.GetString("LogExportTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 共 {0} 条记录  |  错误: {1}  |  警告: {2} 的本地化字符串。
+        /// </summary>
+        public static string LogStatusFormat {
+            get {
+                return ResourceManager.GetString("LogStatusFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 调试日志查看器 的本地化字符串。
+        /// </summary>
+        public static string LogViewerTitle {
+            get {
+                return ResourceManager.GetString("LogViewerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存选中项到 Addins 文件夹 的本地化字符串。
+        /// </summary>
+        public static string MenuSaveToAddins {
+            get {
+                return ResourceManager.GetString("MenuSaveToAddins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存选中项到本地 .addin 文件 的本地化字符串。
+        /// </summary>
+        public static string MenuSaveToLocal {
+            get {
+                return ResourceManager.GetString("MenuSaveToLocal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 未选中项 的本地化字符串。
         /// </summary>
-        internal static string NoItemsSelected {
+        public static string NoItemsSelected {
             get {
                 return ResourceManager.GetString("NoItemsSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 调试日志查看器 的本地化字符串。
+        /// </summary>
+        public static string RibbonDebugLogViewer {
+            get {
+                return ResourceManager.GetString("RibbonDebugLogViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件依赖分析 的本地化字符串。
+        /// </summary>
+        public static string RibbonDependencyAnalyzer {
+            get {
+                return ResourceManager.GetString("RibbonDependencyAnalyzer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件管理(手动模式) 的本地化字符串。
+        /// </summary>
+        public static string RibbonManualMode {
+            get {
+                return ResourceManager.GetString("RibbonManualMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件管理(手动模式,无界面) 的本地化字符串。
+        /// </summary>
+        public static string RibbonManualModeFaceless {
+            get {
+                return ResourceManager.GetString("RibbonManualModeFaceless", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 开发工具 的本地化字符串。
+        /// </summary>
+        public static string RibbonPanelName {
+            get {
+                return ResourceManager.GetString("RibbonPanelName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件管理 的本地化字符串。
+        /// </summary>
+        public static string RibbonPulldownDisplayName {
+            get {
+                return ResourceManager.GetString("RibbonPulldownDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Options 的本地化字符串。
+        /// </summary>
+        public static string RibbonPulldownInternalName {
+            get {
+                return ResourceManager.GetString("RibbonPulldownInternalName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件管理(只读模式) 的本地化字符串。
+        /// </summary>
+        public static string RibbonReadOnlyMode {
+            get {
+                return ResourceManager.GetString("RibbonReadOnlyMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 搜索命令... 的本地化字符串。
+        /// </summary>
+        public static string SearchWatermark {
+            get {
+                return ResourceManager.GetString("SearchWatermark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 无法加载程序集信息: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusAssemblyLoadError {
+            get {
+                return ResourceManager.GetString("StatusAssemblyLoadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 程序集文件不存在: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusAssemblyNotFound {
+            get {
+                return ResourceManager.GetString("StatusAssemblyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已取消选择所有项目 的本地化字符串。
+        /// </summary>
+        public static string StatusDeselectedAll {
+            get {
+                return ResourceManager.GetString("StatusDeselectedAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 文件路径无效或文件不存在。 的本地化字符串。
+        /// </summary>
+        public static string StatusInvalidPath {
+            get {
+                return ResourceManager.GetString("StatusInvalidPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已反转所有可见项目的选择状态 的本地化字符串。
+        /// </summary>
+        public static string StatusInvertedSelection {
+            get {
+                return ResourceManager.GetString("StatusInvertedSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 加载时发生错误: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusLoadError {
+            get {
+                return ResourceManager.GetString("StatusLoadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在加载: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusLoading {
+            get {
+                return ResourceManager.GetString("StatusLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 没有选中可执行的命令 的本地化字符串。
+        /// </summary>
+        public static string StatusNoCommandSelected {
+            get {
+                return ResourceManager.GetString("StatusNoCommandSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选中的项目不是可执行的命令 的本地化字符串。
+        /// </summary>
+        public static string StatusNotExecutableCommand {
+            get {
+                return ResourceManager.GetString("StatusNotExecutableCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 无法打开文件位置: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusOpenLocationError {
+            get {
+                return ResourceManager.GetString("StatusOpenLocationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 就绪 的本地化字符串。
+        /// </summary>
+        public static string StatusReady {
+            get {
+                return ResourceManager.GetString("StatusReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 重新加载时发生错误: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusReloadError {
+            get {
+                return ResourceManager.GetString("StatusReloadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 重新加载失败: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusReloadFailed {
+            get {
+                return ResourceManager.GetString("StatusReloadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件文件不存在，无法重新加载: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusReloadFileNotFound {
+            get {
+                return ResourceManager.GetString("StatusReloadFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在重新加载: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusReloading {
+            get {
+                return ResourceManager.GetString("StatusReloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 无法找到插件信息进行重新加载。 的本地化字符串。
+        /// </summary>
+        public static string StatusReloadNotFound {
+            get {
+                return ResourceManager.GetString("StatusReloadNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 重新加载成功: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusReloadSuccess {
+            get {
+                return ResourceManager.GetString("StatusReloadSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 准备执行命令时发生错误: {0} 的本地化字符串。
+        /// </summary>
+        public static string StatusRunError {
+            get {
+                return ResourceManager.GetString("StatusRunError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存成功 的本地化字符串。
+        /// </summary>
+        public static string StatusSaveSuccess {
+            get {
+                return ResourceManager.GetString("StatusSaveSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存成功，请关闭窗口加载插件 的本地化字符串。
+        /// </summary>
+        public static string StatusSaveSuccessReload {
+            get {
+                return ResourceManager.GetString("StatusSaveSuccessReload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已选择所有可见项目 的本地化字符串。
+        /// </summary>
+        public static string StatusSelectedAll {
+            get {
+                return ResourceManager.GetString("StatusSelectedAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已加载外部应用 的本地化字符串。
+        /// </summary>
+        public static string TabApplications {
+            get {
+                return ResourceManager.GetString("TabApplications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 已加载外部命令 的本地化字符串。
+        /// </summary>
+        public static string TabCommands {
+            get {
+                return ResourceManager.GetString("TabCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 折叠所有节点 的本地化字符串。
+        /// </summary>
+        public static string TooltipCollapseAll {
+            get {
+                return ResourceManager.GetString("TooltipCollapseAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 折叠所有应用程序节点 的本地化字符串。
+        /// </summary>
+        public static string TooltipCollapseAllApps {
+            get {
+                return ResourceManager.GetString("TooltipCollapseAllApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 取消选中应用 的本地化字符串。
+        /// </summary>
+        public static string TooltipDeselectApps {
+            get {
+                return ResourceManager.GetString("TooltipDeselectApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 取消选中命令 的本地化字符串。
+        /// </summary>
+        public static string TooltipDeselectCommands {
+            get {
+                return ResourceManager.GetString("TooltipDeselectCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 展开所有节点 的本地化字符串。
+        /// </summary>
+        public static string TooltipExpandAll {
+            get {
+                return ResourceManager.GetString("TooltipExpandAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 展开所有应用程序节点 的本地化字符串。
+        /// </summary>
+        public static string TooltipExpandAllApps {
+            get {
+                return ResourceManager.GetString("TooltipExpandAllApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选中所有应用 的本地化字符串。
+        /// </summary>
+        public static string TooltipSelectAllApps {
+            get {
+                return ResourceManager.GetString("TooltipSelectAllApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 选中所有命令 的本地化字符串。
+        /// </summary>
+        public static string TooltipSelectAllCommands {
+            get {
+                return ResourceManager.GetString("TooltipSelectAllCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 插件管理器 的本地化字符串。
+        /// </summary>
+        public static string WindowTitle {
+            get {
+                return ResourceManager.GetString("WindowTitle", resourceCulture);
             }
         }
     }

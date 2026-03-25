@@ -15,7 +15,7 @@ namespace AddInManager
 
         public static void ShowWarning(string msg)
         {
-            MessageBox.Show(msg, "插件管理", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show(msg, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         public static string m_ecFullName = typeof(IExternalCommand).FullName;

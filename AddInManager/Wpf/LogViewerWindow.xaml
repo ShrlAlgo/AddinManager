@@ -1,0 +1,91 @@
+﻿<Window
+    x:Class="AddInManager.Wpf.LogViewerWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="调试日志查看器"
+    Width="980"
+    Height="560"
+    WindowStartupLocation="CenterScreen"
+    Background="#FFF5F5F5">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/AddInManager;component/Wpf/Styles/ModernStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border Margin="12" Padding="12" Style="{StaticResource WindowContainer}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                <CheckBox x:Name="chkInfo" Content="Info" IsChecked="True"
+                          Margin="0,0,12,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkWarning" Content="Warning" IsChecked="True"
+                          Margin="0,0,12,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkError" Content="Error" IsChecked="True"
+                          Margin="0,0,20,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkDebugLogger" Content="DebugLogger" IsChecked="True"
+                          Margin="0,0,12,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkSystemDiagnostics" Content="System.Diagnostics" IsChecked="True"
+                          Margin="0,0,20,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <Button x:Name="btnClear" Content="清空日志" Style="{StaticResource ActionButton}"
+                        Click="BtnClear_Click"/>
+                <Button x:Name="btnExport" Content="导出…" Style="{StaticResource ActionButton}"
+                        Margin="8,0,0,0" Click="BtnExport_Click"/>
+                <CheckBox x:Name="chkAutoScroll" Content="自动滚动" IsChecked="True"
+                          Margin="16,0,0,0"/>
+            </StackPanel>
+
+            <Border Grid.Row="1" Style="{StaticResource ContentContainer}">
+                <ListView x:Name="logListView"
+                          Style="{StaticResource ModernListView}"
+                          BorderThickness="0"
+                          FontFamily="Consolas"
+                          SelectionMode="Single"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListView.View>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource ModernGridViewColumnHeader}">
+                            <GridViewColumn Header="时间" Width="90"
+                                            DisplayMemberBinding="{Binding Timestamp, StringFormat=HH:mm:ss.fff}"/>
+                            <GridViewColumn Header="级别" Width="70"
+                                            DisplayMemberBinding="{Binding Level}"/>
+                            <GridViewColumn Header="来源" Width="150"
+                                            DisplayMemberBinding="{Binding Source}"/>
+                            <GridViewColumn Header="消息" Width="600"
+                                            DisplayMemberBinding="{Binding Message}"/>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource ModernListViewItem}" TargetType="ListViewItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Level}" Value="Warning">
+                                    <Setter Property="Foreground" Value="#9A6B00"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Level}" Value="Error">
+                                    <Setter Property="Foreground" Value="#A4262C"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Border>
+
+            <TextBlock x:Name="statusText" Grid.Row="2"
+                       Style="{StaticResource ModernStatusText}"
+                       Text="就绪"/>
+        </Grid>
+    </Border>
+</Window>

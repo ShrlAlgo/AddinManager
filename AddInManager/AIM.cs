@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 
+using AddInManager.DebugTools;
+
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
@@ -14,12 +16,20 @@ namespace AddInManager
             {
                 return RunActiveCommand(data, ref message, elements);
             }
-            
-            var mainWindow = new Wpf.MainWindow(this);
-            var dialogResult = mainWindow.ShowDialog();
 
-            if (dialogResult != true)
+            DebugLogger.Instance.Info("打开主窗口");
+            bool dialogResult;
+            do
             {
+                LanguageManager.RestartRequested = false;
+                LanguageManager.ApplySavedLanguage();
+                var mainWindow = new Wpf.MainWindow(this);
+                dialogResult = mainWindow.ShowDialog() == true;
+            } while (LanguageManager.RestartRequested);
+
+            if (!dialogResult)
+            {
+                DebugLogger.Instance.Info("用户取消，主窗口已关闭");
                 return Result.Cancelled;
             }
 
@@ -36,75 +46,40 @@ namespace AddInManager
 
         private Result RunActiveCommand(ExternalCommandData data, ref string message, ElementSet elements)
         {
-            // 防御性检查：确保 ActiveCmd 不为空
-            if (this.ActiveCmd == null)
-            {
-                MessageBox.Show("错误：ActiveCmd 为 null");
-                return Result.Failed;
-            }
-
-            // 防御性检查：确保 ActiveCmdItem 不为空
-            if (this.ActiveCmdItem == null)
-            {
-                MessageBox.Show("错误：ActiveCmdItem 为 null");
-                return Result.Failed;
-            }
-
             var filePath = ActiveCmd.FilePath;
-
-            // 检查文件是否存在
-            if (!System.IO.File.Exists(filePath))
-            {
-                MessageBox.Show($"错误：找不到文件 {filePath}");
-                return Result.Failed;
-            }
-
+            DebugLogger.Instance.Info($"执行命令: {ActiveCmdItem?.FullClassName} ({filePath})");
             var assemLoader = new AssemLoader();
-            Result result = Result.Failed; // 默认失败
-
+            Result result;
             try
             {
                 assemLoader.HookAssemblyResolve();
-
                 var assembly = assemLoader.LoadAddinsToTempFolder(filePath, false);
-
-                if (assembly == null)
+                if (null == assembly)
                 {
-                    message = "Assembly 加载失败，返回了 null";
+                    DebugLogger.Instance.Error($"程序集加载失败: {filePath}");
                     result = Result.Failed;
                 }
                 else
                 {
                     ActiveTempFolder = assemLoader.TempFolder;
-
-                    string className = ActiveCmdItem.FullClassName;
-                    if (string.IsNullOrEmpty(className)) throw new Exception("类名为空");
-
-                    var instanceObj = assembly.CreateInstance(className);
-
-                    if (instanceObj == null)
+                    var externalCommand = assembly.CreateInstance(ActiveCmdItem.FullClassName) as IExternalCommand;
+                    if (externalCommand == null)
                     {
-                        message = $"无法创建实例: {className}。请检查类名是否正确或是否有无参构造函数。";
+                        DebugLogger.Instance.Error($"无法创建命令实例: {ActiveCmdItem.FullClassName}");
                         result = Result.Failed;
                     }
                     else
                     {
-                        if (instanceObj is not IExternalCommand externalCommand)
-                        {
-                            message = $"{className} 没有实现 IExternalCommand 接口";
-                            result = Result.Failed;
-                        }
-                        else
-                        {
-                            ActiveEC = externalCommand;
-                            result = ActiveEC.Execute(data, ref message, elements);
-                        }
+                        ActiveEC = externalCommand;
+                        result = ActiveEC.Execute(data, ref message, elements);
+                        DebugLogger.Instance.Info($"命令执行完成，结果: {result}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"执行异常:\n{ex.Message}\n\n堆栈:\n{ex.StackTrace}");
+                DebugLogger.Instance.Error(ex, "RunActiveCommand");
+                MessageBox.Show(ex.ToString());
                 result = Result.Failed;
             }
             finally

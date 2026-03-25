@@ -1,8 +1,8 @@
-﻿using Autodesk.Revit.Attributes;
-using Autodesk.Revit.UI;
-
-using System;
+﻿using System;
 using System.Windows;
+
+using Autodesk.Revit.Attributes;
+using Autodesk.Revit.UI;
 
 namespace AddInManager
 {
@@ -14,15 +14,20 @@ namespace AddInManager
             try
             {
                 var aim = AIM.Instance;
-                var window = new Wpf.MainWindow(aim)
+                bool dialogResult;
+                do
                 {
-                    WindowStartupLocation = WindowStartupLocation.CenterScreen
-                };
-
-                var dialogResult = window.ShowDialog();
+                    LanguageManager.RestartRequested = false;
+                    LanguageManager.ApplySavedLanguage();
+                    var window = new Wpf.MainWindow(aim)
+                    {
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen
+                    };
+                    dialogResult = window.ShowDialog() == true;
+                } while (LanguageManager.RestartRequested);
 
                 // 检查是否需要执行命令
-                if (dialogResult == true && aim.ActiveCmd != null && aim.ActiveCmdItem != null)
+                if (dialogResult && aim.ActiveCmd != null && aim.ActiveCmdItem != null)
                 {
                     // 调用AIM的ExecuteCommand方法来执行选中的命令
                     return aim.ExecuteCommand(commandData, ref message, elements, true);

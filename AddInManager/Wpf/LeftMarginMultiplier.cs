@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace AddInManager.Wpf // 请确保这里的命名空间与您的项目匹配
+namespace AddInManager.Wpf
 {
     public class LeftMarginMultiplier : IValueConverter
     {

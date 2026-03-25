@@ -4,8 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:props="clr-namespace:AddInManager.Properties"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    Title="插件管理器"
+    Title="{x:Static props:Resources.WindowTitle}"
     Width="580"
     Height="520"
     Background="{DynamicResource BackgroundBrush}"
@@ -27,7 +28,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -40,7 +40,7 @@
             Margin="0,0,0,5"
             Style="{StaticResource ContentContainer}">
             <TabControl x:Name="externalToolsTabControl" SelectionChanged="ExternalToolsTabControl_SelectionChanged">
-                <TabItem x:Name="commandsTabPage" Header="已加载外部命令">
+                <TabItem x:Name="commandsTabPage" Header="{x:Static props:Resources.TabCommands}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -52,14 +52,35 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox
                                 x:Name="searchTextBox"
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Style="{StaticResource SearchTextBox}"
-                                Tag="搜索命令..."
+                                Tag="{x:Static props:Resources.SearchWatermark}"
                                 TextChanged="SearchTextBox_TextChanged" />
+                            <!--  Language Selector  -->
+                            <StackPanel
+                                Grid.Column="2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="5,0"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Static props:Resources.LangMenu}" />
+                                <ComboBox
+                                    x:Name="languageComboBox"
+                                    Width="100"
+                                    SelectedIndex="0"
+                                    SelectionChanged="LanguageComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="{x:Static props:Resources.LangChinese}" Tag="zh-CN" />
+                                    <ComboBoxItem Content="{x:Static props:Resources.LangEnglish}" Tag="en-US" />
+                                    <ComboBoxItem Content="{x:Static props:Resources.LangJapanese}" Tag="ja-JP" />
+                                </ComboBox>
+                            </StackPanel>
                             <!--  工具栏  -->
                             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 
@@ -69,16 +90,24 @@
                                         Margin="2"
                                         Click="SelectAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="选中所有命令">
-                                        <Path Data="{StaticResource Geo.SelectAll}" />
+                                        ToolTip="{x:Static props:Resources.TooltipSelectAllCommands}">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Text="&#xE73E;" />
                                     </Button>
 
                                     <Button
                                         x:Name="selectNoneButton"
                                         Click="SelectNoneButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="取消选中应用">
-                                        <Path Data="{StaticResource Geo.DeselectAll}" />
+                                        ToolTip="{x:Static props:Resources.TooltipDeselectCommands}">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Text="&#xE739;" />
                                     </Button>
                                 </UniformGrid>
                                 <Rectangle
@@ -92,16 +121,24 @@
                                         Margin="2"
                                         Click="ExpandAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="展开所有节点">
-                                        <Path Data="{StaticResource Geo.Expand}" />
+                                        ToolTip="{x:Static props:Resources.TooltipExpandAll}">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Text="&#xE972;" />
                                     </Button>
 
                                     <Button
                                         x:Name="collapseAllButton"
                                         Click="CollapseAllButton_Click"
                                         Style="{StaticResource ToolbarButton}"
-                                        ToolTip="折叠所有节点">
-                                        <Path Data="{StaticResource Geo.Collapse}" />
+                                        ToolTip="{x:Static props:Resources.TooltipCollapseAll}">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Text="&#xE971;" />
                                     </Button>
                                 </UniformGrid>
                             </StackPanel>
@@ -116,15 +153,23 @@
                             LostFocus="CommandsTreeView_LostFocus"
                             MouseDoubleClick="CommandsTreeView_MouseDoubleClick"
                             PreviewMouseRightButtonDown="CommandsTreeView_PreviewMouseRightButtonDown"
-                            SelectedItemChanged="CommandsTreeView_SelectedItemChanged">
+                            ScrollViewer.CanContentScroll="True"
+                            SelectedItemChanged="CommandsTreeView_SelectedItemChanged"
+                            VirtualizingPanel.IsVirtualizing="True"
+                            VirtualizingPanel.VirtualizationMode="Recycling">
                             <TreeView.ContextMenu>
                                 <ContextMenu x:Name="commandsTreeViewContextMenu">
                                     <MenuItem
                                         x:Name="ContextMenuRun"
                                         Click="ContextMenuRun_Click"
-                                        Header="运行">
+                                        Header="{x:Static props:Resources.ContextMenuRun}">
                                         <MenuItem.Icon>
-                                            <Path Data="{StaticResource Geo.Run}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE768;" />
                                         </MenuItem.Icon>
                                     </MenuItem>
 
@@ -133,25 +178,40 @@
                                     <MenuItem
                                         x:Name="ContextMenuLoad"
                                         Click="ContextMenuLoad_Click"
-                                        Header="加载...">
+                                        Header="{x:Static props:Resources.ContextMenuLoad}">
                                         <MenuItem.Icon>
-                                            <Path Data="{StaticResource Geo.LoadAssembly}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE8E5;" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem
                                         x:Name="ContextMenuRemove"
                                         Click="ContextMenuRemove_Click"
-                                        Header="移除">
+                                        Header="{x:Static props:Resources.ContextMenuRemove}">
                                         <MenuItem.Icon>
-                                            <Path Data="{StaticResource Geo.Remove}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE74D;" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem
                                         x:Name="ContextMenuReload"
                                         Click="ContextMenuReload_Click"
-                                        Header="重新加载">
+                                        Header="{x:Static props:Resources.ContextMenuReload}">
                                         <MenuItem.Icon>
-                                            <Path Data="{StaticResource Geo.Reload}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE895;" />
                                         </MenuItem.Icon>
                                     </MenuItem>
 
@@ -160,17 +220,27 @@
                                     <MenuItem
                                         x:Name="ContextMenuOpenInExplorer"
                                         Click="ContextMenuOpenInExplorer_Click"
-                                        Header="在资源管理器中显示">
+                                        Header="{x:Static props:Resources.ContextMenuOpenInExplorer}">
                                         <MenuItem.Icon>
-                                            <Path Data="{StaticResource Geo.Explorer}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE8B7;" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem
                                         x:Name="ContextMenuAssemblyInfo"
                                         Click="ContextMenuAssemblyInfo_Click"
-                                        Header="查看程序集信息">
+                                        Header="{x:Static props:Resources.ContextMenuAssemblyInfo}">
                                         <MenuItem.Icon>
-                                            <Path Data="{StaticResource Geo.Info}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE946;" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </ContextMenu>
@@ -178,7 +248,7 @@
                         </TreeView>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="applicationsTabPage" Header="已加载外部应用">
+                <TabItem x:Name="applicationsTabPage" Header="{x:Static props:Resources.TabApplications}">
                     <Grid Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -191,16 +261,24 @@
                                     Margin="2"
                                     Click="AppSelectAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="选中所有应用">
-                                    <Path Data="{StaticResource Geo.SelectAll}" />
+                                    ToolTip="{x:Static props:Resources.TooltipSelectAllApps}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        Text="&#xE73E;" />
                                 </Button>
 
                                 <Button
                                     x:Name="appSelectNoneButton"
                                     Click="AppSelectNoneButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="取消选中应用">
-                                    <Path Data="{StaticResource Geo.DeselectAll}" />
+                                    ToolTip="{x:Static props:Resources.TooltipDeselectApps}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        Text="&#xE739;" />
                                 </Button>
                             </UniformGrid>
                             <Rectangle
@@ -215,16 +293,24 @@
                                     Margin="2"
                                     Click="AppExpandAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="展开所有应用程序节点">
-                                    <Path Data="{StaticResource Geo.Expand}" />
+                                    ToolTip="{x:Static props:Resources.TooltipExpandAllApps}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        Text="&#xE972;" />
                                 </Button>
 
                                 <Button
                                     x:Name="appCollapseAllButton"
                                     Click="AppCollapseAllButton_Click"
                                     Style="{StaticResource ToolbarButton}"
-                                    ToolTip="折叠所有应用程序节点">
-                                    <Path Data="{StaticResource Geo.Collapse}" />
+                                    ToolTip="{x:Static props:Resources.TooltipCollapseAllApps}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        Text="&#xE971;" />
                                 </Button>
                             </UniformGrid>
                         </StackPanel>
@@ -237,7 +323,10 @@
                             BorderThickness="0"
                             LostFocus="ApplicationsTreeView_LostFocus"
                             MouseUp="ApplicationsTreeView_MouseUp"
-                            SelectedItemChanged="ApplicationsTreeView_SelectedItemChanged" />
+                            ScrollViewer.CanContentScroll="True"
+                            SelectedItemChanged="ApplicationsTreeView_SelectedItemChanged"
+                            VirtualizingPanel.IsVirtualizing="True"
+                            VirtualizingPanel.VirtualizationMode="Recycling" />
                     </Grid>
                 </TabItem>
             </TabControl>
@@ -253,13 +342,13 @@
 
             <!--  Name  -->
             <StackPanel Grid.Row="0">
-                <TextBlock Text="名称：" />
+                <TextBlock Text="{x:Static props:Resources.LabelName}" />
                 <TextBox x:Name="nametextBox" LostFocus="NameTextBox_LostFocus" />
             </StackPanel>
 
             <!--  Description  -->
             <StackPanel Grid.Row="1">
-                <TextBlock Text="描述：" />
+                <TextBlock Text="{x:Static props:Resources.LabelDescription}" />
                 <TextBox
                     x:Name="descriptionTextBox"
                     AcceptsReturn="True"
@@ -270,7 +359,7 @@
 
             <!--  Notes  -->
             <StackPanel Grid.Row="2">
-                <TextBlock Text="备注：" />
+                <TextBlock Text="{x:Static props:Resources.LabelNotes}" />
                 <TextBox x:Name="notesTextBox" IsReadOnly="True" />
             </StackPanel>
         </Grid>
@@ -286,11 +375,10 @@
                 Margin="5"
                 Click="RunButton_Click"
                 Style="{StaticResource ActionButton}"
-                Tag="Primary"
-                ToolTip="运行选中的外部命令或应用程序">
+                Tag="Primary">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="{StaticResource Geo.Run}" />
-                    <TextBlock Margin="5,0,0,0" Text="运行" />
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnRun}" />
                 </StackPanel>
             </Button>
             <Button
@@ -298,11 +386,10 @@
                 Margin="5"
                 Click="LoadButton_Click"
                 Style="{StaticResource ActionButton}"
-                Tag="Primary"
-                ToolTip="加载程序集">
+                Tag="Primary">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="{StaticResource Geo.LoadAssembly}" />
-                    <TextBlock Margin="5,0,0,0" Text="加载" />
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8E5;" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnLoad}" />
                 </StackPanel>
             </Button>
             <Button
@@ -311,35 +398,38 @@
                 Click="RemoveButton_Click"
                 LostFocus="RemoveButton_LostFocus"
                 Style="{StaticResource ActionButton}"
-                Tag="Danger"
-                ToolTip="移除选中的外部命令或应用程序">
+                Tag="Danger">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="{StaticResource Geo.Remove}" />
-                    <TextBlock Margin="5,0,0,0" Text="移除" />
+
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnRemove}" />
                 </StackPanel>
             </Button>
             <Button
                 x:Name="saveSplitButton"
                 Margin="5"
-                Click="SaveSplitButton_Click"
-                Style="{StaticResource ActionButton}"
-                Tag="Primary"
-                ToolTip="保存addin文件">
+                Click="SaveSplitButton_Click">
                 <StackPanel Orientation="Horizontal">
-                    <Path Data="{StaticResource Geo.Save}" />
-                    <TextBlock Margin="5,0,0,0" Text="保存" />
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEA35;" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnSave}" />
                 </StackPanel>
                 <Button.ContextMenu>
                     <ContextMenu x:Name="saveContextMenu">
-                        <MenuItem Click="SaveToAddinMenuItem_Click" Header="保存选中项到 Addins 文件夹">
+                        <MenuItem Click="SaveToAddinMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToAddins}">
                             <MenuItem.Icon>
-                                <Path Data="{StaticResource Geo.SaveToDirectory}" />
+                                <TextBlock
+                                    FontFamily="Segoe MDL2 Assets"
+                                    FontSize="14"
+                                    Text="&#xE78C;" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <Separator />
-                        <MenuItem Click="SaveLocalMenuItem_Click" Header="保存选中项到本地 .addin 文件">
+                        <MenuItem Click="SaveLocalMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToLocal}">
                             <MenuItem.Icon>
-                                <Path Data="{StaticResource Geo.SaveToFile}" />
+                                <TextBlock
+                                    FontFamily="Segoe MDL2 Assets"
+                                    FontSize="14"
+                                    Text="&#xE792;" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>
