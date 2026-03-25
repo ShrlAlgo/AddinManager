@@ -1413,12 +1413,6 @@ namespace AddInManager.Wpf
                 {
                     LanguageManager.SetLanguage(cultureName);
                     App.RefreshRibbonLanguage();
-                    //MessageBox.Show(
-                    //    Properties.Resources.LangChangeMessage,
-                    //    Properties.Resources.LangChangeTitle,
-                    //    MessageBoxButton.OK,
-                    //    MessageBoxImage.Information);
-
                     Dispatcher.BeginInvoke(new Action(() => Close()), DispatcherPriority.Background);
                 }
             }
