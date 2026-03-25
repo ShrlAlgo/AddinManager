@@ -1,111 +1,91 @@
-<Window
+﻿<Window
     x:Class="AddInManager.Wpf.LogViewerWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="调试日志查看器"
-    Width="820"
-    Height="520"
+    Width="980"
+    Height="560"
     WindowStartupLocation="CenterScreen"
-    Background="#FF1E1E1E">
+    Background="#FFF5F5F5">
 
     <Window.Resources>
-        <Style x:Key="ToolbarButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#FF3C3C3C"/>
-            <Setter Property="Foreground" Value="#FFDCDCDC"/>
-            <Setter Property="BorderBrush" Value="#FF555555"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="10,4"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="3"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#FF505050"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#FF2A2A2A"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/AddInManager;component/Wpf/Styles/ModernStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
-    <Grid Margin="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Border Margin="12" Padding="12" Style="{StaticResource WindowContainer}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <!-- Toolbar -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
-            <CheckBox x:Name="chkInfo"    Content="Info"    IsChecked="True"
-                      Foreground="#FF9CDCFE" VerticalAlignment="Center" Margin="0,0,10,0"
-                      Checked="Filter_Changed" Unchecked="Filter_Changed"/>
-            <CheckBox x:Name="chkWarning" Content="Warning" IsChecked="True"
-                      Foreground="#FFFFD700" VerticalAlignment="Center" Margin="0,0,10,0"
-                      Checked="Filter_Changed" Unchecked="Filter_Changed"/>
-            <CheckBox x:Name="chkError"   Content="Error"   IsChecked="True"
-                      Foreground="#FFFF6B6B" VerticalAlignment="Center" Margin="0,0,20,0"
-                      Checked="Filter_Changed" Unchecked="Filter_Changed"/>
-            <Button x:Name="btnClear" Content="清空日志" Style="{StaticResource ToolbarButtonStyle}"
-                    Click="BtnClear_Click"/>
-            <Button x:Name="btnExport" Content="导出…" Style="{StaticResource ToolbarButtonStyle}"
-                    Margin="6,0,0,0" Click="BtnExport_Click"/>
-            <CheckBox x:Name="chkAutoScroll" Content="自动滚动" IsChecked="True"
-                      Foreground="#FFDCDCDC" VerticalAlignment="Center" Margin="12,0,0,0"/>
-        </StackPanel>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                <CheckBox x:Name="chkInfo" Content="Info" IsChecked="True"
+                          Margin="0,0,12,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkWarning" Content="Warning" IsChecked="True"
+                          Margin="0,0,12,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkError" Content="Error" IsChecked="True"
+                          Margin="0,0,20,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkDebugLogger" Content="DebugLogger" IsChecked="True"
+                          Margin="0,0,12,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <CheckBox x:Name="chkSystemDiagnostics" Content="System.Diagnostics" IsChecked="True"
+                          Margin="0,0,20,0"
+                          Checked="Filter_Changed" Unchecked="Filter_Changed"/>
+                <Button x:Name="btnClear" Content="清空日志" Style="{StaticResource ActionButton}"
+                        Click="BtnClear_Click"/>
+                <Button x:Name="btnExport" Content="导出…" Style="{StaticResource ActionButton}"
+                        Margin="8,0,0,0" Click="BtnExport_Click"/>
+                <CheckBox x:Name="chkAutoScroll" Content="自动滚动" IsChecked="True"
+                          Margin="16,0,0,0"/>
+            </StackPanel>
 
-        <!-- Log list -->
-        <ListView x:Name="logListView"
-                  Grid.Row="1"
-                  Background="#FF252526"
-                  Foreground="#FFDCDCDC"
-                  BorderBrush="#FF3C3C3C"
-                  FontFamily="Consolas"
-                  FontSize="12"
-                  SelectionMode="Single"
-                  VirtualizingPanel.IsVirtualizing="True"
-                  VirtualizingPanel.VirtualizationMode="Recycling">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="时间" Width="75"
-                                    DisplayMemberBinding="{Binding Timestamp, StringFormat=HH:mm:ss.fff}"/>
-                    <GridViewColumn Header="级别" Width="70"
-                                    DisplayMemberBinding="{Binding Level}"/>
-                    <GridViewColumn Header="消息" Width="620"
-                                    DisplayMemberBinding="{Binding Message}"/>
-                </GridView>
-            </ListView.View>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Level}" Value="Warning">
-                            <Setter Property="Foreground" Value="#FFFFD700"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Level}" Value="Error">
-                            <Setter Property="Foreground" Value="#FFFF6B6B"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+            <Border Grid.Row="1" Style="{StaticResource ContentContainer}">
+                <ListView x:Name="logListView"
+                          Style="{StaticResource ModernListView}"
+                          BorderThickness="0"
+                          FontFamily="Consolas"
+                          SelectionMode="Single"
+                          VirtualizingPanel.IsVirtualizing="True"
+                          VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListView.View>
+                        <GridView ColumnHeaderContainerStyle="{StaticResource ModernGridViewColumnHeader}">
+                            <GridViewColumn Header="时间" Width="90"
+                                            DisplayMemberBinding="{Binding Timestamp, StringFormat=HH:mm:ss.fff}"/>
+                            <GridViewColumn Header="级别" Width="70"
+                                            DisplayMemberBinding="{Binding Level}"/>
+                            <GridViewColumn Header="来源" Width="150"
+                                            DisplayMemberBinding="{Binding Source}"/>
+                            <GridViewColumn Header="消息" Width="600"
+                                            DisplayMemberBinding="{Binding Message}"/>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource ModernListViewItem}" TargetType="ListViewItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Level}" Value="Warning">
+                                    <Setter Property="Foreground" Value="#9A6B00"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Level}" Value="Error">
+                                    <Setter Property="Foreground" Value="#A4262C"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Border>
 
-        <!-- Status bar -->
-        <TextBlock x:Name="statusText" Grid.Row="2"
-                   Foreground="#FF888888" FontSize="11"
-                   Margin="0,4,0,0"
-                   Text="就绪"/>
-    </Grid>
+            <TextBlock x:Name="statusText" Grid.Row="2"
+                       Style="{StaticResource ModernStatusText}"
+                       Text="就绪"/>
+        </Grid>
+    </Border>
 </Window>

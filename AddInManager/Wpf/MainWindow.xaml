@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:props="clr-namespace:AddInManager.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="{x:Static props:Resources.WindowTitle}"
     Width="580"
     Height="520"
@@ -25,7 +25,6 @@
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -53,6 +52,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox
                                 x:Name="searchTextBox"
@@ -61,6 +61,26 @@
                                 Style="{StaticResource SearchTextBox}"
                                 Tag="{x:Static props:Resources.SearchWatermark}"
                                 TextChanged="SearchTextBox_TextChanged" />
+                            <!--  Language Selector  -->
+                            <StackPanel
+                                Grid.Column="2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="5,0"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Static props:Resources.LangMenu}" />
+                                <ComboBox
+                                    x:Name="languageComboBox"
+                                    Width="100"
+                                    SelectedIndex="0"
+                                    SelectionChanged="LanguageComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="{x:Static props:Resources.LangChinese}" Tag="zh-CN" />
+                                    <ComboBoxItem Content="{x:Static props:Resources.LangEnglish}" Tag="en-US" />
+                                    <ComboBoxItem Content="{x:Static props:Resources.LangJapanese}" Tag="ja-JP" />
+                                </ComboBox>
+                            </StackPanel>
                             <!--  工具栏  -->
                             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 
@@ -83,6 +103,25 @@
                                         Click="SelectNoneButton_Click"
                                         Style="{StaticResource ToolbarButton}"
                                         ToolTip="{x:Static props:Resources.TooltipDeselectCommands}">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Text="&#xE739;" />
+                                    </Button>
+                                </UniformGrid>
+                                <Rectangle
+                                    Width="1"
+                                    Height="16"
+                                    Margin="4,0"
+                                    Fill="{StaticResource BorderBrush}" />
+                                <UniformGrid Rows="1">
+                                    <Button
+                                        x:Name="expandAllButton"
+                                        Margin="2"
+                                        Click="ExpandAllButton_Click"
+                                        Style="{StaticResource ToolbarButton}"
+                                        ToolTip="{x:Static props:Resources.TooltipExpandAll}">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -111,13 +150,13 @@
                             Margin="8,4,8,8"
                             d:ItemsSource="{d:SampleData ItemCount=5}"
                             BorderThickness="0"
-                            ScrollViewer.CanContentScroll="True"
-                            VirtualizingPanel.IsVirtualizing="True"
-                            VirtualizingPanel.VirtualizationMode="Recycling"
                             LostFocus="CommandsTreeView_LostFocus"
                             MouseDoubleClick="CommandsTreeView_MouseDoubleClick"
                             PreviewMouseRightButtonDown="CommandsTreeView_PreviewMouseRightButtonDown"
-                            SelectedItemChanged="CommandsTreeView_SelectedItemChanged">
+                            ScrollViewer.CanContentScroll="True"
+                            SelectedItemChanged="CommandsTreeView_SelectedItemChanged"
+                            VirtualizingPanel.IsVirtualizing="True"
+                            VirtualizingPanel.VirtualizationMode="Recycling">
                             <TreeView.ContextMenu>
                                 <ContextMenu x:Name="commandsTreeViewContextMenu">
                                     <MenuItem
@@ -282,12 +321,12 @@
                             Grid.Row="1"
                             Margin="8,4,8,8"
                             BorderThickness="0"
-                            ScrollViewer.CanContentScroll="True"
-                            VirtualizingPanel.IsVirtualizing="True"
-                            VirtualizingPanel.VirtualizationMode="Recycling"
                             LostFocus="ApplicationsTreeView_LostFocus"
                             MouseUp="ApplicationsTreeView_MouseUp"
-                            SelectedItemChanged="ApplicationsTreeView_SelectedItemChanged" />
+                            ScrollViewer.CanContentScroll="True"
+                            SelectedItemChanged="ApplicationsTreeView_SelectedItemChanged"
+                            VirtualizingPanel.IsVirtualizing="True"
+                            VirtualizingPanel.VirtualizationMode="Recycling" />
                     </Grid>
                 </TabItem>
             </TabControl>
@@ -397,25 +436,5 @@
                 </Button.ContextMenu>
             </Button>
         </UniformGrid>
-        <!--  Language Selector  -->
-        <StackPanel
-            Grid.Row="2"
-            Grid.ColumnSpan="2"
-            Margin="0,5,0,0"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
-            <TextBlock
-                VerticalAlignment="Center"
-                Margin="0,0,5,0"
-                Text="{x:Static props:Resources.LangMenu}" />
-            <ComboBox
-                x:Name="languageComboBox"
-                Width="120"
-                SelectionChanged="LanguageComboBox_SelectionChanged">
-                <ComboBoxItem Tag="zh-CN" Content="{x:Static props:Resources.LangChinese}" />
-                <ComboBoxItem Tag="en-US" Content="{x:Static props:Resources.LangEnglish}" />
-                <ComboBoxItem Tag="ja-JP" Content="{x:Static props:Resources.LangJapanese}" />
-            </ComboBox>
-        </StackPanel>
     </Grid>
 </Window>

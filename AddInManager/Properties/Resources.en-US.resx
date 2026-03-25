@@ -1,5 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -58,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppFolder" xml:space="preserve">
+    <value>AddinData</value>
+  </data>
   <data name="AppName" xml:space="preserve">
     <value>Addin Manager</value>
   </data>
@@ -76,7 +138,6 @@
   <data name="NoItemsSelected" xml:space="preserve">
     <value>No items selected</value>
   </data>
-  <!-- MainWindow strings -->
   <data name="WindowTitle" xml:space="preserve">
     <value>Addin Manager</value>
   </data>
@@ -158,7 +219,6 @@
   <data name="MenuSaveToLocal" xml:space="preserve">
     <value>Save selected to local .addin file</value>
   </data>
-  <!-- Status messages -->
   <data name="StatusSelectedAll" xml:space="preserve">
     <value>All visible items selected</value>
   </data>
@@ -219,7 +279,6 @@
   <data name="StatusAssemblyLoadError" xml:space="preserve">
     <value>Cannot load assembly info: {0}</value>
   </data>
-  <!-- Assembly info dialog -->
   <data name="AssemblyInfoTitle" xml:space="preserve">
     <value>Assembly Info</value>
   </data>
@@ -233,10 +292,8 @@
     <value>Full Name: {0}</value>
   </data>
   <data name="AssemblyInfoDependencies" xml:space="preserve">
-    <value>
---- Dependencies ---</value>
+    <value>--- Dependencies ---</value>
   </data>
-  <!-- AssemblySelectorWindow strings -->
   <data name="AssemblySelectorTitle" xml:space="preserve">
     <value>Assembly File Selector</value>
   </data>
@@ -255,7 +312,6 @@
   <data name="BtnCancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <!-- DependencyGraphWindow strings -->
   <data name="DependencyTitle" xml:space="preserve">
     <value>Addin Dependency Analysis</value>
   </data>
@@ -280,7 +336,6 @@
   <data name="DependencyDetailHeader" xml:space="preserve">
     <value>{0} — Referenced Assemblies ({1})</value>
   </data>
-  <!-- UnhandledExceptionDialog strings -->
   <data name="ExceptionTitle" xml:space="preserve">
     <value>Unhandled Exception</value>
   </data>
@@ -302,7 +357,6 @@
   <data name="CopiedMessage" xml:space="preserve">
     <value>Exception details copied to clipboard.</value>
   </data>
-  <!-- LogViewerWindow strings -->
   <data name="LogViewerTitle" xml:space="preserve">
     <value>Debug Log Viewer</value>
   </data>
@@ -349,7 +403,6 @@
   <data name="ErrorTitle" xml:space="preserve">
     <value>Error</value>
   </data>
-  <!-- FolderTooBigDialog strings -->
   <data name="FolderTooBigLine1" xml:space="preserve">
     <value>Folder [{0}]</value>
   </data>
@@ -368,11 +421,9 @@
   <data name="FolderTooBigLine6" xml:space="preserve">
     <value>Choose [Cancel] to cancel the operation</value>
   </data>
-  <!-- FailedToRunECDialog strings -->
   <data name="FailedToRunEC" xml:space="preserve">
     <value>Selected external command [{0}] returned "Result.Failed". Please check the test script.</value>
   </data>
-  <!-- Language switcher strings -->
   <data name="LangMenu" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -388,7 +439,28 @@
   <data name="LangChangeTitle" xml:space="preserve">
     <value>Language Changed</value>
   </data>
-  <data name="LangChangeMessage" xml:space="preserve">
-    <value>Language setting saved. It will take effect when the window is reopened.</value>
+  <data name="RibbonPanelName" xml:space="preserve">
+    <value>Developer Tools</value>
+  </data>
+  <data name="RibbonPulldownInternalName" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="RibbonPulldownDisplayName" xml:space="preserve">
+    <value>Addin Manager</value>
+  </data>
+  <data name="RibbonManualMode" xml:space="preserve">
+    <value>Addin Manager (Manual Mode)</value>
+  </data>
+  <data name="RibbonManualModeFaceless" xml:space="preserve">
+    <value>Addin Manager (Manual Mode, No UI)</value>
+  </data>
+  <data name="RibbonReadOnlyMode" xml:space="preserve">
+    <value>Addin Manager (Read-only Mode)</value>
+  </data>
+  <data name="RibbonDebugLogViewer" xml:space="preserve">
+    <value>Debug Log Viewer</value>
+  </data>
+  <data name="RibbonDependencyAnalyzer" xml:space="preserve">
+    <value>Addin Dependency Analyzer</value>
   </data>
 </root>

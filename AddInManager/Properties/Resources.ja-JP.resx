@@ -1,5 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -58,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppFolder" xml:space="preserve">
+    <value>AddinData</value>
+  </data>
   <data name="AppName" xml:space="preserve">
     <value>アドイン管理</value>
   </data>
@@ -76,7 +138,6 @@
   <data name="NoItemsSelected" xml:space="preserve">
     <value>選択されていません</value>
   </data>
-  <!-- MainWindow strings -->
   <data name="WindowTitle" xml:space="preserve">
     <value>アドインマネージャー</value>
   </data>
@@ -158,7 +219,6 @@
   <data name="MenuSaveToLocal" xml:space="preserve">
     <value>選択項目をローカル .addin ファイルに保存</value>
   </data>
-  <!-- Status messages -->
   <data name="StatusSelectedAll" xml:space="preserve">
     <value>表示されているすべての項目を選択しました</value>
   </data>
@@ -219,7 +279,6 @@
   <data name="StatusAssemblyLoadError" xml:space="preserve">
     <value>アセンブリ情報を読み込めません: {0}</value>
   </data>
-  <!-- Assembly info dialog -->
   <data name="AssemblyInfoTitle" xml:space="preserve">
     <value>アセンブリ情報</value>
   </data>
@@ -233,10 +292,8 @@
     <value>フルネーム: {0}</value>
   </data>
   <data name="AssemblyInfoDependencies" xml:space="preserve">
-    <value>
---- 依存関係 ---</value>
+    <value>--- 依存関係 ---</value>
   </data>
-  <!-- AssemblySelectorWindow strings -->
   <data name="AssemblySelectorTitle" xml:space="preserve">
     <value>アセンブリファイルセレクター</value>
   </data>
@@ -255,7 +312,6 @@
   <data name="BtnCancel" xml:space="preserve">
     <value>キャンセル</value>
   </data>
-  <!-- DependencyGraphWindow strings -->
   <data name="DependencyTitle" xml:space="preserve">
     <value>アドイン依存関係分析</value>
   </data>
@@ -280,7 +336,6 @@
   <data name="DependencyDetailHeader" xml:space="preserve">
     <value>{0} — 参照されたアセンブリ ({1})</value>
   </data>
-  <!-- UnhandledExceptionDialog strings -->
   <data name="ExceptionTitle" xml:space="preserve">
     <value>未処理の例外</value>
   </data>
@@ -302,7 +357,6 @@
   <data name="CopiedMessage" xml:space="preserve">
     <value>例外の詳細をクリップボードにコピーしました。</value>
   </data>
-  <!-- LogViewerWindow strings -->
   <data name="LogViewerTitle" xml:space="preserve">
     <value>デバッグログビューアー</value>
   </data>
@@ -349,7 +403,6 @@
   <data name="ErrorTitle" xml:space="preserve">
     <value>エラー</value>
   </data>
-  <!-- FolderTooBigDialog strings -->
   <data name="FolderTooBigLine1" xml:space="preserve">
     <value>フォルダー [{0}]</value>
   </data>
@@ -368,11 +421,9 @@
   <data name="FolderTooBigLine6" xml:space="preserve">
     <value>[キャンセル]を選択して操作をキャンセル</value>
   </data>
-  <!-- FailedToRunECDialog strings -->
   <data name="FailedToRunEC" xml:space="preserve">
     <value>選択された外部コマンド [{0}] が "Result.Failed" を返しました。テストスクリプトを確認してください。</value>
   </data>
-  <!-- Language switcher strings -->
   <data name="LangMenu" xml:space="preserve">
     <value>言語</value>
   </data>
@@ -388,7 +439,28 @@
   <data name="LangChangeTitle" xml:space="preserve">
     <value>言語が変更されました</value>
   </data>
-  <data name="LangChangeMessage" xml:space="preserve">
-    <value>言語設定が保存されました。ウィンドウを再度開くと有効になります。</value>
+  <data name="RibbonPanelName" xml:space="preserve">
+    <value>開発ツール</value>
+  </data>
+  <data name="RibbonPulldownInternalName" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="RibbonPulldownDisplayName" xml:space="preserve">
+    <value>アドイン管理</value>
+  </data>
+  <data name="RibbonManualMode" xml:space="preserve">
+    <value>アドイン管理(手動モード)</value>
+  </data>
+  <data name="RibbonManualModeFaceless" xml:space="preserve">
+    <value>アドイン管理(手動モード、UIなし)</value>
+  </data>
+  <data name="RibbonReadOnlyMode" xml:space="preserve">
+    <value>アドイン管理(読み取り専用モード)</value>
+  </data>
+  <data name="RibbonDebugLogViewer" xml:space="preserve">
+    <value>デバッグログビューアー</value>
+  </data>
+  <data name="RibbonDependencyAnalyzer" xml:space="preserve">
+    <value>アドイン依存関係分析</value>
   </data>
 </root>

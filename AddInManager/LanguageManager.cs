@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -65,6 +65,7 @@ namespace AddInManager
                 var culture = new CultureInfo(cultureName);
                 Thread.CurrentThread.CurrentUICulture = culture;
                 Thread.CurrentThread.CurrentCulture = culture;
+                Properties.Resources.Culture = culture;
             }
             catch (Exception)
             {
@@ -73,6 +74,7 @@ namespace AddInManager
                 var defaultCulture = new CultureInfo(DefaultCulture);
                 Thread.CurrentThread.CurrentUICulture = defaultCulture;
                 Thread.CurrentThread.CurrentCulture = defaultCulture;
+                Properties.Resources.Culture = defaultCulture;
             }
         }
 

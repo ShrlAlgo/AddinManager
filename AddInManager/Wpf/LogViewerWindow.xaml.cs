@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,7 +12,34 @@ namespace AddInManager.Wpf
 {
     public partial class LogViewerWindow : Window
     {
+        private static LogViewerWindow _instance;
         private readonly DebugLogger _logger = DebugLogger.Instance;
+
+        public static void ShowSingleton()
+        {
+            if (_instance == null || !_instance.IsLoaded)
+            {
+                _instance = new LogViewerWindow
+                {
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen
+                };
+                _instance.Show();
+                return;
+            }
+
+            if (_instance.WindowState == WindowState.Minimized)
+            {
+                _instance.WindowState = WindowState.Normal;
+            }
+
+            if (!_instance.IsVisible)
+            {
+                _instance.Show();
+            }
+
+            _instance.Activate();
+            _instance.Focus();
+        }
 
         public LogViewerWindow()
         {
@@ -31,6 +58,10 @@ namespace AddInManager.Wpf
         private void OnClosed(object sender, EventArgs e)
         {
             _logger.EntryAdded -= OnEntryAdded;
+            if (ReferenceEquals(_instance, this))
+            {
+                _instance = null;
+            }
         }
 
         private void ScrollToBottom()
@@ -59,12 +90,27 @@ namespace AddInManager.Wpf
 
         private bool PassesFilter(LogEntry entry)
         {
+            return PassesLevelFilter(entry) && PassesSourceFilter(entry);
+        }
+
+        private bool PassesLevelFilter(LogEntry entry)
+        {
             switch (entry.Level)
             {
-                case LogLevel.Info:    return chkInfo.IsChecked == true;
+                case LogLevel.Info: return chkInfo.IsChecked == true;
                 case LogLevel.Warning: return chkWarning.IsChecked == true;
-                case LogLevel.Error:   return chkError.IsChecked == true;
-                default:               return true;
+                case LogLevel.Error: return chkError.IsChecked == true;
+                default: return true;
+            }
+        }
+
+        private bool PassesSourceFilter(LogEntry entry)
+        {
+            switch (entry.Source)
+            {
+                case "DebugLogger": return chkDebugLogger.IsChecked == true;
+                case "System.Diagnostics": return chkSystemDiagnostics.IsChecked == true;
+                default: return true;
             }
         }
 
@@ -78,14 +124,15 @@ namespace AddInManager.Wpf
 
         private void UpdateStatus()
         {
-            var total    = _logger.Entries.Count;
-            var errors   = _logger.Entries.Count(e => e.Level == LogLevel.Error);
+            var total = _logger.Entries.Count;
+            var errors = _logger.Entries.Count(e => e.Level == LogLevel.Error);
             var warnings = _logger.Entries.Count(e => e.Level == LogLevel.Warning);
             statusText.Text = string.Format(Properties.Resources.LogStatusFormat, total, errors, warnings);
         }
 
         private void Filter_Changed(object sender, RoutedEventArgs e)
         {
+            if (!IsLoaded || logListView == null || statusText == null) return;
             RefreshList();
             UpdateStatus();
         }

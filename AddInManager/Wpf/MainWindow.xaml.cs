@@ -19,6 +19,7 @@ namespace AddInManager.Wpf
         private readonly AIM m_aim;
         private List<TreeViewItem> m_allCommandItems; // 存储所有命令项用于搜索
         private DispatcherTimer m_searchDebounceTimer;
+        private bool m_isLanguageSelectorInitializing = true;
 
         // Reusable virtualizing ItemsPanelTemplate for child nodes, created once to avoid per-node allocation
         private static readonly ItemsPanelTemplate s_virtualizingItemsPanel = CreateVirtualizingItemsPanel();
@@ -43,6 +44,7 @@ namespace AddInManager.Wpf
             InitializeComponent();
             // Initialize language selector
             InitializeLanguageSelector();
+            m_isLanguageSelectorInitializing = false;
             m_aim = aim;
             Loaded += MainWindow_Loaded;
             m_allCommandItems = new List<TreeViewItem>();
@@ -620,6 +622,9 @@ namespace AddInManager.Wpf
 
         private void ApplicationsTreeView_LostFocus(object sender, RoutedEventArgs e)
         {
+            // 添加 null 检查
+            if (removeButton == null) return;
+
             // 检查焦点是否转移到了removeButton
             var focusedElement = Keyboard.FocusedElement as FrameworkElement;
             if (focusedElement != removeButton)
@@ -631,6 +636,9 @@ namespace AddInManager.Wpf
 
         private void DisableControl()
         {
+            // 添加 null 检查
+            if (nametextBox == null || descriptionTextBox == null || runButton == null) return;
+
             nametextBox.Text = "";
             descriptionTextBox.Text = "";
             nametextBox.IsEnabled = false;
@@ -640,20 +648,25 @@ namespace AddInManager.Wpf
 
         private void ExternalToolsTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // 添加 null 检查，防止在初始化期间访问
+            if (externalToolsTabControl == null || applicationsTreeView == null || commandsTreeView == null) return;
+
             if (externalToolsTabControl.SelectedIndex == 1)
             {
                 DisableControl();
-                applicationsTreeView.Focus();
+                applicationsTreeView?.Focus();
                 RemoveButton_RefreshData();
                 return;
             }
-            commandsTreeView.Focus();
+            commandsTreeView?.Focus();
             RefreshData();
             RemoveButton_RefreshData(); // 添加这行
         }
 
         private void RefreshData()
         {
+            if (commandsTreeView == null || nametextBox == null || descriptionTextBox == null || runButton == null) return;
+
             var selectedItem = commandsTreeView.SelectedItem as TreeViewItem;
             if (selectedItem != null && !HasChildren(selectedItem))
             {
@@ -797,6 +810,9 @@ namespace AddInManager.Wpf
 
         private void RemoveButton_RefreshData()
         {
+            // 添加 null 检查，防止在初始化期间访问未初始化的控件
+            if (removeButton == null || externalToolsTabControl == null) return;
+
             // 检查当前活动的标签页
             if (externalToolsTabControl.SelectedIndex == 0) // Commands tab
             {
@@ -876,6 +892,9 @@ namespace AddInManager.Wpf
 
         private void CommandsTreeView_LostFocus(object sender, RoutedEventArgs e)
         {
+            // 添加 null 检查
+            if (removeButton == null || nametextBox == null || descriptionTextBox == null || runButton == null) return;
+
             // 检查焦点是否转移到了相关控件
             var focusedElement = Keyboard.FocusedElement as FrameworkElement;
             if (focusedElement != nametextBox &&
@@ -1382,18 +1401,25 @@ namespace AddInManager.Wpf
 
         private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (m_isLanguageSelectorInitializing)
+            {
+                return;
+            }
+
             if (languageComboBox.SelectedItem is ComboBoxItem selected)
             {
                 var cultureName = selected.Tag?.ToString();
                 if (!string.IsNullOrEmpty(cultureName) && cultureName != LanguageManager.CurrentCultureName)
                 {
                     LanguageManager.SetLanguage(cultureName);
-                    MessageBox.Show(
-                        Properties.Resources.LangChangeMessage,
-                        Properties.Resources.LangChangeTitle,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information);
-                    Close();
+                    App.RefreshRibbonLanguage();
+                    //MessageBox.Show(
+                    //    Properties.Resources.LangChangeMessage,
+                    //    Properties.Resources.LangChangeTitle,
+                    //    MessageBoxButton.OK,
+                    //    MessageBoxImage.Information);
+
+                    Dispatcher.BeginInvoke(new Action(() => Close()), DispatcherPriority.Background);
                 }
             }
         }

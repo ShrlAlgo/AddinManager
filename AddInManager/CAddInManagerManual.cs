@@ -1,8 +1,8 @@
-﻿using Autodesk.Revit.Attributes;
-using Autodesk.Revit.UI;
-
-using System;
+﻿using System;
 using System.Windows;
+
+using Autodesk.Revit.Attributes;
+using Autodesk.Revit.UI;
 
 namespace AddInManager
 {
@@ -18,6 +18,7 @@ namespace AddInManager
                 do
                 {
                     LanguageManager.RestartRequested = false;
+                    LanguageManager.ApplySavedLanguage();
                     var window = new Wpf.MainWindow(aim)
                     {
                         WindowStartupLocation = WindowStartupLocation.CenterScreen

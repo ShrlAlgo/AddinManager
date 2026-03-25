@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
@@ -6,9 +6,6 @@ using Autodesk.Revit.UI;
 
 namespace AddInManager.DebugTools
 {
-    /// <summary>
-    /// Revit external command that opens the Debug Log Viewer window.
-    /// </summary>
     [Transaction(TransactionMode.Manual)]
     public class CDebugLogViewer : IExternalCommand
     {
@@ -16,11 +13,7 @@ namespace AddInManager.DebugTools
         {
             try
             {
-                var window = new Wpf.LogViewerWindow
-                {
-                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
-                };
-                window.Show();
+                Wpf.LogViewerWindow.ShowSingleton();
                 return Result.Succeeded;
             }
             catch (Exception ex)

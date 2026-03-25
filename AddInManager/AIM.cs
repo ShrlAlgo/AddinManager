@@ -22,6 +22,7 @@ namespace AddInManager
             do
             {
                 LanguageManager.RestartRequested = false;
+                LanguageManager.ApplySavedLanguage();
                 var mainWindow = new Wpf.MainWindow(this);
                 dialogResult = mainWindow.ShowDialog() == true;
             } while (LanguageManager.RestartRequested);

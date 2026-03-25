@@ -145,7 +145,6 @@
   <data name="NoItemsSelected" xml:space="preserve">
     <value>未选中项</value>
   </data>
-  <!-- MainWindow strings -->
   <data name="WindowTitle" xml:space="preserve">
     <value>插件管理器</value>
   </data>
@@ -227,7 +226,6 @@
   <data name="MenuSaveToLocal" xml:space="preserve">
     <value>保存选中项到本地 .addin 文件</value>
   </data>
-  <!-- Status messages -->
   <data name="StatusSelectedAll" xml:space="preserve">
     <value>已选择所有可见项目</value>
   </data>
@@ -288,7 +286,6 @@
   <data name="StatusAssemblyLoadError" xml:space="preserve">
     <value>无法加载程序集信息: {0}</value>
   </data>
-  <!-- Assembly info dialog -->
   <data name="AssemblyInfoTitle" xml:space="preserve">
     <value>程序集信息</value>
   </data>
@@ -302,10 +299,8 @@
     <value>完整名称: {0}</value>
   </data>
   <data name="AssemblyInfoDependencies" xml:space="preserve">
-    <value>
---- 依赖项 ---</value>
+    <value>--- 依赖项 ---</value>
   </data>
-  <!-- AssemblySelectorWindow strings -->
   <data name="AssemblySelectorTitle" xml:space="preserve">
     <value>程序集文件选择器</value>
   </data>
@@ -324,7 +319,6 @@
   <data name="BtnCancel" xml:space="preserve">
     <value>取消</value>
   </data>
-  <!-- DependencyGraphWindow strings -->
   <data name="DependencyTitle" xml:space="preserve">
     <value>插件依赖分析</value>
   </data>
@@ -349,7 +343,6 @@
   <data name="DependencyDetailHeader" xml:space="preserve">
     <value>{0} — 引用的程序集 ({1})</value>
   </data>
-  <!-- UnhandledExceptionDialog strings -->
   <data name="ExceptionTitle" xml:space="preserve">
     <value>未处理的异常</value>
   </data>
@@ -371,7 +364,6 @@
   <data name="CopiedMessage" xml:space="preserve">
     <value>异常详情已复制到剪贴板。</value>
   </data>
-  <!-- LogViewerWindow strings -->
   <data name="LogViewerTitle" xml:space="preserve">
     <value>调试日志查看器</value>
   </data>
@@ -418,7 +410,6 @@
   <data name="ErrorTitle" xml:space="preserve">
     <value>错误</value>
   </data>
-  <!-- FolderTooBigDialog strings -->
   <data name="FolderTooBigLine1" xml:space="preserve">
     <value>文件夹[{0}]</value>
   </data>
@@ -426,7 +417,7 @@
     <value>有{0}MB大小</value>
   </data>
   <data name="FolderTooBigLine3" xml:space="preserve">
-    <value>AddinManager尝试复制所有文件到临时文件夹</value>
+    <value>插件管理器尝试复制所有文件到临时文件夹</value>
   </data>
   <data name="FolderTooBigLine4" xml:space="preserve">
     <value>选择[是(Y)]复制所有文件到临时文件夹</value>
@@ -437,11 +428,9 @@
   <data name="FolderTooBigLine6" xml:space="preserve">
     <value>选择[取消]取消操作</value>
   </data>
-  <!-- FailedToRunECDialog strings -->
   <data name="FailedToRunEC" xml:space="preserve">
     <value>选中外部命令 [{0}] 返回 "Result.Failed",请检查测试脚本</value>
   </data>
-  <!-- Language switcher strings -->
   <data name="LangMenu" xml:space="preserve">
     <value>语言</value>
   </data>
@@ -457,7 +446,28 @@
   <data name="LangChangeTitle" xml:space="preserve">
     <value>语言已更改</value>
   </data>
-  <data name="LangChangeMessage" xml:space="preserve">
-    <value>语言设置已保存，将在重新打开窗口后生效。</value>
+  <data name="RibbonPanelName" xml:space="preserve">
+    <value>开发工具</value>
+  </data>
+  <data name="RibbonPulldownInternalName" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="RibbonPulldownDisplayName" xml:space="preserve">
+    <value>插件管理</value>
+  </data>
+  <data name="RibbonManualMode" xml:space="preserve">
+    <value>插件管理(手动模式)</value>
+  </data>
+  <data name="RibbonManualModeFaceless" xml:space="preserve">
+    <value>插件管理(手动模式,无界面)</value>
+  </data>
+  <data name="RibbonReadOnlyMode" xml:space="preserve">
+    <value>插件管理(只读模式)</value>
+  </data>
+  <data name="RibbonDebugLogViewer" xml:space="preserve">
+    <value>调试日志查看器</value>
+  </data>
+  <data name="RibbonDependencyAnalyzer" xml:space="preserve">
+    <value>插件依赖分析</value>
   </data>
 </root>
