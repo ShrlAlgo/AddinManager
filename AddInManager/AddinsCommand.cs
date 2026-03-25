@@ -2,7 +2,7 @@
 {
     public class AddinsCommand : Addins
     {
-        public void ReadItems(InitFile file)
+        public void ReadItems(IniFile file)
         {
             var num = file.ReadInt("ExternalCommands", "ECCount");
             var i = 1;
@@ -13,7 +13,7 @@
             SortAddin();
         }
 
-        private bool ReadExternalCommand(InitFile file, int nodeNumber)
+        private bool ReadExternalCommand(IniFile file, int nodeNumber)
         {
             var text = file.ReadString("ExternalCommands", $"ECName{nodeNumber}");
             var text2 = file.ReadString("ExternalCommands", $"ECAssembly{nodeNumber}");
@@ -33,7 +33,7 @@
             return true;
         }
 
-        public void Save(InitFile file)
+        public void Save(IniFile file)
         {
             file.WriteSection("ExternalCommands");
             file.Write("ExternalCommands", "ECCount", m_maxCount);
@@ -55,7 +55,7 @@
             file.Write("ExternalCommands", "ECCount", num);
         }
 
-        private bool WriteExternalCommand(InitFile file, AddinItem item, int number)
+        private bool WriteExternalCommand(IniFile file, AddinItem item, int number)
         {
             file.Write("ExternalCommands", $"ECName{number}", item.Name);
             file.Write("ExternalCommands", $"ECClassName{number}", item.FullClassName);

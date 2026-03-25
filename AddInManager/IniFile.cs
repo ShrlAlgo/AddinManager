@@ -1,21 +1,20 @@
-﻿using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
+using System.Text;
 
 namespace AddInManager
 {
-    public class InitFile
+    public class IniFile
     {
         public string FilePath { get; }
 
         private readonly bool m_isJson;
         private Dictionary<string, Dictionary<string, string>> m_jsonData;
 
-        public InitFile(string filePath)
+        public IniFile(string filePath)
         {
             FilePath = filePath;
             m_isJson = string.Equals(Path.GetExtension(FilePath), ".json", StringComparison.OrdinalIgnoreCase);
