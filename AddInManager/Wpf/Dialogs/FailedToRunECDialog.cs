@@ -1,10 +1,9 @@
-﻿using System.Windows;
+﻿using AddInManager.Properties;
+using System.Windows;
 
-using AddInManager.Properties;
-
-namespace AddInManager
+namespace AddInManager.Wpf.Dialogs
 {
-    public class FailedToRunECDialog
+    public static class FailedToRunECDialog
     {
         public static MessageBoxResult Show(string ecName)
         {

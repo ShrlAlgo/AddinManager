@@ -2,11 +2,12 @@
     x:Class="AddInManager.Wpf.DependencyGraphWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="插件依赖分析"
+    xmlns:props="clr-namespace:AddInManager.Properties"
+    Title="{x:Static props:Resources.DependencyTitle}"
     Width="980"
     Height="620"
-    WindowStartupLocation="CenterScreen"
-    Background="#FFF5F5F5">
+    Background="{DynamicResource BackgroundBrush}"
+    WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -35,12 +36,12 @@
                 <Button
                     x:Name="btnRefresh"
                     Click="BtnRefresh_Click"
-                    Content="刷新分析"
+                    Content="{x:Static props:Resources.BtnRefreshAnalysis}"
                     Style="{StaticResource ActionButton}" />
                 <TextBlock
                     Margin="16,0,0,0"
                     Style="{StaticResource ModernHintText}"
-                    Text="选择左侧插件查看其引用的程序集列表。" />
+                    Text="{x:Static props:Resources.DependencyHelpText}" />
             </StackPanel>
 
             <!--  Main content area  -->
@@ -58,7 +59,7 @@
                             Margin="0,0,0,6"
                             DockPanel.Dock="Top"
                             Style="{StaticResource ModernSectionTitleText}"
-                            Text="已加载的插件" />
+                            Text="{x:Static props:Resources.DependencyLoadedPlugins}" />
                         <ListView
                             x:Name="addinListView"
                             BorderThickness="0"
@@ -85,7 +86,8 @@
 
                 <GridSplitter
                     Grid.Column="1"
-                    HorizontalAlignment="Stretch"
+                    Width="1"
+                    HorizontalAlignment="Center"
                     ResizeBehavior="PreviousAndNext"
                     Style="{StaticResource ModernGridSplitter}" />
 
@@ -97,7 +99,7 @@
                             Margin="0,0,0,4"
                             DockPanel.Dock="Top"
                             Style="{StaticResource ModernSectionTitleText}"
-                            Text="引用的程序集" />
+                            Text="{x:Static props:Resources.DependencyReferencedAssemblies}" />
                         <TextBlock
                             x:Name="filePathText"
                             Margin="0,0,0,6"
@@ -124,7 +126,7 @@
                 x:Name="statusText"
                 Grid.Row="2"
                 Style="{StaticResource ModernStatusText}"
-                Text="就绪" />
+                Text="{x:Static props:Resources.DependencyReady}" />
         </Grid>
     </Border>
 </Window>

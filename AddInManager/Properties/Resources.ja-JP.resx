@@ -463,4 +463,43 @@
   <data name="RibbonDependencyAnalyzer" xml:space="preserve">
     <value>アドイン依存関係分析</value>
   </data>
+  <data name="ColSource" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="LogLevelInfo" xml:space="preserve">
+    <value>情報</value>
+  </data>
+  <data name="LogLevelWarning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="LogLevelError" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="LogSourceDebugLogger" xml:space="preserve">
+    <value>DebugLogger</value>
+  </data>
+  <data name="LogSourceSystemDiagnostics" xml:space="preserve">
+    <value>System.Diagnostics</value>
+  </data>
+  <data name="ExceptionUnknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="ExceptionNoDetails" xml:space="preserve">
+    <value>（例外の詳細はありません）</value>
+  </data>
+  <data name="AddinTypeCommandShort" xml:space="preserve">
+    <value>[コマンド]</value>
+  </data>
+  <data name="AddinTypeApplicationShort" xml:space="preserve">
+    <value>[アプリ]</value>
+  </data>
+  <data name="AssemblyFileDialogFilter" xml:space="preserve">
+    <value>アセンブリファイル (*.dll;*.exe;*.mcl)|*.dll;*.exe;*.mcl|すべてのファイル (*.*)|*.*</value>
+  </data>
+  <data name="AssemblyLoadFailedFormat" xml:space="preserve">
+    <value>依存アセンブリを読み込めません: "{0}"。</value>
+  </data>
+  <data name="AssemblySelectorWarningTitle" xml:space="preserve">
+    <value>アドインマネージャー内部</value>
+  </data>
 </root>

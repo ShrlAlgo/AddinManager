@@ -77,6 +77,24 @@ namespace AddInManager.Properties {
                 return ResourceManager.GetString("AppName", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   查找类似 [应用] 的本地化字符串。
+        /// </summary>
+        public static string AddinTypeApplicationShort {
+            get {
+                return ResourceManager.GetString("AddinTypeApplicationShort", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 [命令] 的本地化字符串。
+        /// </summary>
+        public static string AddinTypeCommandShort {
+            get {
+                return ResourceManager.GetString("AddinTypeCommandShort", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   查找类似 程序集: {0} 的本地化字符串。
@@ -124,6 +142,15 @@ namespace AddInManager.Properties {
         }
         
         /// <summary>
+        ///   查找类似 程序集文件选择器 的本地化字符串。
+        /// </summary>
+        public static string AssemblySelectorTitle {
+            get {
+                return ResourceManager.GetString("AssemblySelectorTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   查找类似 以下程序集名称无法自动解析： 的本地化字符串。
         /// </summary>
         public static string AssemblySelectorPrompt1 {
@@ -131,7 +158,7 @@ namespace AddInManager.Properties {
                 return ResourceManager.GetString("AssemblySelectorPrompt1", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   查找类似 请手动选择程序集文件： 的本地化字符串。
         /// </summary>
@@ -140,13 +167,31 @@ namespace AddInManager.Properties {
                 return ResourceManager.GetString("AssemblySelectorPrompt2", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   查找类似 程序集文件 (*.dll;*.exe;*.mcl)|*.dll;*.exe;*.mcl|所有文件 (*.*)|*.* 的本地化字符串。
+        /// </summary>
+        public static string AssemblyFileDialogFilter {
+            get {
+                return ResourceManager.GetString("AssemblyFileDialogFilter", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 依赖程序集无法加载: &quot;{0}&quot;。 的本地化字符串。
+        /// </summary>
+        public static string AssemblyLoadFailedFormat {
+            get {
+                return ResourceManager.GetString("AssemblyLoadFailedFormat", resourceCulture);
+            }
+        }
         
         /// <summary>
-        ///   查找类似 程序集文件选择器 的本地化字符串。
+        ///   查找类似 插件管理器内部 的本地化字符串。
         /// </summary>
-        public static string AssemblySelectorTitle {
+        public static string AssemblySelectorWarningTitle {
             get {
-                return ResourceManager.GetString("AssemblySelectorTitle", resourceCulture);
+                return ResourceManager.GetString("AssemblySelectorWarningTitle", resourceCulture);
             }
         }
         
@@ -282,6 +327,15 @@ namespace AddInManager.Properties {
         public static string ColMessage {
             get {
                 return ResourceManager.GetString("ColMessage", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 来源 的本地化字符串。
+        /// </summary>
+        public static string ColSource {
+            get {
+                return ResourceManager.GetString("ColSource", resourceCulture);
             }
         }
         
@@ -468,6 +522,15 @@ namespace AddInManager.Properties {
         }
         
         /// <summary>
+        ///   查找类似 （无异常细节） 的本地化字符串。
+        /// </summary>
+        public static string ExceptionNoDetails {
+            get {
+                return ResourceManager.GetString("ExceptionNoDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 堆栈跟踪 的本地化字符串。
         /// </summary>
         public static string ExceptionStackTrace {
@@ -482,6 +545,15 @@ namespace AddInManager.Properties {
         public static string ExceptionTitle {
             get {
                 return ResourceManager.GetString("ExceptionTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 未知异常 的本地化字符串。
+        /// </summary>
+        public static string ExceptionUnknown {
+            get {
+                return ResourceManager.GetString("ExceptionUnknown", resourceCulture);
             }
         }
         
@@ -701,13 +773,58 @@ namespace AddInManager.Properties {
                 return ResourceManager.GetString("LogExportTitle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   查找类似 共 {0} 条记录  |  错误: {1}  |  警告: {2} 的本地化字符串。
         /// </summary>
         public static string LogStatusFormat {
             get {
                 return ResourceManager.GetString("LogStatusFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 错误 的本地化字符串。
+        /// </summary>
+        public static string LogLevelError {
+            get {
+                return ResourceManager.GetString("LogLevelError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 信息 的本地化字符串。
+        /// </summary>
+        public static string LogLevelInfo {
+            get {
+                return ResourceManager.GetString("LogLevelInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 警告 的本地化字符串。
+        /// </summary>
+        public static string LogLevelWarning {
+            get {
+                return ResourceManager.GetString("LogLevelWarning", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 DebugLogger 的本地化字符串。
+        /// </summary>
+        public static string LogSourceDebugLogger {
+            get {
+                return ResourceManager.GetString("LogSourceDebugLogger", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 System.Diagnostics 的本地化字符串。
+        /// </summary>
+        public static string LogSourceSystemDiagnostics {
+            get {
+                return ResourceManager.GetString("LogSourceSystemDiagnostics", resourceCulture);
             }
         }
         

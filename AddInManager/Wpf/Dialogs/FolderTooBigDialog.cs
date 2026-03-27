@@ -2,9 +2,9 @@
 using System.Text;
 using System.Windows;
 
-namespace AddInManager
+namespace AddInManager.Wpf.Dialogs
 {
-    public abstract class FolderTooBigDialog
+    public static class FolderTooBigDialog
     {
         public static MessageBoxResult Show(string folderPath, long sizeInMB)
         {

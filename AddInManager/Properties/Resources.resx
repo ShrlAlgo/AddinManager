@@ -385,6 +385,9 @@
   <data name="ColMessage" xml:space="preserve">
     <value>消息</value>
   </data>
+  <data name="ColSource" xml:space="preserve">
+    <value>来源</value>
+  </data>
   <data name="StatusReady" xml:space="preserve">
     <value>就绪</value>
   </data>
@@ -469,5 +472,41 @@
   </data>
   <data name="RibbonDependencyAnalyzer" xml:space="preserve">
     <value>插件依赖分析</value>
+  </data>
+  <data name="LogLevelInfo" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="LogLevelWarning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="LogLevelError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="LogSourceDebugLogger" xml:space="preserve">
+    <value>DebugLogger</value>
+  </data>
+  <data name="LogSourceSystemDiagnostics" xml:space="preserve">
+    <value>System.Diagnostics</value>
+  </data>
+  <data name="ExceptionUnknown" xml:space="preserve">
+    <value>未知异常</value>
+  </data>
+  <data name="ExceptionNoDetails" xml:space="preserve">
+    <value>（无异常详情）</value>
+  </data>
+  <data name="AddinTypeCommandShort" xml:space="preserve">
+    <value>[命令]</value>
+  </data>
+  <data name="AddinTypeApplicationShort" xml:space="preserve">
+    <value>[应用]</value>
+  </data>
+  <data name="AssemblyFileDialogFilter" xml:space="preserve">
+    <value>程序集文件 (*.dll;*.exe;*.mcl)|*.dll;*.exe;*.mcl|所有文件 (*.*)|*.*</value>
+  </data>
+  <data name="AssemblyLoadFailedFormat" xml:space="preserve">
+    <value>依赖程序集无法加载: "{0}"。</value>
+  </data>
+  <data name="AssemblySelectorWarningTitle" xml:space="preserve">
+    <value>插件管理器内部</value>
   </data>
 </root>

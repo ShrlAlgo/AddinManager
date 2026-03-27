@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
-using System.Text;
+
 using AddInManager.DebugTools;
+using AddInManager.Models;
 using AddInManager.Properties;
 
-namespace AddInManager
+namespace AddInManager.Persistence
 {
     public class AddinManager
     {
+        private readonly string m_persistentStoreFilePath;
+
         public AddinsApplication Applications { get; }
 
         public int AppCount => Applications.Count;
@@ -25,72 +27,22 @@ namespace AddInManager
         {
             Commands = new AddinsCommand();
             Applications = new AddinsApplication();
-            GetIniFilePaths();
-            ReadAddinsFromAimIni();
+            m_persistentStoreFilePath = GetPersistentStoreFilePath();
+            ReadAddinsFromPersistentStore();
         }
 
-        public IniFile AimIniFile { get; set; }
-
-        public IniFile RevitIniFile { get; set; }
-
-        private void GetIniFilePaths()
+        private static string GetPersistentStoreFilePath()
         {
-            //var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var appFolder = Path.Combine(folderPath, Resources.AppFolder);
-            // switch from INI to JSON storage
-            var iniFilePath = Path.Combine(appFolder, "AimInternal.json");
-            AimIniFile = new IniFile(iniFilePath);
-
-            // If an old INI exists, migrate it to JSON (one-time)
-            try
-            {
-                var oldIniPath = Path.Combine(appFolder, "AimInternal.ini");
-                if (File.Exists(oldIniPath) && !File.Exists(iniFilePath))
-                {
-                    var oldIni = new IniFile(oldIniPath);
-                    // populate commands/applications from old INI
-                    Commands.ReadItems(oldIni);
-                    Applications.ReadItems(oldIni);
-
-                    // save to new JSON store
-                    SaveToPersistentStore(iniFilePath);
-
-                    // backup old INI
-                    try
-                    {
-                        var backupPath = oldIniPath + ".bak";
-                        File.Copy(oldIniPath, backupPath, true);
-                        FileUtils.SetWriteable(oldIniPath);
-                        File.Delete(oldIniPath);
-                    }
-                    catch (Exception)
-                    {
-                        // ignore backup errors
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignore migration errors
-            }
-
-            var currentProcess = Process.GetCurrentProcess();
-            var fileName = currentProcess.MainModule.FileName;
-            var revitIniFilePath = fileName.Replace(".exe", ".ini");
-            RevitIniFile = new IniFile(revitIniFilePath);
+            return Path.Combine(appFolder, "AimInternal.json");
         }
 
-        public void ReadAddinsFromAimIni()
+        public void ReadAddinsFromPersistentStore()
         {
-            DebugLogger.Instance.Info("从配置读取插件列表");
-            // try load from persistent JSON store; if fails, fall back to legacy INI-format reader
-            if (!LoadFromPersistentStore(AimIniFile.FilePath))
-            {
-                Commands.ReadItems(AimIniFile);
-                Applications.ReadItems(AimIniFile);
-            }
-            DebugLogger.Instance.Info($"插件读取完成，命令: {CmdCount}，应用: {AppCount}");
+            DebugLogger.Instance.Info($"Read addins from {m_persistentStoreFilePath}");
+            LoadFromPersistentStore(m_persistentStoreFilePath);
+            DebugLogger.Instance.Info($"Read addins completed, Commands: {CmdCount}, Applications: {AppCount}");
         }
 
         public void RemoveAddin(Addin addin)
@@ -106,10 +58,10 @@ namespace AddInManager
             var addinType = AddinType.Invalid;
             if (!File.Exists(filePath))
             {
-                DebugLogger.Instance.Warning($"LoadAddin: 文件不存在: {filePath}");
+                DebugLogger.Instance.Warning($"LoadAddin: file not found: {filePath}");
                 return addinType;
             }
-            DebugLogger.Instance.Info($"LoadAddin: 加载 {filePath}");
+            DebugLogger.Instance.Info($"LoadAddin: loading {filePath}");
             var assemLoader = new AssemLoader();
             List<AddinItem> cmdItems = null;
             List<AddinItem> appItems = null;
@@ -119,7 +71,7 @@ namespace AddInManager
                 var assembly = assemLoader.LoadAddinsToTempFolder(filePath, true);
                 if (null == assembly)
                 {
-                    DebugLogger.Instance.Error($"LoadAddin: 程序集加载失败: {filePath}");
+                    DebugLogger.Instance.Error($"LoadAddin: failed to load assembly: {filePath}");
                     return addinType;
                 }
                 cmdItems = Commands.LoadItems(assembly, StaticUtil.m_ecFullName, filePath, AddinType.Command);
@@ -138,14 +90,14 @@ namespace AddInManager
                 var cmdAddin = new Addin(filePath, cmdItems);
                 Commands.AddAddIn(cmdAddin);
                 addinType |= AddinType.Command;
-                DebugLogger.Instance.Info($"LoadAddin: 发现 {cmdItems.Count} 个命令于 {System.IO.Path.GetFileName(filePath)}");
+                DebugLogger.Instance.Info($"LoadAddin: found {cmdItems.Count} commands in {System.IO.Path.GetFileName(filePath)}");
             }
             if (appItems != null && appItems.Count > 0)
             {
                 var appAddin = new Addin(filePath, appItems);
                 Applications.AddAddIn(appAddin);
                 addinType |= AddinType.Application;
-                DebugLogger.Instance.Info($"LoadAddin: 发现 {appItems.Count} 个应用于 {System.IO.Path.GetFileName(filePath)}");
+                DebugLogger.Instance.Info($"LoadAddin: found {appItems.Count} applications in {System.IO.Path.GetFileName(filePath)}");
             }
             return addinType;
         }
@@ -157,27 +109,7 @@ namespace AddInManager
 
         public void SaveToAimIni()
         {
-            // ensure file exists
-            try
-            {
-                if (!File.Exists(AimIniFile.FilePath))
-                {
-                    new FileInfo(AimIniFile.FilePath).Directory?.Create();
-                    FileUtils.CreateFile(AimIniFile.FilePath);
-                    FileUtils.SetWriteable(AimIniFile.FilePath);
-                }
-            }
-            catch (Exception)
-            {
-                // ignore
-            }
-
-            // save to persistent JSON store; if fails, fall back to legacy INI writer
-            if (!SaveToPersistentStore(AimIniFile.FilePath))
-            {
-                Commands.Save(AimIniFile);
-                Applications.Save(AimIniFile);
-            }
+            SaveToPersistentStore(m_persistentStoreFilePath);
         }
 
         public bool HasItemsToSave()
@@ -258,6 +190,7 @@ namespace AddInManager
             {
                 addinFilePath = GetProperFilePath(currentAddinFolder, addinFileName, ".addin");
             }
+
             manifestFile.SaveAs(addinFilePath);
             return addinFilePath;
         }

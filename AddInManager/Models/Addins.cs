@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 using Autodesk.Revit.Attributes;
 
-namespace AddInManager
+namespace AddInManager.Models
 {
     public abstract class Addins
     {
+        protected SortedDictionary<string, Addin> m_addinDict;
+
         public SortedDictionary<string, Addin> AddinDict
         {
             get => m_addinDict;
@@ -138,35 +139,8 @@ namespace AddInManager
                 {
                 }
             }
-            if (list2.Count > 0)
-            {
-                var stringBuilder = new StringBuilder();
-                stringBuilder.AppendLine("The following Classes: ");
-                foreach (var text in list2)
-                {
-                    stringBuilder.AppendLine(text);
-                }
-                stringBuilder.Append("implements IExternalCommand but doesn't contain both RegenerationAttribute and TransactionAttribute!");
-                StaticUtil.ShowWarning(stringBuilder.ToString());
-            }
-            if (list3.Count > 0)
-            {
-                var stringBuilder2 = new StringBuilder();
-                stringBuilder2.AppendLine("The TransactionMode set to Classes: ");
-                foreach (var text2 in list3)
-                {
-                    stringBuilder2.AppendLine(text2);
-                }
-                stringBuilder2.Append(" are not the same as the mode set to Add-In Manager!");
-                StaticUtil.ShowWarning(stringBuilder2.ToString());
-            }
+
             return list;
         }
-
-        protected SortedDictionary<string, Addin> m_addinDict;
-
-        protected int m_maxCount = 100;
-
-        protected int m_count;
     }
 }

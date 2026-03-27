@@ -1,10 +1,12 @@
-using System;
+﻿using System;
+
+using AddInManager.Core;
 
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace AddInManager.DebugTools
+namespace AddInManager.Commands
 {
     /// <summary>
     /// Revit external command that opens the Dependency Graph window.

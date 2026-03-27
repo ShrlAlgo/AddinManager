@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Media.Imaging;
 
+using AddInManager.Localization;
 using AddInManager.Properties;
 
 using Autodesk.Revit.UI;
@@ -40,14 +41,12 @@ namespace AddInManager
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             LanguageManager.ApplySavedLanguage();
-            DebugTools.DebugLogger.Instance.Info("AddinManager 启动");
             CreateRibbonPanel(application);
             return Result.Succeeded;
         }
 
         public Result OnShutdown(UIControlledApplication application)
         {
-            DebugTools.DebugLogger.Instance.Info("AddinManager 关闭");
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
             return Result.Cancelled;
         }
@@ -64,8 +63,8 @@ namespace AddInManager
             s_facelessButton = AddPushButton(s_pulldownButton, typeof(CAddInManagerFaceless), Resources.RibbonManualModeFaceless);
             s_readOnlyButton = AddPushButton(s_pulldownButton, typeof(CAddInManagerReadOnly), Resources.RibbonReadOnlyMode);
             s_pulldownButton.AddSeparator();
-            s_logViewerButton = AddPushButton(s_pulldownButton, typeof(DebugTools.CDebugLogViewer), Resources.RibbonDebugLogViewer);
-            s_dependencyGraphButton = AddPushButton(s_pulldownButton, typeof(DebugTools.CDebugDependencyGraph), Resources.RibbonDependencyAnalyzer);
+            s_logViewerButton = AddPushButton(s_pulldownButton, typeof(Commands.CDebugLogViewer), Resources.RibbonDebugLogViewer);
+            s_dependencyGraphButton = AddPushButton(s_pulldownButton, typeof(Commands.CDebugDependencyGraph), Resources.RibbonDependencyAnalyzer);
             var tab = ComponentManager.Ribbon.FindTab("Modify");
             if (tab == null) return;
             var adwPanel = new Autodesk.Windows.RibbonPanel();

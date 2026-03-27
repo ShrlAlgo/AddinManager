@@ -1,7 +1,8 @@
-﻿using Microsoft.Win32;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Windows;
+
+using Microsoft.Win32;
 
 namespace AddInManager.Wpf
 {
@@ -31,7 +32,7 @@ namespace AddInManager.Wpf
         {
             var openFileDialog = new OpenFileDialog
             {
-                Filter = "Assembly files (*.dll;*.exe,*.mcl)|*.dll;*.exe;*.mcl|All files|*.*||"
+                Filter = Properties.Resources.AssemblyFileDialogFilter
             };
 
             var assemblyBaseName = m_assemName.Substring(0, m_assemName.IndexOf(','));
@@ -69,11 +70,10 @@ namespace AddInManager.Wpf
 
         private void ShowWarning()
         {
-            var text = new StringBuilder("The dependent assembly can't be loaded: \"")
-                .Append(m_assemName)
-                .Append("\".")
+            var text = new StringBuilder()
+                .AppendFormat(Properties.Resources.AssemblyLoadFailedFormat, m_assemName)
                 .ToString();
-            MessageBox.Show(text, "Add-in Manager Internal", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show(text, Properties.Resources.AssemblySelectorWarningTitle, MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
     }
 }

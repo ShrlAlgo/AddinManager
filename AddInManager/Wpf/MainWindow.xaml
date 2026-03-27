@@ -15,11 +15,7 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/ModernStyles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="Styles/ModernStyles.xaml" />
     </Window.Resources>
 
     <Grid Margin="5">
@@ -97,7 +93,6 @@
                                             FontFamily="Segoe MDL2 Assets"
                                             Text="&#xE73E;" />
                                     </Button>
-
                                     <Button
                                         x:Name="selectNoneButton"
                                         Click="SelectNoneButton_Click"

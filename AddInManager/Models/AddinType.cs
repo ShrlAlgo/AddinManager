@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AddInManager
+namespace AddInManager.Models
 {
     [Flags]
     public enum AddinType

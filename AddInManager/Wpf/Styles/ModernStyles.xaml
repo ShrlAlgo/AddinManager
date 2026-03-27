@@ -756,12 +756,13 @@
                                 <!--  选中状态的勾选标记  -->
                                 <Path
                                     x:Name="CheckMark"
-                                    Data="M 2,8 L 7,12 L 14,4"
+                                    Margin="2"
+                                    Data="M 2,8 L 6,12 L 14,4"
                                     Fill="Transparent"
                                     Stretch="Uniform"
                                     Stroke="{StaticResource PrimaryBrush}"
                                     StrokeLineJoin="Round"
-                                    StrokeThickness="2"
+                                    StrokeThickness="1"
                                     Visibility="Collapsed" />
 
                                 <!--  不确定状态的标记  -->

@@ -4,7 +4,7 @@ using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace AddInManager.DebugTools
+namespace AddInManager.Commands
 {
     [Transaction(TransactionMode.Manual)]
     public class CDebugLogViewer : IExternalCommand

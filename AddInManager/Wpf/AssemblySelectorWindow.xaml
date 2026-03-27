@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="程序集文件选择器"
+    xmlns:props="clr-namespace:AddInManager.Properties"
+    Title="{x:Static props:Resources.AssemblySelectorTitle}"
     Width="420"
     Height="220"
     Background="{DynamicResource BackgroundBrush}"
@@ -38,13 +39,13 @@
                 Grid.Row="0"
                 Margin="0,0,0,8"
                 Foreground="{DynamicResource SecondaryBrush}"
-                Text="以下程序集名称无法自动解析：" />
+                Text="{x:Static props:Resources.AssemblySelectorPrompt1}" />
 
             <!--  程序集名称显示  -->
             <TextBox
                 x:Name="assemNameTextBox"
                 Grid.Row="1"
-                Height="45"
+                Height="50"
                 Margin="0,0,0,15"
                 FontWeight="Bold"
                 IsReadOnly="True"
@@ -55,7 +56,7 @@
                 Grid.Row="2"
                 Margin="0,0,0,8"
                 Foreground="{DynamicResource SecondaryBrush}"
-                Text="请手动选择程序集文件：" />
+                Text="{x:Static props:Resources.AssemblySelectorPrompt2}" />
 
             <!--  文件路径输入  -->
             <Grid Grid.Row="3" Margin="0,0,0,5">
@@ -73,7 +74,7 @@
                     Grid.Column="1"
                     Width="70"
                     Click="BrowseButton_Click"
-                    Content="浏览..."
+                    Content="{x:Static props:Resources.BtnBrowse}"
                     Style="{StaticResource BrowseButton}" />
             </Grid>
 
@@ -89,7 +90,7 @@
                     Height="32"
                     Margin="0,0,10,0"
                     Click="OkButton_Click"
-                    Content="确定"
+                    Content="{x:Static props:Resources.BtnOk}"
                     IsDefault="True"
                     Style="{StaticResource ActionButton}"
                     Tag="Primary" />
@@ -98,7 +99,7 @@
                     Width="75"
                     Height="32"
                     Click="CancelButton_Click"
-                    Content="取消"
+                    Content="{x:Static props:Resources.BtnCancel}"
                     Foreground="{DynamicResource SecondaryBrush}"
                     IsCancel="True" />
             </StackPanel>

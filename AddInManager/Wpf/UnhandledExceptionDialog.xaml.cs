@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows;
 
 namespace AddInManager.Wpf
@@ -16,7 +16,7 @@ namespace AddInManager.Wpf
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            exceptionTypeText.Text = _exception?.GetType().FullName ?? "Unknown";
+            exceptionTypeText.Text = _exception?.GetType().FullName ?? Properties.Resources.ExceptionUnknown;
             messageText.Text       = _exception?.Message ?? string.Empty;
             stackTraceText.Text    = _exception?.StackTrace ?? string.Empty;
         }
@@ -24,7 +24,7 @@ namespace AddInManager.Wpf
         private string FormatExceptionDetail()
         {
             return _exception == null
-                ? "(no exception details)"
+                ? Properties.Resources.ExceptionNoDetails
                 : $"{_exception.GetType().FullName}: {_exception.Message}{Environment.NewLine}{_exception.StackTrace}";
         }
 

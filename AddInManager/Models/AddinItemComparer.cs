@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AddInManager
+namespace AddInManager.Models
 {
     public class AddinItemComparer : IComparer<AddinItem>
     {

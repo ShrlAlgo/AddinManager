@@ -10,6 +10,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
+using AddInManager.Core;
+using AddInManager.Localization;
+using AddInManager.Models;
+
 using Microsoft.Win32;
 
 namespace AddInManager.Wpf
@@ -37,10 +41,6 @@ namespace AddInManager.Wpf
 
         public MainWindow(AIM aim)
         {
-            aim.AddinManager.Commands?.AddinDict?.Clear();
-            aim.AddinManager.Applications?.AddinDict?.Clear();
-            aim.AddinManager.ReadAddinsFromAimIni();
-
             InitializeComponent();
             // Initialize language selector
             InitializeLanguageSelector();
@@ -1023,11 +1023,10 @@ namespace AddInManager.Wpf
                     IsChecked = value.Save,
                     VerticalAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(0, 0, 5, 0),
-                    IsThreeState = true // 支持三态（选中、未选中、部分选中）
+                    IsThreeState = false // 父节点点击只允许两态（选中、未选中）
                 };
                 checkBox.Checked += TreeViewCheckBox_Changed;
                 checkBox.Unchecked += TreeViewCheckBox_Changed;
-                checkBox.Indeterminate += TreeViewCheckBox_Changed;
 
                 var textBlock = new TextBlock
                 {

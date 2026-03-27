@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 
 using AddInManager.DebugTools;
 
@@ -44,8 +45,31 @@ namespace AddInManager.Wpf
         public LogViewerWindow()
         {
             InitializeComponent();
+            ApplyLocalization();
             Loaded += OnLoaded;
             Closed += OnClosed;
+        }
+
+        private void ApplyLocalization()
+        {
+            Title = Properties.Resources.LogViewerTitle;
+            chkInfo.Content = Properties.Resources.LogLevelInfo;
+            chkWarning.Content = Properties.Resources.LogLevelWarning;
+            chkError.Content = Properties.Resources.LogLevelError;
+            chkDebugLogger.Content = Properties.Resources.LogSourceDebugLogger;
+            chkSystemDiagnostics.Content = Properties.Resources.LogSourceSystemDiagnostics;
+            btnClear.Content = Properties.Resources.BtnClearLog;
+            btnExport.Content = Properties.Resources.BtnExport;
+            chkAutoScroll.Content = Properties.Resources.ChkAutoScroll;
+            statusText.Text = Properties.Resources.StatusReady;
+
+            if (logListView.View is GridView gridView && gridView.Columns.Count >= 4)
+            {
+                gridView.Columns[0].Header = Properties.Resources.ColTime;
+                gridView.Columns[1].Header = Properties.Resources.ColLevel;
+                gridView.Columns[2].Header = Properties.Resources.ColSource;
+                gridView.Columns[3].Header = Properties.Resources.ColMessage;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

@@ -463,4 +463,43 @@
   <data name="RibbonDependencyAnalyzer" xml:space="preserve">
     <value>Addin Dependency Analyzer</value>
   </data>
+  <data name="ColSource" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="LogLevelInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="LogLevelWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="LogLevelError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="LogSourceDebugLogger" xml:space="preserve">
+    <value>DebugLogger</value>
+  </data>
+  <data name="LogSourceSystemDiagnostics" xml:space="preserve">
+    <value>System.Diagnostics</value>
+  </data>
+  <data name="ExceptionUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ExceptionNoDetails" xml:space="preserve">
+    <value>(no exception details)</value>
+  </data>
+  <data name="AddinTypeCommandShort" xml:space="preserve">
+    <value>[Cmd]</value>
+  </data>
+  <data name="AddinTypeApplicationShort" xml:space="preserve">
+    <value>[App]</value>
+  </data>
+  <data name="AssemblyFileDialogFilter" xml:space="preserve">
+    <value>Assembly files (*.dll;*.exe;*.mcl)|*.dll;*.exe;*.mcl|All files (*.*)|*.*</value>
+  </data>
+  <data name="AssemblyLoadFailedFormat" xml:space="preserve">
+    <value>The dependent assembly can't be loaded: "{0}".</value>
+  </data>
+  <data name="AssemblySelectorWarningTitle" xml:space="preserve">
+    <value>Add-in Manager Internal</value>
+  </data>
 </root>

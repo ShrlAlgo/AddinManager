@@ -1,9 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
+using AddInManager.Core;
 using AddInManager.DebugTools;
+using AddInManager.Models;
 
 namespace AddInManager.Wpf
 {
@@ -26,8 +28,8 @@ namespace AddInManager.Wpf
             {
                 switch (_node.AddinType)
                 {
-                    case AddinType.Command:     return "[Cmd]";
-                    case AddinType.Application: return "[App]";
+                    case AddinType.Command:     return Properties.Resources.AddinTypeCommandShort;
+                    case AddinType.Application: return Properties.Resources.AddinTypeApplicationShort;
                     default:                    return $"[{_node.AddinType}]";
                 }
             }

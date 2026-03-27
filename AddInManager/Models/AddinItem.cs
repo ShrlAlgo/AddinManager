@@ -3,7 +3,7 @@ using System.IO;
 
 using Autodesk.Revit.Attributes;
 
-namespace AddInManager
+namespace AddInManager.Models
 {
     public class AddinItem : IAddinNode
     {

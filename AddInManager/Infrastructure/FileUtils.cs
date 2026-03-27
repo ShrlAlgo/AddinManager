@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 
+using AddInManager.Wpf.Dialogs;
+
 namespace AddInManager
 {
     public static class FileUtils
@@ -219,18 +221,16 @@ namespace AddInManager
 
         public static long GetFolderSize(string folderPath)
         {
-            var directoryInfo = new DirectoryInfo(folderPath);
-            var num = 0L;
-            foreach (var fileSystemInfo in directoryInfo.GetFileSystemInfos())
+            long num = 0L;
+            try
             {
-                if (fileSystemInfo is FileInfo)
+                foreach (var file in Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories))
                 {
-                    num += ((FileInfo)fileSystemInfo).Length;
+                    num += new FileInfo(file).Length;
                 }
-                else
-                {
-                    num += GetFolderSize(fileSystemInfo.FullName);
-                }
+            }
+            catch (Exception)
+            {
             }
             return num / 1024L / 1024L;
         }

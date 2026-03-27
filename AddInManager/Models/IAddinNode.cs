@@ -1,4 +1,4 @@
-﻿namespace AddInManager
+﻿namespace AddInManager.Models
 {
     public interface IAddinNode
     {

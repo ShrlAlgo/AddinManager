@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Threading;
 
-namespace AddInManager
+namespace AddInManager.Localization
 {
     /// <summary>
     /// Manages UI language selection and persistence.
