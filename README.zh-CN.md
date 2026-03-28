@@ -94,4 +94,4 @@ dotnet build .\AddInManager\AddInManager.csproj -c Release
 
 ## 许可证
 
-当前仓库未包含明确开源许可证文件；如需对外分发，建议先补充许可证声明。
+MIT license
