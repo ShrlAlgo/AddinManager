@@ -94,4 +94,4 @@ To add more versions, update both:
 
 ## License
 
-No explicit open-source license file is currently included in this repository. Add a license before public redistribution.
+MIT license
