@@ -40,6 +40,7 @@ namespace AddInManager
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            FileUtils.CleanupTempFolders();
             LanguageManager.ApplySavedLanguage();
             CreateRibbonPanel(application);
             return Result.Succeeded;

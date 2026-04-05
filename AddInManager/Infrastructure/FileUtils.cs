@@ -22,21 +22,36 @@ namespace AddInManager
             {
                 directoryInfo.Create();
             }
-            foreach (var directoryInfo2 in directoryInfo.GetDirectories())
-            {
-                try
-                {
-                    Directory.Delete(directoryInfo2.FullName, true);
-                }
-                catch (Exception)
-                {
-                }
-            }
+            // 不在此处清理旧目录：同一 Revit 会话中首次加载的程序集会被 CLR 缓存并锁定
+            // 其 DLL 无法删除，但资源文件会被删除，导致插件运行时找不到文件。
+            // 清理工作已移至 App.OnStartup，在 Revit 启动时（无锁定文件）执行一次。
             var text = $"{DateTime.Now:yyyyMMdd_HHmmss_ffff}";
             var text2 = Path.Combine(directoryInfo.FullName, prefix + text);
             var directoryInfo3 = new DirectoryInfo(text2);
             directoryInfo3.Create();
             return directoryInfo3.FullName;
+        }
+
+        /// <summary>
+        /// 清理 RevitAddins 临时目录下所有残留的子目录。
+        /// 应在 Revit 启动时调用（此时没有 DLL 被 CLR 锁定），不应在命令执行期间调用。
+        /// </summary>
+        public static void CleanupTempFolders()
+        {
+            var revitAddinsPath = Path.Combine(Path.GetTempPath(), "RevitAddins");
+            var directoryInfo = new DirectoryInfo(revitAddinsPath);
+            if (!directoryInfo.Exists) return;
+
+            foreach (var dir in directoryInfo.GetDirectories())
+            {
+                try
+                {
+                    Directory.Delete(dir.FullName, true);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         public static void SetWriteable(string fileName)
