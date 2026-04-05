@@ -133,15 +133,17 @@ namespace AddInManager
             try
             {
                 Monitor.Enter(this);
-                // 【关键修改 1】使用 LoadFrom 而不是 LoadFile
-                // LoadFrom 会自动在 filePath 所在的目录中查找依赖项，这解决了大部分 NuGet 包加载失败的问题
-                // LoadFile 这是一个纯粹的文件加载，不带上下文，不会去旁边找依赖
-                assembly = Assembly.LoadFrom(filePath);
+                // 使用 LoadFile 而非 LoadFrom：
+                // LoadFrom 按 Identity (Name+Version+Culture+Token) 缓存，同 Identity 永远返回旧实例，热重载失效。
+                // LoadFile 按文件路径隔离加载上下文：不同路径 = 不同实例，不受 Identity 缓存影响。
+                // 每次 CreateTempFolder 生成新路径，LoadFile 就会加载最新编译的 DLL。
+                // 同时 Assembly.Location 仍然正确指向 TempFolder 内的路径，插件读文件路径不受影响。
+                // 依赖项解析由 AssemblyResolve 事件负责（LoadFile 不自动探测同目录依赖）。
+                assembly = Assembly.LoadFile(filePath);
                 DebugLogger.Instance.Info($"AssemLoader: Successfully loaded assembly: {System.IO.Path.GetFileName(filePath)}");
             }
             catch (Exception ex)
             {
-                // 增加简单的错误输出，方便调试
                 DiagDebug.WriteLine($"LoadAddin Failed: {filePath}, Error: {ex.Message}");
                 DebugLogger.Instance.Error(ex, $"AssemLoader.LoadAddin: {System.IO.Path.GetFileName(filePath)}");
                 throw;

@@ -1,10 +1,10 @@
-; 脚本由 Inno Setup 脚本向导生成。
+﻿; 脚本由 Inno Setup 脚本向导生成。
 ; 有关创建 Inno Setup 脚本文件的详细信息，请参阅帮助文档！
 
 ; 定义应用程序的名称
 #define MyAppName "RevitAddinManager"
 ; 定义应用程序的版本号
-#define MyAppVersion "4.0.0"
+#define MyAppVersion "4.0.2"
 ; 定义应用程序的发布者
 #define MyAppPublisher "ShrlAlgo"
 ; 定义应用程序的网址
