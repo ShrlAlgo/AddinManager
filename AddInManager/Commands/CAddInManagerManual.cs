@@ -17,6 +17,8 @@ namespace AddInManager
             try
             {
                 var aim = AIM.Instance;
+                var previousActiveCmd = aim.ActiveCmd;
+                var previousActiveCmdItem = aim.ActiveCmdItem;
                 bool dialogResult;
                 do
                 {
@@ -36,6 +38,9 @@ namespace AddInManager
                     return aim.ExecuteCommand(commandData, ref message, elements, true);
                 }
 
+                // 未执行新命令时保留上一次执行记录，供无界面模式继续使用。
+                aim.ActiveCmd = previousActiveCmd;
+                aim.ActiveCmdItem = previousActiveCmdItem;
                 return Result.Succeeded;
             }
             catch (Exception ex)

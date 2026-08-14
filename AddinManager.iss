@@ -1,10 +1,12 @@
-﻿; 脚本由 Inno Setup 脚本向导生成。
+; 脚本由 Inno Setup 脚本向导生成。
 ; 有关创建 Inno Setup 脚本文件的详细信息，请参阅帮助文档！
 
 ; 定义应用程序的名称
 #define MyAppName "RevitAddinManager"
 ; 定义应用程序的版本号
+#ifndef MyAppVersion
 #define MyAppVersion "4.0.2"
+#endif
 ; 定义应用程序的发布者
 #define MyAppPublisher "ShrlAlgo"
 ; 定义应用程序的网址
@@ -62,4 +64,4 @@ WizardStyle=modern
 [Files]
 ; 源文件路径和目标目录
 Source: ".\AddinManager\bin\Release\*"; DestDir: "C:\ProgramData\Autodesk\ApplicationPlugins\RevitAddinManager.bundle"; Flags: ignoreversion recursesubdirs createallsubdirs
-; 注意：不要在任何共享系统文件上使用 "Flags: ignoreversion" 
+; 注意：不要在任何共享系统文件上使用 "Flags: ignoreversion"

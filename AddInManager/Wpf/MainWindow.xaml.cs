@@ -71,8 +71,7 @@ namespace AddInManager.Wpf
 
             if (commandsTreeView.Items.Count > 0)
             {
-                var firstItem = commandsTreeView.Items[0] as TreeViewItem;
-                if (firstItem != null)
+                if (commandsTreeView.Items[0] is TreeViewItem firstItem)
                 {
                     firstItem.IsSelected = true;
                     firstItem.BringIntoView();
@@ -336,10 +335,7 @@ namespace AddInManager.Wpf
         private void SetItemCheckBox(TreeViewItem item, bool isChecked)
         {
             var checkBox = FindCheckBoxInTreeViewItem(item);
-            if (checkBox != null)
-            {
-                checkBox.IsChecked = isChecked;
-            }
+            checkBox?.IsChecked = isChecked;
         }
 
         private bool GetItemCheckBoxState(TreeViewItem item)
@@ -365,7 +361,7 @@ namespace AddInManager.Wpf
 
         private void TreeViewCheckBox_Changed(object sender, RoutedEventArgs e)
         {
-            if (!(sender is CheckBox checkBox)) return;
+            if (sender is not CheckBox checkBox) return;
 
             var item = FindTreeViewItemFromCheckBox(checkBox);
             if (item?.Tag == null) return;
@@ -667,8 +663,7 @@ namespace AddInManager.Wpf
         {
             if (commandsTreeView == null || nametextBox == null || descriptionTextBox == null || runButton == null) return;
 
-            var selectedItem = commandsTreeView.SelectedItem as TreeViewItem;
-            if (selectedItem != null && !HasChildren(selectedItem))
+            if (commandsTreeView.SelectedItem is TreeViewItem selectedItem && !HasChildren(selectedItem))
             {
                 if (m_aim.ActiveCmdItem != null)
                 {
@@ -733,7 +728,7 @@ namespace AddInManager.Wpf
                 return;
             }
 
-            if (!(activeTreeView.SelectedItem is TreeViewItem selectedItem)) return;
+            if (activeTreeView.SelectedItem is not TreeViewItem selectedItem) return;
 
             // 1. 记录原始索引
             var originalIndex = -1;
@@ -742,7 +737,7 @@ namespace AddInManager.Wpf
 
             // 判断是子节点还是父节点
             var parent = VisualTreeHelper.GetParent(selectedItem);
-            while (parent != null && !(parent is TreeView))
+            while (parent is not null and not TreeView)
             {
                 if (parent is TreeViewItem item)
                 {
@@ -952,7 +947,7 @@ namespace AddInManager.Wpf
             }
             var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
             m_aim.AddinManager.SaveToAllUserManifest(typeToSave);
-            ShowStatusLabel(Properties.Resources.StatusSaveSuccessReload);
+            Close();
         }
 
         private void SaveLocalMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1034,6 +1029,12 @@ namespace AddInManager.Wpf
                     VerticalAlignment = VerticalAlignment.Center
                 };
 
+                if (!File.Exists(value.FilePath))
+                {
+                    textBlock.Foreground = Brushes.Red;
+                    textBlock.ToolTip = $"DLL 不存在：{value.FilePath}";
+                }
+
                 stackPanel.Children.Add(checkBox);
                 stackPanel.Children.Add(textBlock);
                 node.Header = stackPanel;
@@ -1102,8 +1103,7 @@ namespace AddInManager.Wpf
 
             if (tree.Items.Count > 0)
             {
-                var lastItem = tree.Items[tree.Items.Count - 1] as TreeViewItem;
-                if (lastItem != null)
+                if (tree.Items[tree.Items.Count - 1] is TreeViewItem lastItem)
                 {
                     lastItem.IsSelected = true;
                     lastItem.BringIntoView();
@@ -1116,7 +1116,7 @@ namespace AddInManager.Wpf
         // (新增) 辅助方法：从一个UI元素向上遍历可视化树，找到其所属的 TreeViewItem
         private TreeViewItem FindTreeViewItem(DependencyObject source)
         {
-            while (source != null && !(source is TreeViewItem))
+            while (source is not null and not TreeViewItem)
             {
                 source = VisualTreeHelper.GetParent(source);
             }
@@ -1366,8 +1366,7 @@ namespace AddInManager.Wpf
         // (新增) 在右键按下时，强制选中鼠标下的TreeViewItem
         private void CommandsTreeView_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var treeView = sender as TreeView;
-            if (treeView == null) return;
+            if (sender is not TreeView treeView) return;
 
             var hitTestResult = VisualTreeHelper.HitTest(treeView, e.GetPosition(treeView));
             if (hitTestResult == null) return;

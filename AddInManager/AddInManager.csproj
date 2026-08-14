@@ -13,7 +13,6 @@
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="2020.2.60" />
     <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2020.2.60" />
     <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2020.2.60" />

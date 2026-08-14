@@ -15,7 +15,7 @@ namespace AddInManager.Core
     {
         public Result ExecuteCommand(ExternalCommandData data, ref string message, ElementSet elements, bool faceless)
         {
-            if (ActiveCmd != null && faceless)
+            if (ActiveCmd != null && ActiveCmdItem != null && faceless)
             {
                 return RunActiveCommand(data, ref message, elements);
             }
