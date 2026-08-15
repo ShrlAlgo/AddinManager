@@ -37,11 +37,45 @@ jobs:
           }
           "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Restore
-        run: dotnet restore .\AddInManager.sln
+      - name: Build Revit bundles
+        shell: pwsh
+        run: |
+          $project = ".\AddInManager\AddInManager.csproj"
+          $bundlePath = Join-Path $env:GITHUB_WORKSPACE "artifacts\RevitAddInManager.bundle"
+          $versions = @("2023", "2024", "2025", "2026", "2027")
 
-      - name: Build
-        run: dotnet build .\AddInManager.sln --configuration Release --no-restore --property:Platform=x64
+          New-Item -ItemType Directory -Path $bundlePath -Force | Out-Null
+          Copy-Item ".\AddInManager\PackageContents.xml" $bundlePath
+
+          dotnet build $project --configuration Release --property:Platform=x64 --property:RevitVersion=2020 --property:BuildBundle=true --output $bundlePath
+          if ($LASTEXITCODE -ne 0) {
+            throw "Legacy Revit build failed with exit code $LASTEXITCODE."
+          }
+
+          foreach ($version in 2016..2022) {
+            $contentsPath = Join-Path $bundlePath "Contents\$version"
+            New-Item -ItemType Directory -Path $contentsPath -Force | Out-Null
+            Copy-Item ".\AddInManager\Contents\$version\RevitAddinManager.addin" $contentsPath
+          }
+
+          foreach ($version in $versions) {
+            $contentsPath = Join-Path $bundlePath "Contents\$version"
+            $assemblyPath = Join-Path $contentsPath "AddInManager"
+            New-Item -ItemType Directory -Path $assemblyPath -Force | Out-Null
+
+            dotnet build $project --configuration Release --property:Platform=x64 --property:RevitVersion=$version --property:BuildBundle=true --output $assemblyPath
+            if ($LASTEXITCODE -ne 0) {
+              throw "Revit $version build failed with exit code $LASTEXITCODE."
+            }
+
+            Copy-Item ".\AddInManager\Contents\$version\RevitAddinManager.addin" $contentsPath
+            $assembly = Join-Path $assemblyPath "AddInManager.dll"
+            if (-not (Test-Path -LiteralPath $assembly)) {
+              throw "Revit $version assembly not found: $assembly"
+            }
+          }
+
+          "BUNDLE_PATH=$bundlePath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Build installer
         shell: pwsh
@@ -51,7 +85,7 @@ jobs:
             throw "Inno Setup compiler not found: $isccPath"
           }
 
-          & $isccPath "/DMyAppVersion=$env:RELEASE_VERSION" ".\AddinManager.iss"
+          & $isccPath "/DMyAppVersion=$env:RELEASE_VERSION" "/DBundleSource=$env:BUNDLE_PATH" ".\AddinManager.iss"
           if ($LASTEXITCODE -ne 0) {
             throw "Inno Setup failed with exit code $LASTEXITCODE."
           }

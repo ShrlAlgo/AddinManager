@@ -6,17 +6,39 @@
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <LangVersion>preview</LangVersion>
     <UseWPF>True</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
     <AppendPlatformToOutputPath>False</AppendPlatformToOutputPath>
     <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
-    <TargetFramework>net48</TargetFramework>
+    <RevitVersion Condition="'$(RevitVersion)' == ''">2020</RevitVersion>
+    <TargetFramework Condition="'$(RevitVersion)' == '2025' Or '$(RevitVersion)' == '2026'">net8.0-windows</TargetFramework>
+    <TargetFramework Condition="'$(RevitVersion)' == '2027'">net10.0-windows</TargetFramework>
+    <TargetFramework Condition="'$(TargetFramework)' == ''">net48</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(RevitVersion)' == '2023'">
+    <RevitApiVersion>2023.1.90</RevitApiVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RevitVersion)' == '2024'">
+    <RevitApiVersion>2024.3.60</RevitApiVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RevitVersion)' == '2025'">
+    <RevitApiVersion>2025.4.60</RevitApiVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RevitVersion)' == '2026'">
+    <RevitApiVersion>2026.4.10</RevitApiVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RevitVersion)' == '2027'">
+    <RevitApiVersion>2027.2.0</RevitApiVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RevitApiVersion)' == ''">
+    <RevitApiVersion>2020.2.60</RevitApiVersion>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="2020.2.60" />
-    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2020.2.60" />
-    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2020.2.60" />
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="Nice3point.Revit.Api.AdWindows" Version="$(RevitApiVersion)" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitApiVersion)" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitApiVersion)" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" Condition="'$(TargetFramework)' == 'net48'" />
   </ItemGroup>
   <ItemGroup>
    <!-- <Page Update="Wpf\MainWindow.xaml">
@@ -53,7 +75,7 @@
       <Culture>ja-JP</Culture>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(BuildBundle)' != 'true'">
     <None Update="Contents\2016\RevitAddinManager.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -73,6 +95,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Contents\2022\RevitAddinManager.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contents\2023\RevitAddinManager.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contents\2024\RevitAddinManager.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contents\2025\RevitAddinManager.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contents\2026\RevitAddinManager.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Contents\2027\RevitAddinManager.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="PackageContents.xml">

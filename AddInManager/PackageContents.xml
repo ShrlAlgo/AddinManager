@@ -63,5 +63,40 @@
                     ModuleName="./Contents/2022/RevitAddinManager.addin">
     </ComponentEntry>
   </Components>
+
+  <Components Description="Revit 2023">
+    <RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2023" SeriesMax="R2023" />
+    <ComponentEntry AppName="RevitAddinManager"
+                    ModuleName="./Contents/2023/RevitAddinManager.addin">
+    </ComponentEntry>
+  </Components>
+
+  <Components Description="Revit 2024">
+    <RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2024" SeriesMax="R2024" />
+    <ComponentEntry AppName="RevitAddinManager"
+                    ModuleName="./Contents/2024/RevitAddinManager.addin">
+    </ComponentEntry>
+  </Components>
+
+  <Components Description="Revit 2025">
+    <RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2025" SeriesMax="R2025" />
+    <ComponentEntry AppName="RevitAddinManager"
+                    ModuleName="./Contents/2025/RevitAddinManager.addin">
+    </ComponentEntry>
+  </Components>
+
+  <Components Description="Revit 2026">
+    <RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2026" SeriesMax="R2026" />
+    <ComponentEntry AppName="RevitAddinManager"
+                    ModuleName="./Contents/2026/RevitAddinManager.addin">
+    </ComponentEntry>
+  </Components>
+
+  <Components Description="Revit 2027">
+    <RuntimeRequirements OS="Win64" Platform="Revit" SeriesMin="R2027" SeriesMax="R2027" />
+    <ComponentEntry AppName="RevitAddinManager"
+                    ModuleName="./Contents/2027/RevitAddinManager.addin">
+    </ComponentEntry>
+  </Components>
   
 </ApplicationPackage>

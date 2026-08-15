@@ -14,6 +14,9 @@
 ; 定义应用程序的可执行文件名
 #define MyAppExeName "MyProg-x64.exe"
 #define MyDllName "AddinManager"
+#ifndef BundleSource
+#define BundleSource ".\artifacts\RevitAddinManager.bundle"
+#endif
 
 [Setup]
 ; 注意：AppId 的值唯一标识此应用程序。不要在其他应用程序的安装程序中使用相同的 AppId 值。
@@ -63,5 +66,5 @@ WizardStyle=modern
 
 [Files]
 ; 源文件路径和目标目录
-Source: ".\AddinManager\bin\Release\*"; DestDir: "C:\ProgramData\Autodesk\ApplicationPlugins\RevitAddinManager.bundle"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#BundleSource}\*"; DestDir: "C:\ProgramData\Autodesk\ApplicationPlugins\RevitAddinManager.bundle"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; 注意：不要在任何共享系统文件上使用 "Flags: ignoreversion"
