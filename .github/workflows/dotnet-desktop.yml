@@ -37,21 +37,44 @@ jobs:
           }
           "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
+      - name: Restore
+        run: dotnet restore .\AddInManager.sln
+
       - name: Build
-        run: dotnet build .\AddInManager.sln --configuration Release
+        run: dotnet build .\AddInManager.sln --configuration Release --no-restore --property:Platform=x64
 
       - name: Build installer
         shell: pwsh
         run: |
-          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DMyAppVersion=$env:RELEASE_VERSION" ".\AddinManager.iss"
+          $isccPath = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path -LiteralPath $isccPath)) {
+            throw "Inno Setup compiler not found: $isccPath"
+          }
+
+          & $isccPath "/DMyAppVersion=$env:RELEASE_VERSION" ".\AddinManager.iss"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup failed with exit code $LASTEXITCODE."
+          }
+
+          $installer = Join-Path $env:GITHUB_WORKSPACE "Setup\RevitAddinManager$env:RELEASE_VERSION.exe"
+          if (-not (Test-Path -LiteralPath $installer)) {
+            throw "Installer not found: $installer"
+          }
+          "INSTALLER_PATH=$installer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Publish GitHub Release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $installer = ".\Setup\RevitAddinManager$env:RELEASE_VERSION.exe"
-          if (-not (Test-Path -LiteralPath $installer)) {
-            throw "Installer not found: $installer"
+          gh release view $env:GITHUB_REF_NAME *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:GITHUB_REF_NAME $env:INSTALLER_PATH --clobber
           }
-          gh release create $env:GITHUB_REF_NAME $installer --verify-tag --generate-notes --title $env:GITHUB_REF_NAME
+          else {
+            gh release create $env:GITHUB_REF_NAME $env:INSTALLER_PATH --verify-tag --generate-notes --title $env:GITHUB_REF_NAME
+          }
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "GitHub Release publish failed with exit code $LASTEXITCODE."
+          }
