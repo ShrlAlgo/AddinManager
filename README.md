@@ -4,7 +4,7 @@
 
 A plugin management and debugging tool for `Autodesk Revit`, designed to quickly load external assemblies, select commands/applications, and generate `.addin` manifests.
 
-<img width="566" height="513" alt="image" src="https://github.com/user-attachments/assets/aef2058d-b1ec-46e5-b807-2c69ac2d7057" />
+<img width="566" height="513" alt="PixPin_2026-09-13_11-06-40" src="https://github.com/user-attachments/assets/dfaf4c02-1598-4706-9d81-066090c4a6cb" />
 
 ## Features
 
