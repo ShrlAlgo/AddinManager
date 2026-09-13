@@ -4,7 +4,7 @@
 
 用于 `Autodesk Revit` 的插件管理与调试工具，支持快速加载外部程序集、选择命令/应用并生成 `.addin` 清单。
 
-<img width="566" height="513" alt="image" src="https://github.com/user-attachments/assets/aef2058d-b1ec-46e5-b807-2c69ac2d7057" />
+<img width="566" height="513" alt="PixPin_2026-09-13_11-07-55" src="https://github.com/user-attachments/assets/9f9e34a6-2ff6-4f4b-84c4-b4cc0a322bc1" />
 
 ## 功能概览
 
