@@ -11,4 +11,8 @@
     <VendorId>ADSK</VendorId>
     <VendorDescription>Autodesk, www.autodesk.com</VendorDescription>
   </AddIn>
+  <ManifestSettings>
+    <UseRevitContext>False</UseRevitContext>
+    <ContextName>RevitAddinManager_2026</ContextName>
+  </ManifestSettings>
 </RevitAddIns>

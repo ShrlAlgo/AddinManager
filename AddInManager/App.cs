@@ -27,6 +27,7 @@ namespace AddInManager
         private static PushButton s_readOnlyButton;
         private static PushButton s_logViewerButton;
         private static PushButton s_dependencyGraphButton;
+#if NET48
         private static readonly Dictionary<string, string> KnownAssemblies = new Dictionary<string, string>(
             StringComparer.Ordinal)
         {
@@ -35,10 +36,13 @@ namespace AddInManager
         };
         private static readonly ConcurrentDictionary<string, Assembly> AssemblyCache = new ConcurrentDictionary<string, Assembly>(StringComparer.Ordinal);
         private static readonly string BaseDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+#endif
 
         public Result OnStartup(UIControlledApplication application)
         {
+#if NET48
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+#endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             FileUtils.CleanupTempFolders();
             LanguageManager.ApplySavedLanguage();
@@ -48,6 +52,9 @@ namespace AddInManager
 
         public Result OnShutdown(UIControlledApplication application)
         {
+#if NET48
+            AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+#endif
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
             return Result.Cancelled;
         }
@@ -114,6 +121,7 @@ namespace AddInManager
             }
         }
 
+#if NET48
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             var requestedAssemblyName = new AssemblyName(args.Name).Name;
@@ -139,6 +147,7 @@ namespace AddInManager
 
             return null;
         }
+#endif
 
         internal static void RefreshRibbonLanguage()
         {
