@@ -45,6 +45,9 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Infrastructure\InstallUpdate.ps1" />
+  </ItemGroup>
+  <ItemGroup>
    <!-- <Page Update="Wpf\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

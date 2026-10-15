@@ -515,12 +515,40 @@
     <value>更新はありません（現在 v{0}）。</value>
   </data>
   <data name="UpdateAvailableFormat" xml:space="preserve">
-    <value>新しいバージョン v{0} があります（現在 v{1}）。ダウンロードページを開きますか？</value>
+    <value>新しいバージョン v{0} があります（現在 v{1}）。ダウンロードしてインストールしますか？ダウンロード後に Revit を終了し、インストール後に再起動します。終了時の確認でドキュメントを保存してください。</value>
   </data>
   <data name="UpdateCheckTimedOut" xml:space="preserve">
     <value>更新の確認がタイムアウトしました。しばらくしてから再試行してください。</value>
   </data>
   <data name="UpdateCheckFailedFormat" xml:space="preserve">
     <value>更新を確認できませんでした: {0}</value>
+  </data>
+  <data name="UpdateCancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="UpdateDownloadingFormat" xml:space="preserve">
+    <value>インストーラーをダウンロード中: {0}%</value>
+  </data>
+  <data name="UpdateInstallerMissing" xml:space="preserve">
+    <value>最新リリースのインストーラーがまだ揃っていません。しばらくしてから再試行してください。</value>
+  </data>
+  <data name="UpdateHashMismatch" xml:space="preserve">
+    <value>インストーラーの検証に失敗しました。もう一度更新を確認してください。</value>
+  </data>
+  <data name="UpdateOtherRevit" xml:space="preserve">
+    <value>更新する前に、ほかの Revit を終了してください。</value>
+  </data>
+  <data name="UpdateExitCancelled" xml:space="preserve">
+    <value>Revit が終了しなかったため、更新をキャンセルしました。</value>
+  </data>
+  <data name="UpdateStartFailed" xml:space="preserve">
+    <value>更新プログラムを起動できませんでした。Revit は開いたままです。</value>
+  </data>
+  <data name="UpdateInstallFailedFormat" xml:space="preserve">
+    <value>自動更新に失敗しました: {0}
+ログ: {1}</value>
+  </data>
+  <data name="UpdateExitTimedOut" xml:space="preserve">
+    <value>Revit の終了待機がタイムアウトしたため、更新をキャンセルしました。</value>
   </data>
 </root>

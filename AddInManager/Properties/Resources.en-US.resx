@@ -515,12 +515,40 @@
     <value>No updates available (current: v{0}).</value>
   </data>
   <data name="UpdateAvailableFormat" xml:space="preserve">
-    <value>Version v{0} is available (current: v{1}). Open the download page?</value>
+    <value>Version v{0} is available (current: v{1}). Download and install it? Revit will exit after the download and restart after installation. Save your documents when prompted.</value>
   </data>
   <data name="UpdateCheckTimedOut" xml:space="preserve">
     <value>The update check timed out. Please try again later.</value>
   </data>
   <data name="UpdateCheckFailedFormat" xml:space="preserve">
     <value>Could not check for updates: {0}</value>
+  </data>
+  <data name="UpdateCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="UpdateDownloadingFormat" xml:space="preserve">
+    <value>Downloading installer: {0}%</value>
+  </data>
+  <data name="UpdateInstallerMissing" xml:space="preserve">
+    <value>The latest release does not have a complete installer yet. Please try again later.</value>
+  </data>
+  <data name="UpdateHashMismatch" xml:space="preserve">
+    <value>Installer verification failed. Please check for updates again.</value>
+  </data>
+  <data name="UpdateOtherRevit" xml:space="preserve">
+    <value>Close other Revit instances before updating.</value>
+  </data>
+  <data name="UpdateExitCancelled" xml:space="preserve">
+    <value>Revit did not exit. This update has been cancelled.</value>
+  </data>
+  <data name="UpdateStartFailed" xml:space="preserve">
+    <value>Could not start the updater. Revit will remain open.</value>
+  </data>
+  <data name="UpdateInstallFailedFormat" xml:space="preserve">
+    <value>Automatic update failed: {0}
+Log: {1}</value>
+  </data>
+  <data name="UpdateExitTimedOut" xml:space="preserve">
+    <value>Timed out waiting for Revit to exit. The update was cancelled.</value>
   </data>
 </root>

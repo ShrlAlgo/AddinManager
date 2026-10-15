@@ -522,12 +522,40 @@
     <value>暂无更新（当前 v{0}）。</value>
   </data>
   <data name="UpdateAvailableFormat" xml:space="preserve">
-    <value>发现新版本 v{0}（当前 v{1}）。是否打开下载页面？</value>
+    <value>发现新版本 v{0}（当前 v{1}）。是否下载并安装？下载完成后将退出 Revit，安装后自动重启；请在退出提示中保存文档。</value>
   </data>
   <data name="UpdateCheckTimedOut" xml:space="preserve">
     <value>检查更新超时，请稍后重试。</value>
   </data>
   <data name="UpdateCheckFailedFormat" xml:space="preserve">
     <value>检查更新失败：{0}</value>
+  </data>
+  <data name="UpdateCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="UpdateDownloadingFormat" xml:space="preserve">
+    <value>正在下载安装包：{0}%</value>
+  </data>
+  <data name="UpdateInstallerMissing" xml:space="preserve">
+    <value>最新版本尚未提供完整安装包，请稍后重试。</value>
+  </data>
+  <data name="UpdateHashMismatch" xml:space="preserve">
+    <value>安装包校验失败，请重新检查更新。</value>
+  </data>
+  <data name="UpdateOtherRevit" xml:space="preserve">
+    <value>请先关闭其他 Revit 窗口，再执行更新。</value>
+  </data>
+  <data name="UpdateExitCancelled" xml:space="preserve">
+    <value>Revit 未退出，已取消本次更新。</value>
+  </data>
+  <data name="UpdateStartFailed" xml:space="preserve">
+    <value>无法启动自动更新程序，Revit 将保持打开。</value>
+  </data>
+  <data name="UpdateInstallFailedFormat" xml:space="preserve">
+    <value>自动更新失败：{0}
+日志：{1}</value>
+  </data>
+  <data name="UpdateExitTimedOut" xml:space="preserve">
+    <value>等待 Revit 退出超时，已取消更新。</value>
   </data>
 </root>

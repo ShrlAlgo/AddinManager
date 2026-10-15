@@ -27,6 +27,7 @@ namespace AddInManager
         private static PushButton s_readOnlyButton;
         private static PushButton s_logViewerButton;
         private static PushButton s_dependencyGraphButton;
+        private static PushButton s_checkUpdatesButton;
 #if NET48
         private static readonly Dictionary<string, string> KnownAssemblies = new Dictionary<string, string>(
             StringComparer.Ordinal)
@@ -52,6 +53,7 @@ namespace AddInManager
 
         public Result OnShutdown(UIControlledApplication application)
         {
+            Commands.CCheckForUpdates.ConfirmShutdown();
 #if NET48
             AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
 #endif
@@ -73,6 +75,9 @@ namespace AddInManager
             s_pulldownButton.AddSeparator();
             s_logViewerButton = AddPushButton(s_pulldownButton, typeof(Commands.CDebugLogViewer), Resources.RibbonDebugLogViewer);
             s_dependencyGraphButton = AddPushButton(s_pulldownButton, typeof(Commands.CDebugDependencyGraph), Resources.RibbonDependencyAnalyzer);
+            s_pulldownButton.AddSeparator();
+            s_checkUpdatesButton = AddPushButton(s_pulldownButton, typeof(Commands.CCheckForUpdates), Resources.BtnCheckUpdates);
+            s_checkUpdatesButton.AvailabilityClassName = typeof(Commands.CCheckForUpdatesAvailability).FullName;
             var tab = ComponentManager.Ribbon.FindTab("Modify");
             if (tab == null) return;
             var adwPanel = new Autodesk.Windows.RibbonPanel();
@@ -164,6 +169,7 @@ namespace AddInManager
             s_readOnlyButton?.ItemText = Resources.RibbonReadOnlyMode;
             s_logViewerButton?.ItemText = Resources.RibbonDebugLogViewer;
             s_dependencyGraphButton?.ItemText = Resources.RibbonDependencyAnalyzer;
+            s_checkUpdatesButton?.ItemText = Resources.BtnCheckUpdates;
         }
     }
 }

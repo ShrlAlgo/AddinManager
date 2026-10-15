@@ -1224,6 +1224,60 @@ namespace AddInManager.Properties {
             }
         }
         
+        public static string UpdateCancel {
+            get {
+                return ResourceManager.GetString("UpdateCancel", resourceCulture);
+            }
+        }
+
+        public static string UpdateDownloadingFormat {
+            get {
+                return ResourceManager.GetString("UpdateDownloadingFormat", resourceCulture);
+            }
+        }
+
+        public static string UpdateInstallerMissing {
+            get {
+                return ResourceManager.GetString("UpdateInstallerMissing", resourceCulture);
+            }
+        }
+
+        public static string UpdateHashMismatch {
+            get {
+                return ResourceManager.GetString("UpdateHashMismatch", resourceCulture);
+            }
+        }
+
+        public static string UpdateOtherRevit {
+            get {
+                return ResourceManager.GetString("UpdateOtherRevit", resourceCulture);
+            }
+        }
+
+        public static string UpdateExitCancelled {
+            get {
+                return ResourceManager.GetString("UpdateExitCancelled", resourceCulture);
+            }
+        }
+
+        public static string UpdateStartFailed {
+            get {
+                return ResourceManager.GetString("UpdateStartFailed", resourceCulture);
+            }
+        }
+
+        public static string UpdateInstallFailedFormat {
+            get {
+                return ResourceManager.GetString("UpdateInstallFailedFormat", resourceCulture);
+            }
+        }
+
+        public static string UpdateExitTimedOut {
+            get {
+                return ResourceManager.GetString("UpdateExitTimedOut", resourceCulture);
+            }
+        }
+
         public static string BtnCheckUpdates {
             get {
                 return ResourceManager.GetString("BtnCheckUpdates", resourceCulture);
