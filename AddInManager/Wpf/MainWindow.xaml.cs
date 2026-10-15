@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,6 +28,7 @@ namespace AddInManager.Wpf
         private List<TreeViewItem> m_allCommandItems; // 存储所有命令项用于搜索
         private DispatcherTimer m_searchDebounceTimer;
         private bool m_isLanguageSelectorInitializing = true;
+        private CancellationTokenSource m_updateCancellation;
 
         // Reusable virtualizing ItemsPanelTemplate for child nodes, created once to avoid per-node allocation
         private static readonly ItemsPanelTemplate s_virtualizingItemsPanel = CreateVirtualizingItemsPanel();
@@ -42,6 +47,8 @@ namespace AddInManager.Wpf
         public MainWindow(AIM aim)
         {
             InitializeComponent();
+            Title = $"{Properties.Resources.WindowTitle} v{Assembly.GetExecutingAssembly().GetName().Version.ToString(3)}";
+            Closed += (sender, args) => m_updateCancellation?.Cancel();
             // Initialize language selector
             InitializeLanguageSelector();
             m_isLanguageSelectorInitializing = false;
@@ -975,6 +982,86 @@ namespace AddInManager.Wpf
             }
             m_aim.AddinManager.SaveToLocal(typeToSave);
             Close();
+        }
+
+        // 按需查询正式发布版本；关闭窗口时取消请求，避免继续弹出更新提示。
+        private async void CheckUpdatesButton_Click(object sender, RoutedEventArgs e)
+        {
+            checkUpdatesButton.IsEnabled = false;
+            ShowStatusLabel(Properties.Resources.UpdateChecking);
+
+            using (var cancellation = new CancellationTokenSource())
+            {
+                m_updateCancellation = cancellation;
+                try
+                {
+                    var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                    using (var client = new HttpClient { Timeout = TimeSpan.FromSeconds(15) })
+                    {
+                        client.DefaultRequestHeaders.UserAgent.ParseAdd($"AddInManager/{currentVersion.ToString(3)}");
+                        client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+                        using (var response = await client.GetAsync("https://api.github.com/repos/ShrlAlgo/AddinManager/releases/latest", cancellation.Token))
+                        {
+                            response.EnsureSuccessStatusCode();
+                            using (var stream = await response.Content.ReadAsStreamAsync())
+                            {
+                                var release = new DataContractJsonSerializer(typeof(ReleaseInfo)).ReadObject(stream) as ReleaseInfo;
+                                cancellation.Token.ThrowIfCancellationRequested();
+                                if (!Version.TryParse(release?.TagName?.TrimStart('v', 'V'), out var latestVersion))
+                                {
+                                    ShowStatusError(Properties.Resources.UpdateVersionInvalid);
+                                    return;
+                                }
+
+                                // Git 标签通常只有三段，补齐缺省段后再与四段程序集版本比较。
+                                latestVersion = new Version(latestVersion.Major, latestVersion.Minor, Math.Max(0, latestVersion.Build), Math.Max(0, latestVersion.Revision));
+                                if (latestVersion <= currentVersion)
+                                {
+                                    ShowStatusLabel(string.Format(Properties.Resources.UpdateUpToDateFormat, currentVersion.ToString(3)));
+                                    return;
+                                }
+
+                                var message = string.Format(Properties.Resources.UpdateAvailableFormat, latestVersion.ToString(3), currentVersion.ToString(3));
+                                if (MessageBox.Show(this, message, Title, MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                                {
+                                    // 下载地址固定到当前仓库，避免执行服务端响应中的任意链接。
+                                    Process.Start(new ProcessStartInfo("https://github.com/ShrlAlgo/AddinManager/releases/tag/" + Uri.EscapeDataString(release.TagName)) { UseShellExecute = true });
+                                }
+                                ShowStatusLabel($"v{currentVersion.ToString(3)} → v{latestVersion.ToString(3)}");
+                            }
+                        }
+                    }
+                }
+                catch (System.OperationCanceledException)
+                {
+                    if (IsLoaded)
+                    {
+                        ShowStatusError(Properties.Resources.UpdateCheckTimedOut);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (IsLoaded)
+                    {
+                        ShowStatusError(string.Format(Properties.Resources.UpdateCheckFailedFormat, ex.Message));
+                    }
+                }
+                finally
+                {
+                    m_updateCancellation = null;
+                    if (IsLoaded)
+                    {
+                        checkUpdatesButton.IsEnabled = true;
+                    }
+                }
+            }
+        }
+
+        [DataContract]
+        private sealed class ReleaseInfo
+        {
+            [DataMember(Name = "tag_name")]
+            public string TagName { get; set; }
         }
 
         private void ShowStatusLabel(string msg)

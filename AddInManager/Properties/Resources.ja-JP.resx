@@ -502,4 +502,25 @@
   <data name="AssemblySelectorWarningTitle" xml:space="preserve">
     <value>アドインマネージャー内部</value>
   </data>
+  <data name="BtnCheckUpdates" xml:space="preserve">
+    <value>更新を確認</value>
+  </data>
+  <data name="UpdateChecking" xml:space="preserve">
+    <value>更新を確認しています…</value>
+  </data>
+  <data name="UpdateVersionInvalid" xml:space="preserve">
+    <value>最新リリースのバージョンタグを認識できません。</value>
+  </data>
+  <data name="UpdateUpToDateFormat" xml:space="preserve">
+    <value>更新はありません（現在 v{0}）。</value>
+  </data>
+  <data name="UpdateAvailableFormat" xml:space="preserve">
+    <value>新しいバージョン v{0} があります（現在 v{1}）。ダウンロードページを開きますか？</value>
+  </data>
+  <data name="UpdateCheckTimedOut" xml:space="preserve">
+    <value>更新の確認がタイムアウトしました。しばらくしてから再試行してください。</value>
+  </data>
+  <data name="UpdateCheckFailedFormat" xml:space="preserve">
+    <value>更新を確認できませんでした: {0}</value>
+  </data>
 </root>

@@ -5,7 +5,7 @@
 #define MyAppName "RevitAddinManager"
 ; 定义应用程序的版本号
 #ifndef MyAppVersion
-#define MyAppVersion "4.0.2"
+#define MyAppVersion "4.1.2"
 #endif
 ; 定义应用程序的发布者
 #define MyAppPublisher "ShrlAlgo"

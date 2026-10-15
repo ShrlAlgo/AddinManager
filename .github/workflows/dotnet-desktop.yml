@@ -47,7 +47,14 @@ jobs:
           New-Item -ItemType Directory -Path $bundlePath -Force | Out-Null
           Copy-Item ".\AddInManager\PackageContents.xml" $bundlePath
 
-          dotnet build $project --configuration Release --property:Platform=x64 --property:RevitVersion=2020 --property:BuildBundle=true --output $bundlePath
+          # 将标签版本同步到 Bundle 清单，保持插件和安装包版本一致。
+          $manifestPath = Join-Path $bundlePath "PackageContents.xml"
+          [xml]$manifest = Get-Content -LiteralPath $manifestPath -Raw
+          $manifest.ApplicationPackage.AppVersion = $env:RELEASE_VERSION
+          $manifest.ApplicationPackage.FriendlyVersion = $env:RELEASE_VERSION
+          $manifest.Save($manifestPath)
+
+          dotnet build $project --configuration Release --property:Platform=x64 --property:RevitVersion=2020 --property:Version=$env:RELEASE_VERSION --property:BuildBundle=true --output $bundlePath
           if ($LASTEXITCODE -ne 0) {
             throw "Legacy Revit build failed with exit code $LASTEXITCODE."
           }
@@ -63,7 +70,7 @@ jobs:
             $assemblyPath = Join-Path $contentsPath "AddInManager"
             New-Item -ItemType Directory -Path $assemblyPath -Force | Out-Null
 
-            dotnet build $project --configuration Release --property:Platform=x64 --property:RevitVersion=$version --property:BuildBundle=true --output $assemblyPath
+            dotnet build $project --configuration Release --property:Platform=x64 --property:RevitVersion=$version --property:Version=$env:RELEASE_VERSION --property:BuildBundle=true --output $assemblyPath
             if ($LASTEXITCODE -ne 0) {
               throw "Revit $version build failed with exit code $LASTEXITCODE."
             }

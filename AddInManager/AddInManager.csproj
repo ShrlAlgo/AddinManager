@@ -3,7 +3,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>AddInManager</RootNamespace>
     <AssemblyName>AddInManager</AssemblyName>
-    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <Version Condition="'$(Version)' == ''">4.1.2</Version>
     <LangVersion>preview</LangVersion>
     <UseWPF>True</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
@@ -39,6 +40,9 @@
     <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitApiVersion)" />
     <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitApiVersion)" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" Condition="'$(TargetFramework)' == 'net48'" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
    <!-- <Page Update="Wpf\MainWindow.xaml">

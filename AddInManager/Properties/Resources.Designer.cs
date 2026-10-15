@@ -1224,6 +1224,48 @@ namespace AddInManager.Properties {
             }
         }
         
+        public static string BtnCheckUpdates {
+            get {
+                return ResourceManager.GetString("BtnCheckUpdates", resourceCulture);
+            }
+        }
+
+        public static string UpdateChecking {
+            get {
+                return ResourceManager.GetString("UpdateChecking", resourceCulture);
+            }
+        }
+
+        public static string UpdateVersionInvalid {
+            get {
+                return ResourceManager.GetString("UpdateVersionInvalid", resourceCulture);
+            }
+        }
+
+        public static string UpdateUpToDateFormat {
+            get {
+                return ResourceManager.GetString("UpdateUpToDateFormat", resourceCulture);
+            }
+        }
+
+        public static string UpdateAvailableFormat {
+            get {
+                return ResourceManager.GetString("UpdateAvailableFormat", resourceCulture);
+            }
+        }
+
+        public static string UpdateCheckTimedOut {
+            get {
+                return ResourceManager.GetString("UpdateCheckTimedOut", resourceCulture);
+            }
+        }
+
+        public static string UpdateCheckFailedFormat {
+            get {
+                return ResourceManager.GetString("UpdateCheckFailedFormat", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   查找类似 插件管理器 的本地化字符串。
         /// </summary>

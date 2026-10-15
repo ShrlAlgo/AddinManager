@@ -502,4 +502,25 @@
   <data name="AssemblySelectorWarningTitle" xml:space="preserve">
     <value>Add-in Manager Internal</value>
   </data>
+  <data name="BtnCheckUpdates" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="UpdateChecking" xml:space="preserve">
+    <value>Checking for updates…</value>
+  </data>
+  <data name="UpdateVersionInvalid" xml:space="preserve">
+    <value>The latest release tag is not a supported version.</value>
+  </data>
+  <data name="UpdateUpToDateFormat" xml:space="preserve">
+    <value>No updates available (current: v{0}).</value>
+  </data>
+  <data name="UpdateAvailableFormat" xml:space="preserve">
+    <value>Version v{0} is available (current: v{1}). Open the download page?</value>
+  </data>
+  <data name="UpdateCheckTimedOut" xml:space="preserve">
+    <value>The update check timed out. Please try again later.</value>
+  </data>
+  <data name="UpdateCheckFailedFormat" xml:space="preserve">
+    <value>Could not check for updates: {0}</value>
+  </data>
 </root>
