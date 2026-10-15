@@ -112,27 +112,20 @@ namespace AddInManager.Persistence
             SaveToPersistentStore(m_persistentStoreFilePath);
         }
 
-        public bool HasItemsToSave()
+        public bool HasItemsToSave(AddinType addinTypeToSave)
         {
-            foreach (var addin in Commands.AddinDict.Values)
-            {
-                if (addin.Save)
-                {
-                    return true;
-                }
-            }
-            foreach (var addin2 in Applications.AddinDict.Values)
-            {
-                if (addin2.Save)
-                {
-                    return true;
-                }
-            }
-            return false;
+            // 仅检查当前页签实际勾选的子项，避免其他页签的选择触发空文件保存。
+            var addins = addinTypeToSave == AddinType.Command ? Commands.AddinDict.Values : Applications.AddinDict.Values;
+            return addins.Any(a => a.Save && a.ItemList.Any(i => i.Save));
         }
 
         public string SaveToAllUserManifest(AddinType addinTypeToSave)
         {
+            if (!HasItemsToSave(addinTypeToSave))
+            {
+                return string.Empty;
+            }
+
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
             var currentAddinFolder = Path.Combine(folderPath, $"Autodesk\\Revit\\Addins\\{App.RevitVersion}");
             var manifestFile = new ManifestFile(false);
@@ -188,6 +181,8 @@ namespace AddInManager.Persistence
             }
             else
             {
+                // 多个程序集合并保存时使用固定名称，并沿用现有的重名递增规则。
+                addinFileName = "CombinedAddins";
                 addinFilePath = GetProperFilePath(currentAddinFolder, addinFileName, ".addin");
             }
 

@@ -19,7 +19,7 @@ namespace AddInManager.Models
         {
             ItemList = new List<AddinItem>();
             FilePath = filePath;
-            Save = true;
+            Save = false;
         }
 
         public Addin(string filePath, List<AddinItem> itemList)
@@ -27,7 +27,7 @@ namespace AddInManager.Models
             ItemList = itemList;
             FilePath = filePath;
             SortAddinItem();
-            Save = true;
+            Save = false;
         }
 
         public void SortAddinItem()

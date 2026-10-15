@@ -15,7 +15,12 @@
 #define MyAppExeName "MyProg-x64.exe"
 #define MyDllName "AddinManager"
 #ifndef BundleSource
+; 优先使用 CI 生成的 Bundle，本地编译时使用 Release 产物。
+#if FileExists(SourcePath + "artifacts\RevitAddinManager.bundle\PackageContents.xml")
 #define BundleSource ".\artifacts\RevitAddinManager.bundle"
+#else
+#define BundleSource ".\AddInManager\bin\Release"
+#endif
 #endif
 
 [Setup]

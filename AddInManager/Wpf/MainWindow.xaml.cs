@@ -59,6 +59,19 @@ namespace AddInManager.Wpf
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            // 每次打开窗口都取消保存勾选，不沿用历史配置或上次窗口的选择。
+            foreach (var addins in new[] { m_aim.AddinManager.Commands.AddinDict.Values, m_aim.AddinManager.Applications.AddinDict.Values })
+            {
+                foreach (var addin in addins)
+                {
+                    addin.Save = false;
+                    foreach (var item in addin.ItemList)
+                    {
+                        item.Save = false;
+                    }
+                }
+            }
+
             CommandsTreeView_RefreshData();
             ApplicationsTreeView_RefreshData();
             DisableControl();
@@ -940,26 +953,28 @@ namespace AddInManager.Wpf
 
         private void SaveToAddinMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!m_aim.AddinManager.HasItemsToSave())
+            var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
+            if (!m_aim.AddinManager.HasItemsToSave(typeToSave))
             {
                 MessageBox.Show(Properties.Resources.NoItemsSelected, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
-            m_aim.AddinManager.SaveToAllUserManifest(typeToSave);
-            Close();
+            if (!string.IsNullOrEmpty(m_aim.AddinManager.SaveToAllUserManifest(typeToSave)))
+            {
+                Close();
+            }
         }
 
         private void SaveLocalMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!m_aim.AddinManager.HasItemsToSave())
+            var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
+            if (!m_aim.AddinManager.HasItemsToSave(typeToSave))
             {
                 MessageBox.Show(Properties.Resources.NoItemsSelected, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            var typeToSave = externalToolsTabControl.SelectedItem == commandsTabPage ? AddinType.Command : AddinType.Application;
             m_aim.AddinManager.SaveToLocal(typeToSave);
-            ShowStatusLabel(Properties.Resources.StatusSaveSuccess);
+            Close();
         }
 
         private void ShowStatusLabel(string msg)

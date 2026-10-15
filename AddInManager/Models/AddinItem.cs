@@ -16,7 +16,7 @@ namespace AddInManager.Models
             AssemblyName = string.Empty;
             FullClassName = string.Empty;
             _mName = string.Empty;
-            Save = true;
+            Save = false;
             VisibilityMode = VisibilityMode.AlwaysVisible;
         }
 
@@ -33,7 +33,7 @@ namespace AddInManager.Models
             FullClassName = fullClassName;
             var num = fullClassName.LastIndexOf(".");
             _mName = fullClassName.Substring(num + 1);
-            Save = true;
+            Save = false;
             VisibilityMode = VisibilityMode.AlwaysVisible;
         }
 
