@@ -1098,6 +1098,48 @@ namespace AddInManager.Properties {
             }
         }
         
+        public static string CopyDiagnostics {
+            get {
+                return ResourceManager.GetString("CopyDiagnostics", resourceCulture);
+            }
+        }
+
+        public static string DiagnosticReportFormat {
+            get {
+                return ResourceManager.GetString("DiagnosticReportFormat", resourceCulture);
+            }
+        }
+
+        public static string RecentCommands {
+            get {
+                return ResourceManager.GetString("RecentCommands", resourceCulture);
+            }
+        }
+
+        public static string NoRecentCommands {
+            get {
+                return ResourceManager.GetString("NoRecentCommands", resourceCulture);
+            }
+        }
+
+        public static string LogSearchWatermark {
+            get {
+                return ResourceManager.GetString("LogSearchWatermark", resourceCulture);
+            }
+        }
+
+        public static string RunAssemblyLoadFailed {
+            get {
+                return ResourceManager.GetString("RunAssemblyLoadFailed", resourceCulture);
+            }
+        }
+
+        public static string RunCommandNotFound {
+            get {
+                return ResourceManager.GetString("RunCommandNotFound", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   查找类似 准备执行命令时发生错误: {0} 的本地化字符串。
         /// </summary>

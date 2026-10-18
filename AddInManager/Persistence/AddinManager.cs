@@ -62,6 +62,7 @@ namespace AddInManager.Persistence
                 return addinType;
             }
             DebugLogger.Instance.Info($"LoadAddin: loading {filePath}");
+            var loadedFileWriteTimeUtc = Addin.GetFileWriteTimeUtc(filePath);
             var assemLoader = new AssemLoader();
             List<AddinItem> cmdItems = null;
             List<AddinItem> appItems = null;
@@ -87,14 +88,30 @@ namespace AddInManager.Persistence
             }
             if (cmdItems != null && cmdItems.Count > 0)
             {
-                var cmdAddin = new Addin(filePath, cmdItems);
+                var cmdAddin = new Addin(filePath, cmdItems)
+                {
+                    LoadedFileWriteTimeUtc = loadedFileWriteTimeUtc,
+                    IsExpanded = Commands.AddinDict.TryGetValue(Path.GetFileName(filePath), out var previousCmd) ? previousCmd.IsExpanded : true
+                };
+                // 重载保留同一路径、同一命令的运行记录。
+                if (previousCmd != null && string.Equals(previousCmd.FilePath, filePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    foreach (var item in cmdAddin.ItemList)
+                    {
+                        item.LastRunUtc = previousCmd.ItemList.Find(previous => previous.FullClassName == item.FullClassName)?.LastRunUtc;
+                    }
+                }
                 Commands.AddAddIn(cmdAddin);
                 addinType |= AddinType.Command;
                 DebugLogger.Instance.Info($"LoadAddin: found {cmdItems.Count} commands in {System.IO.Path.GetFileName(filePath)}");
             }
             if (appItems != null && appItems.Count > 0)
             {
-                var appAddin = new Addin(filePath, appItems);
+                var appAddin = new Addin(filePath, appItems)
+                {
+                    LoadedFileWriteTimeUtc = loadedFileWriteTimeUtc,
+                    IsExpanded = Applications.AddinDict.TryGetValue(Path.GetFileName(filePath), out var previousApp) ? previousApp.IsExpanded : true
+                };
                 Applications.AddAddIn(appAddin);
                 addinType |= AddinType.Application;
                 DebugLogger.Instance.Info($"LoadAddin: found {appItems.Count} applications in {System.IO.Path.GetFileName(filePath)}");
@@ -110,6 +127,18 @@ namespace AddInManager.Persistence
         public void SaveToAimIni()
         {
             SaveToPersistentStore(m_persistentStoreFilePath);
+        }
+
+        // 从当前列表查找命令，兼容 Faceless 仍持有重载前对象的情况。
+        internal void RecordCommandRun(string filePath, string fullClassName)
+        {
+            if (!Commands.AddinDict.TryGetValue(Path.GetFileName(filePath), out var addin) ||
+                !string.Equals(addin.FilePath, filePath, StringComparison.OrdinalIgnoreCase)) return;
+
+            var item = addin.ItemList.Find(command => command.FullClassName == fullClassName);
+            if (item == null) return;
+            item.LastRunUtc = DateTime.UtcNow;
+            SaveToAimIni();
         }
 
         public bool HasItemsToSave(AddinType addinTypeToSave)
@@ -268,14 +297,17 @@ namespace AddInManager.Persistence
                                 Description = pi.Description,
                                 VisibilityMode = pi.VisibilityMode,
                                 Save = pi.Save,
-                                Hidden = pi.Hidden
+                                Hidden = pi.Hidden,
+                                LastRunUtc = pi.LastRunUtc
                             };
                             items.Add(ai);
                         }
                         var addin = new Addin(p.FilePath ?? string.Empty, items)
                         {
                             Save = p.Save,
-                            Hidden = p.Hidden
+                            Hidden = p.Hidden,
+                            IsExpanded = p.IsExpanded ?? true,
+                            LoadedFileWriteTimeUtc = p.LoadedFileWriteTimeUtc
                         };
                         Commands.AddAddIn(addin);
                     }
@@ -291,14 +323,17 @@ namespace AddInManager.Persistence
                                 Description = pi.Description,
                                 VisibilityMode = pi.VisibilityMode,
                                 Save = pi.Save,
-                                Hidden = pi.Hidden
+                                Hidden = pi.Hidden,
+                                LastRunUtc = pi.LastRunUtc
                             };
                             items.Add(ai);
                         }
                         var addin = new Addin(p.FilePath ?? string.Empty, items)
                         {
                             Save = p.Save,
-                            Hidden = p.Hidden
+                            Hidden = p.Hidden,
+                            IsExpanded = p.IsExpanded ?? true,
+                            LoadedFileWriteTimeUtc = p.LoadedFileWriteTimeUtc
                         };
                         Applications.AddAddIn(addin);
                     }
@@ -330,7 +365,9 @@ namespace AddInManager.Persistence
                     {
                         FilePath = a.FilePath,
                         Save = a.Save,
-                        Hidden = a.Hidden
+                        Hidden = a.Hidden,
+                        IsExpanded = a.IsExpanded,
+                        LoadedFileWriteTimeUtc = a.LoadedFileWriteTimeUtc
                     };
                     foreach (var ai in a.ItemList)
                     {
@@ -346,6 +383,7 @@ namespace AddInManager.Persistence
                             VisibilityMode = ai.VisibilityMode,
                             Save = ai.Save,
                             Hidden = ai.Hidden,
+                            LastRunUtc = ai.LastRunUtc,
                             TransactionMode = ai.TransactionMode,
                             RegenerationMode = ai.RegenerationMode,
                             JournalingMode = ai.JournalingMode
@@ -362,7 +400,9 @@ namespace AddInManager.Persistence
                     {
                         FilePath = a.FilePath,
                         Save = a.Save,
-                        Hidden = a.Hidden
+                        Hidden = a.Hidden,
+                        IsExpanded = a.IsExpanded,
+                        LoadedFileWriteTimeUtc = a.LoadedFileWriteTimeUtc
                     };
                     foreach (var ai in a.ItemList)
                     {
@@ -378,6 +418,7 @@ namespace AddInManager.Persistence
                             VisibilityMode = ai.VisibilityMode,
                             Save = ai.Save,
                             Hidden = ai.Hidden,
+                            LastRunUtc = ai.LastRunUtc,
                             TransactionMode = ai.TransactionMode,
                             RegenerationMode = ai.RegenerationMode,
                             JournalingMode = ai.JournalingMode

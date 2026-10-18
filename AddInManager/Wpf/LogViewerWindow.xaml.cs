@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 using AddInManager.DebugTools;
 
@@ -15,6 +17,10 @@ namespace AddInManager.Wpf
     {
         private static LogViewerWindow _instance;
         private readonly DebugLogger _logger = DebugLogger.Instance;
+        private readonly DispatcherTimer _searchDebounceTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(300)
+        };
 
         public static void ShowSingleton()
         {
@@ -45,7 +51,9 @@ namespace AddInManager.Wpf
         public LogViewerWindow()
         {
             InitializeComponent();
+            statusText.ToolTip = _logger.LogFilePath;
             ApplyLocalization();
+            _searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
             Loaded += OnLoaded;
             Closed += OnClosed;
         }
@@ -60,6 +68,7 @@ namespace AddInManager.Wpf
             chkSystemDiagnostics.Content = Properties.Resources.LogSourceSystemDiagnostics;
             btnClear.Content = Properties.Resources.BtnClearLog;
             btnExport.Content = Properties.Resources.BtnExport;
+            btnCopyDiagnostics.Content = Properties.Resources.CopyDiagnostics;
             chkAutoScroll.Content = Properties.Resources.ChkAutoScroll;
             statusText.Text = Properties.Resources.StatusReady;
 
@@ -76,12 +85,18 @@ namespace AddInManager.Wpf
         {
             RefreshList();
             _logger.EntryAdded += OnEntryAdded;
+            if (logSearchTextBox.Template.FindName("PART_ClearButton", logSearchTextBox) is Button clearButton)
+            {
+                clearButton.Click += ClearLogSearch_Click;
+            }
             UpdateStatus();
         }
 
         private void OnClosed(object sender, EventArgs e)
         {
             _logger.EntryAdded -= OnEntryAdded;
+            _searchDebounceTimer.Stop();
+            _searchDebounceTimer.Tick -= SearchDebounceTimer_Tick;
             if (ReferenceEquals(_instance, this))
             {
                 _instance = null;
@@ -114,7 +129,28 @@ namespace AddInManager.Wpf
 
         private bool PassesFilter(LogEntry entry)
         {
-            return PassesLevelFilter(entry) && PassesSourceFilter(entry);
+            var searchText = logSearchTextBox.Text.Trim();
+            return PassesLevelFilter(entry) && PassesSourceFilter(entry) &&
+                (searchText.Length == 0 || entry.ToString().IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        private void LogSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            _searchDebounceTimer.Stop();
+            _searchDebounceTimer.Start();
+        }
+
+        private void SearchDebounceTimer_Tick(object sender, EventArgs e)
+        {
+            _searchDebounceTimer.Stop();
+            RefreshList();
+        }
+
+        private void ClearLogSearch_Click(object sender, RoutedEventArgs e)
+        {
+            logSearchTextBox.Clear();
+            logSearchTextBox.Focus();
         }
 
         private bool PassesLevelFilter(LogEntry entry)
@@ -195,6 +231,43 @@ namespace AddInManager.Wpf
                     Properties.Resources.ErrorTitle,
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void BtnCopyDiagnostics_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Windows.Clipboard.SetDataObject(_logger.CreateDiagnosticReport(App.RevitVersion), true);
+                statusText.Text = Properties.Resources.CopiedMessage;
+            }
+            catch (System.Runtime.InteropServices.ExternalException ex)
+            {
+                _logger.Error(ex, "CopyDiagnostics");
+                statusText.Text = ex.Message;
+            }
+        }
+
+        private void CopyLog_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = logListView.SelectedItems.Count > 0;
+            e.Handled = true;
+        }
+
+        // 按显示顺序复制选中的整行，单元格内的文字选择由 TextBox 自行处理。
+        private void CopyLog_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                var text = string.Join(Environment.NewLine, logListView.Items.Cast<LogEntry>()
+                    .Where(entry => logListView.SelectedItems.Contains(entry))
+                    .Select(entry => entry.ToString()));
+                if (!string.IsNullOrEmpty(text)) System.Windows.Clipboard.SetText(text);
+            }
+            catch (System.Runtime.InteropServices.ExternalException ex)
+            {
+                _logger.Error(ex, "CopyLog");
+            }
+            e.Handled = true;
         }
     }
 }

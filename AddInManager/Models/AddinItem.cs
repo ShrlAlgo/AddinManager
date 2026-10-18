@@ -79,6 +79,8 @@ namespace AddInManager.Models
 
         public string FullClassName { get; set; }
 
+        public DateTime? LastRunUtc { get; set; }
+
         public string Name
         {
             get => string.IsNullOrEmpty(_mName) ? "External Tool" : _mName;

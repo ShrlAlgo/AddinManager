@@ -45,6 +45,7 @@ namespace AddInManager
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 #endif
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            DebugTools.DebugLogger.Instance.StartCapture();
             FileUtils.CleanupTempFolders();
             LanguageManager.ApplySavedLanguage();
             CreateRibbonPanel(application);
@@ -58,6 +59,7 @@ namespace AddInManager
             AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
 #endif
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
+            DebugTools.DebugLogger.Instance.StopCapture();
             return Result.Cancelled;
         }
 
@@ -112,17 +114,16 @@ namespace AddInManager
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var ex = e.ExceptionObject as Exception;
-            DebugTools.DebugLogger.Instance.Error(ex ?? new Exception(e.ExceptionObject?.ToString() ?? "Unknown error"),
-                "UnhandledException");
             try
             {
-                var dialog = new Wpf.UnhandledExceptionDialog(ex);
-                dialog.ShowDialog();
+                // 终止阶段只记录，不创建可能再次触发资源或线程异常的 WPF 窗口。
+                var ex = e.ExceptionObject as Exception;
+                DebugTools.DebugLogger.Instance.Error(ex ?? new Exception(e.ExceptionObject?.ToString() ?? "Unknown error"),
+                    $"UnhandledException; IsTerminating={e.IsTerminating}");
             }
             catch
             {
-                // If the dialog itself fails, at least we logged it above
+                // 异常记录失败不干扰宿主的终止流程。
             }
         }
 

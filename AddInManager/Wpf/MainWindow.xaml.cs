@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,7 +24,13 @@ namespace AddInManager.Wpf
         private readonly AIM m_aim;
         private List<TreeViewItem> m_allCommandItems; // 存储所有命令项用于搜索
         private DispatcherTimer m_searchDebounceTimer;
+        private readonly DispatcherTimer m_assemblyCheckTimer;
+        private readonly Dictionary<string, (DateTime WriteTimeUtc, bool Attempted)> m_assemblyUpdates =
+            new Dictionary<string, (DateTime WriteTimeUtc, bool Attempted)>(StringComparer.OrdinalIgnoreCase);
+        private bool m_closeAfterReload;
         private bool m_isLanguageSelectorInitializing = true;
+        private bool m_isUpdatingExpansion;
+        private bool m_isReloading;
 
         // Reusable virtualizing ItemsPanelTemplate for child nodes, created once to avoid per-node allocation
         private static readonly ItemsPanelTemplate s_virtualizingItemsPanel = CreateVirtualizingItemsPanel();
@@ -48,6 +55,7 @@ namespace AddInManager.Wpf
             m_isLanguageSelectorInitializing = false;
             m_aim = aim;
             Loaded += MainWindow_Loaded;
+            Activated += MainWindow_Activated;
             m_allCommandItems = new List<TreeViewItem>();
 
             // Debounce timer: filters the tree 300 ms after the user stops typing
@@ -56,6 +64,79 @@ namespace AddInManager.Wpf
                 Interval = TimeSpan.FromMilliseconds(300)
             };
             m_searchDebounceTimer.Tick += OnSearchDebounceTimerTick;
+            m_assemblyCheckTimer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromSeconds(2)
+            };
+            m_assemblyCheckTimer.Tick += AssemblyCheckTimer_Tick;
+            Closed += (sender, e) => m_assemblyCheckTimer.Stop();
+            Closing += (sender, e) =>
+            {
+                if (!m_isReloading) return;
+                e.Cancel = true;
+                m_closeAfterReload = true;
+            };
+        }
+
+        // 切回窗口时同步 DLL 文件状态，保留现有节点和选择。
+        private void MainWindow_Activated(object sender, EventArgs e)
+        {
+            RefreshAssemblyStates();
+            if (IsLoaded && !m_isReloading && externalToolsTabControl.SelectedIndex == 0) RefreshData();
+        }
+
+        // 定时检查仅更新文件状态，保留当前选择与列表。
+        private void RefreshAssemblyStates()
+        {
+            if (!IsLoaded || m_isReloading) return;
+
+            foreach (var tree in new[] { commandsTreeView, applicationsTreeView })
+            {
+                foreach (TreeViewItem node in tree.Items)
+                {
+                    RefreshAssemblyAvailability(node);
+                }
+            }
+            if (externalToolsTabControl.SelectedIndex == 0 && m_aim.ActiveCmdItem != null)
+            {
+                runButton.IsEnabled = !m_isReloading && File.Exists(m_aim.ActiveCmd?.FilePath);
+            }
+        }
+
+        // 两次检查间文件保持稳定才重载；失败后等待下一次写入，避免持续重试。
+        private async void AssemblyCheckTimer_Tick(object sender, EventArgs e)
+        {
+            if (!IsLoaded || m_isReloading) return;
+            RefreshAssemblyStates();
+
+            try
+            {
+                var addins = m_aim.AddinManager.Commands.AddinDict.Values.Concat(m_aim.AddinManager.Applications.AddinDict.Values)
+                    .GroupBy(addin => addin.FilePath, StringComparer.OrdinalIgnoreCase).Select(group => group.First()).ToList();
+                foreach (var addin in addins)
+                {
+                    var writeTime = Addin.GetFileWriteTimeUtc(addin.FilePath);
+                    if (!writeTime.HasValue || !addin.LoadedFileWriteTimeUtc.HasValue || writeTime == addin.LoadedFileWriteTimeUtc)
+                    {
+                        m_assemblyUpdates.Remove(addin.FilePath);
+                        continue;
+                    }
+                    if (!m_assemblyUpdates.TryGetValue(addin.FilePath, out var update) || update.WriteTimeUtc != writeTime.Value)
+                    {
+                        m_assemblyUpdates[addin.FilePath] = (writeTime.Value, false);
+                        continue;
+                    }
+                    if (update.Attempted) continue;
+                    m_assemblyUpdates[addin.FilePath] = (writeTime.Value, true);
+                    await ReloadAssemblyAsync(addin.FilePath, true);
+                    if (!IsLoaded) return;
+                }
+            }
+            catch (Exception ex)
+            {
+                DebugTools.DebugLogger.Instance.Error(ex, "AutoReload");
+                ShowStatusError(string.Format(Properties.Resources.StatusReloadError, ex.Message));
+            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -77,6 +158,7 @@ namespace AddInManager.Wpf
             ApplicationsTreeView_RefreshData();
             DisableControl();
             removeButton.IsEnabled = false;
+            m_assemblyCheckTimer.Start();
 
             if (searchTextBox.Template.FindName("PART_ClearButton", searchTextBox) is Button clearButton)
             {
@@ -95,6 +177,52 @@ namespace AddInManager.Wpf
         }
 
         #region 搜索功能
+
+        private void RecentCommandsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = new ContextMenu { PlacementTarget = recentCommandsButton, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
+            var commands = m_aim.AddinManager.Commands.AddinDict.Values.SelectMany(addin => addin.ItemList)
+                .Where(command => command.LastRunUtc.HasValue)
+                .OrderByDescending(command => command.LastRunUtc).Take(10).ToList();
+            foreach (var command in commands)
+            {
+                var item = new MenuItem
+                {
+                    Header = new TextBlock { Text = $"{command.Name} — {Path.GetFileName(command.AssemblyPath)}" },
+                    Tag = command,
+                    IsEnabled = File.Exists(command.AssemblyPath),
+                    ToolTip = $"{command.FullClassName}{Environment.NewLine}{command.AssemblyPath}{Environment.NewLine}{command.LastRunUtc.Value.ToLocalTime():yyyy-MM-dd HH:mm:ss}"
+                };
+                item.Click += RecentCommand_Click;
+                menu.Items.Add(item);
+            }
+            if (menu.Items.Count == 0) menu.Items.Add(new MenuItem { Header = Properties.Resources.NoRecentCommands, IsEnabled = false });
+            recentCommandsButton.ContextMenu = menu;
+            menu.IsOpen = true;
+        }
+
+        // 最近运行只定位命令，不执行；定位前清除可能隐藏该命令的搜索条件。
+        private void RecentCommand_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem { Tag: AddinItem command }) return;
+            foreach (TreeViewItem parent in commandsTreeView.Items)
+            {
+                if (parent.Tag is not Addin addin || !string.Equals(addin.FilePath, command.AssemblyPath, StringComparison.OrdinalIgnoreCase)) continue;
+                foreach (TreeViewItem child in parent.Items)
+                {
+                    if (child.Tag is not AddinItem item || item.FullClassName != command.FullClassName) continue;
+                    searchTextBox.Clear();
+                    m_searchDebounceTimer.Stop();
+                    RestoreAllItems();
+                    SetExpandedWithoutSaving(parent, true);
+                    child.IsSelected = true;
+                    child.BringIntoView();
+                    child.Focus();
+                    return;
+                }
+            }
+            ShowStatusError(string.Format(Properties.Resources.RunCommandNotFound, command.FullClassName, command.AssemblyPath));
+        }
 
         #region 搜索功能
 
@@ -130,10 +258,11 @@ namespace AddInManager.Wpf
         }
 
         // (重写) 核心过滤逻辑
-        private void FilterCommandsTreeView(string searchText)
+        private void FilterCommandsTreeView(string searchText, TreeViewItem itemToFilter = null)
         {
             foreach (TreeViewItem parentItem in commandsTreeView.Items)
             {
+                if (itemToFilter != null && parentItem != itemToFilter) continue;
                 var parentShouldBeVisible = false;
 
                 // 1. 检查父节点自身是否匹配
@@ -162,7 +291,7 @@ namespace AddInManager.Wpf
                 if (parentShouldBeVisible || parentMatches)
                 {
                     parentItem.Visibility = Visibility.Visible;
-                    parentItem.IsExpanded = true; // 展开以显示匹配的子项
+                    SetExpandedWithoutSaving(parentItem, true); // 搜索临时展开，不覆盖手动保存的状态
                 }
                 else
                 {
@@ -177,9 +306,10 @@ namespace AddInManager.Wpf
             foreach (TreeViewItem parentItem in commandsTreeView.Items)
             {
                 parentItem.Visibility = Visibility.Visible;
-                // 注意：这里我们不再强制展开所有项，除非您希望如此。
-                // 如果需要恢复时全部展开，可以取消下面这行的注释。
-                // parentItem.IsExpanded = true;
+                if (parentItem.Tag is Addin addin)
+                {
+                    parentItem.IsExpanded = addin.IsExpanded;
+                }
 
                 foreach (TreeViewItem childItem in parentItem.Items)
                 {
@@ -253,10 +383,38 @@ namespace AddInManager.Wpf
 
         private void SetAllItemsExpanded(TreeView treeView, bool isExpanded)
         {
-            foreach (TreeViewItem item in treeView.Items)
+            var wasUpdating = m_isUpdatingExpansion;
+            m_isUpdatingExpansion = true;
+            try
             {
-                SetTreeViewItemExpanded(item, isExpanded);
+                foreach (TreeViewItem item in treeView.Items)
+                {
+                    SetTreeViewItemExpanded(item, isExpanded);
+                    if (item.Tag is Addin addin) addin.IsExpanded = isExpanded;
+                }
             }
+            finally
+            {
+                m_isUpdatingExpansion = wasUpdating;
+            }
+            // 全部展开/折叠只写一次配置，避免逐节点重复写入。
+            if (!m_isReloading) m_aim.AddinManager.SaveToAimIni();
+        }
+
+        private void TreeViewItem_ExpansionChanged(object sender, RoutedEventArgs e)
+        {
+            if (m_isUpdatingExpansion || e.OriginalSource != sender || sender is not TreeViewItem { Tag: Addin addin } item || addin.IsExpanded == item.IsExpanded) return;
+
+            addin.IsExpanded = item.IsExpanded;
+            if (!m_isReloading) m_aim.AddinManager.SaveToAimIni();
+        }
+
+        private void SetExpandedWithoutSaving(TreeViewItem item, bool isExpanded)
+        {
+            var wasUpdating = m_isUpdatingExpansion;
+            m_isUpdatingExpansion = true;
+            try { item.IsExpanded = isExpanded; }
+            finally { m_isUpdatingExpansion = wasUpdating; }
         }
 
         private void SetTreeViewItemExpanded(TreeViewItem item, bool isExpanded)
@@ -647,12 +805,7 @@ namespace AddInManager.Wpf
         private void DisableControl()
         {
             // 添加 null 检查
-            if (nametextBox == null || descriptionTextBox == null || runButton == null) return;
-
-            nametextBox.Text = "";
-            descriptionTextBox.Text = "";
-            nametextBox.IsEnabled = false;
-            descriptionTextBox.IsEnabled = false;
+            if (runButton == null) return;
             runButton.IsEnabled = false;
         }
 
@@ -675,18 +828,11 @@ namespace AddInManager.Wpf
 
         private void RefreshData()
         {
-            if (commandsTreeView == null || nametextBox == null || descriptionTextBox == null || runButton == null) return;
+            if (commandsTreeView == null || runButton == null) return;
 
             if (commandsTreeView.SelectedItem is TreeViewItem selectedItem && !HasChildren(selectedItem))
             {
-                if (m_aim.ActiveCmdItem != null)
-                {
-                    nametextBox.Text = m_aim.ActiveCmdItem.Name;
-                    descriptionTextBox.Text = m_aim.ActiveCmdItem.Description;
-                }
-                nametextBox.IsEnabled = true;
-                descriptionTextBox.IsEnabled = true;
-                runButton.IsEnabled = true;
+                runButton.IsEnabled = !m_isReloading && File.Exists(m_aim.ActiveCmd?.FilePath);
             }
             else
             {
@@ -707,11 +853,24 @@ namespace AddInManager.Wpf
 
         private void Run()
         {
+            if (m_isReloading) return;
             try
             {
                 if (m_aim.ActiveCmdItem == null)
                 {
                     ShowStatusError(Properties.Resources.StatusNoCommandSelected);
+                    return;
+                }
+
+                // 文件可能在窗口打开后被移动或删除，执行前再次确认。
+                if (!File.Exists(m_aim.ActiveCmd?.FilePath))
+                {
+                    RefreshData();
+                    if (commandsTreeView.SelectedItem is TreeViewItem selected && selected.Parent is TreeViewItem parent)
+                    {
+                        RefreshAssemblyAvailability(parent);
+                    }
+                    ShowStatusError(string.Format(Properties.Resources.StatusAssemblyNotFound, m_aim.ActiveCmd?.FilePath));
                     return;
                 }
 
@@ -865,50 +1024,31 @@ namespace AddInManager.Wpf
 
         private void SaveSplitButton_Click(object sender, RoutedEventArgs e)
         {
-            //// 检查是否有可保存项的逻辑 (如果需要)
-            //if (!m_aim.AddinManager.HasItemsToSave())
-            //{
-            //    // 也可以选择在这里禁用按钮，而不是显示消息框
-            //    // MessageBox.Show(...); 
-            //    return;
-            //}
-
-            if (m_aim.AddinManager.AppCount != 0 || m_aim.AddinManager.CmdCount != 0)
+            if (m_aim.AddinManager.AppCount == 0 && m_aim.AddinManager.CmdCount == 0)
             {
-                saveContextMenu.PlacementTarget = saveSplitButton;
-                saveContextMenu.IsOpen = true;
+                saveSplitButton.IsChecked = false;
+                return;
             }
+
+            saveContextMenu.PlacementTarget = saveSplitButton;
+            saveContextMenu.IsOpen = saveSplitButton.IsChecked == true;
         }
 
-        private void NameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void SaveContextMenu_Closed(object sender, RoutedEventArgs e)
         {
-            if (m_aim.ActiveCmdItem != null)
-            {
-                m_aim.ActiveCmdItem.Name = nametextBox.Text;
-                m_aim.AddinManager.SaveToAimIni();
-            }
-        }
-
-        private void DescriptionTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (m_aim.ActiveCmdItem != null)
-            {
-                m_aim.ActiveCmdItem.Description = descriptionTextBox.Text;
-                m_aim.AddinManager.SaveToAimIni();
-            }
+            // 点击外部或按 Esc 关闭菜单后，同步复位下拉按钮。
+            saveSplitButton.IsChecked = false;
         }
 
 
         private void CommandsTreeView_LostFocus(object sender, RoutedEventArgs e)
         {
             // 添加 null 检查
-            if (removeButton == null || nametextBox == null || descriptionTextBox == null || runButton == null) return;
+            if (removeButton == null || runButton == null) return;
 
             // 检查焦点是否转移到了相关控件
             var focusedElement = Keyboard.FocusedElement as FrameworkElement;
-            if (focusedElement != nametextBox &&
-                focusedElement != descriptionTextBox &&
-                focusedElement != runButton &&
+            if (focusedElement != runButton &&
                 focusedElement != removeButton)
             {
                 DisableControl();
@@ -1015,106 +1155,7 @@ namespace AddInManager.Wpf
 
             foreach (var kvp in addins.AddinDict)
             {
-                var key = kvp.Key;
-                var value = kvp.Value;
-
-                var node = new TreeViewItem
-                {
-                    Tag = value,
-                    IsExpanded = true, // 默认展开
-                    // Use a VirtualizingStackPanel so child items are rendered on demand
-                    // rather than all at once, which significantly reduces lag with large lists
-                    ItemsPanel = s_virtualizingItemsPanel
-                };
-
-                // 创建带CheckBox的Header
-                var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
-                var checkBox = new CheckBox
-                {
-                    IsChecked = value.Save,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(0, 0, 5, 0),
-                    IsThreeState = false // 父节点点击只允许两态（选中、未选中）
-                };
-                checkBox.Checked += TreeViewCheckBox_Changed;
-                checkBox.Unchecked += TreeViewCheckBox_Changed;
-
-                var textBlock = new TextBlock
-                {
-                    Text = key,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                if (!File.Exists(value.FilePath))
-                {
-                    textBlock.Foreground = Brushes.Red;
-                    textBlock.ToolTip = $"DLL 不存在：{value.FilePath}";
-                }
-
-                stackPanel.Children.Add(checkBox);
-                stackPanel.Children.Add(textBlock);
-                node.Header = stackPanel;
-
-                // 用于确定父节点初始状态
-                var hasCheckedChildren = false;
-                var hasUncheckedChildren = false;
-
-                foreach (var addinItem in value.ItemList)
-                {
-                    var childNode = new TreeViewItem
-                    {
-                        Tag = addinItem
-                    };
-
-                    // 创建子节点的带CheckBox的Header
-                    var childStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
-                    var childCheckBox = new CheckBox
-                    {
-                        IsChecked = addinItem.Save,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Margin = new Thickness(0, 0, 5, 0)
-                    };
-                    childCheckBox.Checked += TreeViewCheckBox_Changed;
-                    childCheckBox.Unchecked += TreeViewCheckBox_Changed;
-
-                    var childTextBlock = new TextBlock
-                    {
-                        Text = addinItem.FullClassName,
-                        VerticalAlignment = VerticalAlignment.Center
-                    };
-
-                    childStackPanel.Children.Add(childCheckBox);
-                    childStackPanel.Children.Add(childTextBlock);
-                    childNode.Header = childStackPanel;
-
-                    node.Items.Add(childNode);
-
-                    // 统计子节点状态
-                    if (addinItem.Save)
-                    {
-                        hasCheckedChildren = true;
-                    }
-                    else
-                    {
-                        hasUncheckedChildren = true;
-                    }
-                }
-
-                // 设置父节点CheckBox的初始状态
-                if (hasCheckedChildren && hasUncheckedChildren)
-                {
-                    checkBox.IsChecked = null; // 部分选中
-                }
-                else if (hasCheckedChildren)
-                {
-                    checkBox.IsChecked = true; // 全选
-                }
-                else
-                {
-                    checkBox.IsChecked = false; // 全不选
-                }
-
-                tree.Items.Add(node);
+                tree.Items.Add(CreateAssemblyNode(kvp.Key, kvp.Value));
             }
 
             if (tree.Items.Count > 0)
@@ -1129,6 +1170,236 @@ namespace AddInManager.Wpf
             // 刷新RemoveButton状态
             RemoveButton_RefreshData();
         }
+        // 重载只替换目标程序集节点，保留其他节点实例及当前视图状态。
+        private void RefreshAssemblyNode(TreeView tree, Addins addins, string filePath)
+        {
+            TreeViewItem oldNode = null;
+            foreach (TreeViewItem item in tree.Items)
+            {
+                if (item.Tag is Addin addin && string.Equals(addin.FilePath, filePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    oldNode = item;
+                    break;
+                }
+            }
+
+            var key = Path.GetFileName(filePath);
+            addins.AddinDict.TryGetValue(key, out var updatedAddin);
+            if (oldNode == null && updatedAddin == null) return;
+
+            var selected = tree.SelectedItem as TreeViewItem;
+            var restoreSelection = oldNode != null && (selected == oldNode || oldNode.Items.Contains(selected));
+            var selectedClass = (selected?.Tag as AddinItem)?.FullClassName;
+            var wasExpanded = oldNode?.IsExpanded;
+            var scroll = FindTreeScrollViewer(tree);
+            var horizontalOffset = scroll?.HorizontalOffset ?? 0;
+            var verticalOffset = scroll?.VerticalOffset ?? 0;
+            var wasUpdating = m_isUpdatingExpansion;
+            m_isUpdatingExpansion = true;
+            try
+            {
+                if (updatedAddin == null)
+                {
+                    tree.Items.Remove(oldNode);
+                }
+                else
+                {
+                    if (oldNode?.Tag is Addin oldAddin)
+                    {
+                        updatedAddin.IsExpanded = oldAddin.IsExpanded;
+                        // 已有命令沿用勾选；新增命令仍需手动勾选。
+                        foreach (var item in updatedAddin.ItemList)
+                        {
+                            var previous = oldAddin.ItemList.Find(i => i.FullClassName == item.FullClassName);
+                            if (previous != null) item.Save = previous.Save;
+                        }
+                        updatedAddin.Save = updatedAddin.ItemList.Exists(i => i.Save);
+                    }
+
+                    var node = CreateAssemblyNode(key, updatedAddin);
+                    if (oldNode != null)
+                    {
+                        node.Visibility = oldNode.Visibility;
+                        tree.Items[tree.Items.IndexOf(oldNode)] = node;
+                    }
+                    else
+                    {
+                        var index = 0;
+                        foreach (var entry in addins.AddinDict)
+                        {
+                            if (entry.Key == key) break;
+                            index++;
+                        }
+                        tree.Items.Insert(Math.Min(index, tree.Items.Count), node);
+                    }
+
+                    if (tree == commandsTreeView && !string.IsNullOrWhiteSpace(searchTextBox.Text))
+                    {
+                        FilterCommandsTreeView(searchTextBox.Text.Trim().ToLower(), node);
+                    }
+                    if (restoreSelection)
+                    {
+                        var itemToSelect = node;
+                        foreach (TreeViewItem child in node.Items)
+                        {
+                            if (child.Tag is AddinItem item && item.FullClassName == selectedClass)
+                            {
+                                itemToSelect = child;
+                                break;
+                            }
+                        }
+                        itemToSelect.IsSelected = true;
+                    }
+                    if (wasExpanded.HasValue) node.IsExpanded = wasExpanded.Value;
+                }
+            }
+            finally
+            {
+                m_isUpdatingExpansion = wasUpdating;
+            }
+
+            // 等待节点布局和选择引发的自动滚动结束后恢复原位置。
+            if (scroll != null)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (!IsLoaded) return;
+                    tree.UpdateLayout();
+                    scroll.ScrollToHorizontalOffset(horizontalOffset);
+                    scroll.ScrollToVerticalOffset(verticalOffset);
+                }), DispatcherPriority.Background);
+            }
+            RemoveButton_RefreshData();
+        }
+
+        private ScrollViewer FindTreeScrollViewer(DependencyObject root)
+        {
+            if (root is ScrollViewer scroll) return scroll;
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+            {
+                var result = FindTreeScrollViewer(VisualTreeHelper.GetChild(root, i));
+                if (result != null) return result;
+            }
+            return null;
+        }
+
+        private TreeViewItem CreateAssemblyNode(string key, Addin value)
+        {
+            var node = new TreeViewItem
+            {
+                Tag = value,
+                IsExpanded = value.IsExpanded,
+                // Use a VirtualizingStackPanel so child items are rendered on demand
+                // rather than all at once, which significantly reduces lag with large lists
+                ItemsPanel = s_virtualizingItemsPanel
+            };
+            node.Expanded += TreeViewItem_ExpansionChanged;
+            node.Collapsed += TreeViewItem_ExpansionChanged;
+
+            // 创建带CheckBox的Header
+            var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            var checkBox = new CheckBox
+            {
+                IsChecked = value.Save,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 5, 0),
+                IsThreeState = false // 父节点点击只允许两态（选中、未选中）
+            };
+            checkBox.Checked += TreeViewCheckBox_Changed;
+            checkBox.Unchecked += TreeViewCheckBox_Changed;
+
+            var textBlock = new TextBlock
+            {
+                Text = key,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+
+            stackPanel.Children.Add(checkBox);
+            stackPanel.Children.Add(textBlock);
+            node.Header = stackPanel;
+
+            // 用于确定父节点初始状态
+            var hasCheckedChildren = false;
+            var hasUncheckedChildren = false;
+
+            foreach (var addinItem in value.ItemList)
+            {
+                var childNode = new TreeViewItem
+                {
+                    Tag = addinItem
+                };
+
+                // 创建子节点的带CheckBox的Header
+                var childStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+                var childCheckBox = new CheckBox
+                {
+                    IsChecked = addinItem.Save,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(0, 0, 5, 0)
+                };
+                childCheckBox.Checked += TreeViewCheckBox_Changed;
+                childCheckBox.Unchecked += TreeViewCheckBox_Changed;
+
+                var childTextBlock = new TextBlock
+                {
+                    Text = addinItem.FullClassName,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                childStackPanel.Children.Add(childCheckBox);
+                childStackPanel.Children.Add(childTextBlock);
+                childNode.Header = childStackPanel;
+
+                node.Items.Add(childNode);
+
+                // 统计子节点状态
+                if (addinItem.Save)
+                {
+                    hasCheckedChildren = true;
+                }
+                else
+                {
+                    hasUncheckedChildren = true;
+                }
+            }
+
+            // 设置父节点CheckBox的初始状态
+            if (hasCheckedChildren && hasUncheckedChildren)
+            {
+                checkBox.IsChecked = null; // 部分选中
+            }
+            else if (hasCheckedChildren)
+            {
+                checkBox.IsChecked = true; // 全选
+            }
+            else
+            {
+                checkBox.IsChecked = false; // 全不选
+            }
+
+            RefreshAssemblyAvailability(node);
+            return node;
+        }
+
+        // 缺失文件仅禁用执行，节点仍可选择、移除和查看原位置。
+        private void RefreshAssemblyAvailability(TreeViewItem node)
+        {
+            if (node.Tag is not Addin addin) return;
+
+            var fileExists = File.Exists(addin.FilePath);
+            if (!addin.LoadedFileWriteTimeUtc.HasValue) addin.LoadedFileWriteTimeUtc = Addin.GetFileWriteTimeUtc(addin.FilePath);
+            var brushKey = fileExists ? "TextBrush" : "DisabledTextBrush";
+            var tooltip = fileExists ? null : string.Format(Properties.Resources.StatusAssemblyNotFound, addin.FilePath);
+            node.SetResourceReference(Control.ForegroundProperty, brushKey);
+            node.ToolTip = tooltip;
+            foreach (TreeViewItem child in node.Items)
+            {
+                child.SetResourceReference(Control.ForegroundProperty, brushKey);
+                child.ToolTip = tooltip;
+            }
+        }
+
         // (新增) 辅助方法：从一个UI元素向上遍历可视化树，找到其所属的 TreeViewItem
         private TreeViewItem FindTreeViewItem(DependencyObject source)
         {
@@ -1163,16 +1434,16 @@ namespace AddInManager.Wpf
             {
                 // 当右键点击父节点 (Addin) 时
                 ContextMenuRemove.IsEnabled = true;
-                ContextMenuReload.IsEnabled = File.Exists(addin.FilePath);
-                ContextMenuOpenInExplorer.IsEnabled = File.Exists(addin.FilePath);
+                ContextMenuReload.IsEnabled = !m_isReloading && File.Exists(addin.FilePath);
+                ContextMenuOpenInExplorer.IsEnabled = GetAssemblyLocation(addin.FilePath) != null;
             }
             else if (clickedItem.Tag is AddinItem addinItem)
             {
                 // 当右键点击子节点 (AddinItem) 时
-                ContextMenuRun.IsEnabled = true;
+                ContextMenuRun.IsEnabled = !m_isReloading && File.Exists(addinItem.AssemblyPath);
                 ContextMenuRemove.IsEnabled = true;
-                ContextMenuReload.IsEnabled = File.Exists(addinItem.AssemblyPath);
-                ContextMenuOpenInExplorer.IsEnabled = File.Exists(addinItem.AssemblyPath);
+                ContextMenuReload.IsEnabled = !m_isReloading && File.Exists(addinItem.AssemblyPath);
+                ContextMenuOpenInExplorer.IsEnabled = GetAssemblyLocation(addinItem.AssemblyPath) != null;
                 ContextMenuAssemblyInfo.IsEnabled = File.Exists(addinItem.AssemblyPath);
             }
         }
@@ -1205,6 +1476,7 @@ namespace AddInManager.Wpf
         // (重写) 重新加载
         private async void ContextMenuReload_Click(object sender, RoutedEventArgs e)
         {
+            if (m_isReloading) return;
             if (commandsTreeView.SelectedItem is not TreeViewItem selectedItem) return;
 
             Addin addinToReload = null;
@@ -1234,48 +1506,64 @@ namespace AddInManager.Wpf
                 return;
             }
 
-            var filePath = addinToReload.FilePath;
+            await ReloadAssemblyAsync(addinToReload.FilePath);
+        }
+
+        private async Task ReloadAssemblyAsync(string filePath, bool automatic = false)
+        {
+            if (m_isReloading) return;
             if (!File.Exists(filePath))
             {
                 ShowStatusError(string.Format(Properties.Resources.StatusReloadFileNotFound, filePath));
                 return;
             }
 
-            // 1. 从数据模型中移除
-            m_aim.AddinManager.Commands.RemoveAddIn(addinToReload);
-            m_aim.AddinManager.SaveToAimIni();
-
-            // 2. 异步重新加载该文件，避免反射操作阻塞UI
+            // 重载期间禁止执行，并在更新完成后处理关闭请求。
+            m_isReloading = true;
+            var content = Content as UIElement;
+            var wasEnabled = content?.IsEnabled ?? true;
+            if (content != null) content.IsEnabled = false;
             loadButton.IsEnabled = false;
-            ShowStatusLabel(string.Format(Properties.Resources.StatusReloading, Path.GetFileName(filePath)));
-
-            AddinType addinType;
+            runButton.IsEnabled = false;
+            if (!automatic) ShowStatusLabel(string.Format(Properties.Resources.StatusReloading, Path.GetFileName(filePath)));
             try
             {
-                addinType = await Task.Run(() => m_aim.AddinManager.LoadAddin(filePath));
-            }
-            catch (Exception ex)
-            {
-                loadButton.IsEnabled = true;
-                ShowStatusError(string.Format(Properties.Resources.StatusReloadError, ex.Message));
-                return;
+                AddinType addinType;
+                try
+                {
+                    addinType = await Task.Run(() => m_aim.AddinManager.LoadAddin(filePath));
+                }
+                catch (Exception ex)
+                {
+                    DebugTools.DebugLogger.Instance.Error(ex, $"ReloadAssembly: {filePath}");
+                    m_aim.AddinManager.SaveToAimIni();
+                    ShowStatusError(string.Format(Properties.Resources.StatusReloadError, ex.Message));
+                    return;
+                }
+
+                if (addinType == AddinType.Invalid)
+                {
+                    m_aim.AddinManager.SaveToAimIni();
+                    ShowStatusError(string.Format(Properties.Resources.StatusReloadFailed, filePath));
+                }
+                else
+                {
+                    var key = Path.GetFileName(filePath);
+                    if ((addinType & AddinType.Command) == 0) m_aim.AddinManager.Commands.AddinDict.Remove(key);
+                    if ((addinType & AddinType.Application) == 0) m_aim.AddinManager.Applications.AddinDict.Remove(key);
+                    RefreshAssemblyNode(commandsTreeView, m_aim.AddinManager.Commands, filePath);
+                    RefreshAssemblyNode(applicationsTreeView, m_aim.AddinManager.Applications, filePath);
+                    m_aim.AddinManager.SaveToAimIni();
+                    if (!automatic) ShowStatusLabel(string.Format(Properties.Resources.StatusReloadSuccess, filePath));
+                }
             }
             finally
             {
+                m_isReloading = false;
+                if (content != null) content.IsEnabled = wasEnabled;
                 loadButton.IsEnabled = true;
-            }
-
-            // 3. 刷新整个UI
-            CommandsTreeView_RefreshData();
-            ApplicationsTreeView_RefreshData();
-
-            if (addinType == AddinType.Invalid)
-            {
-                ShowStatusError(string.Format(Properties.Resources.StatusReloadFailed, filePath));
-            }
-            else
-            {
-                ShowStatusLabel(string.Format(Properties.Resources.StatusReloadSuccess, filePath));
+                if (IsLoaded && externalToolsTabControl.SelectedIndex == 0) RefreshData();
+                if (m_closeAfterReload) Close();
             }
         }
 
@@ -1295,12 +1583,14 @@ namespace AddInManager.Wpf
                 }
             }
 
-            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+            var location = GetAssemblyLocation(filePath);
+            if (location != null)
             {
                 try
                 {
-                    // /select, 会打开文件夹并选中该文件
-                    Process.Start("explorer.exe", $"/select,\"{filePath}\"");
+                    // DLL 缺失时打开仍存在的原目录。
+                    var arguments = File.Exists(location) ? $"/select,\"{location}\"" : $"\"{location}\"";
+                    Process.Start("explorer.exe", arguments);
                 }
                 catch (Exception ex)
                 {
@@ -1311,6 +1601,15 @@ namespace AddInManager.Wpf
             {
                 ShowStatusError(Properties.Resources.StatusInvalidPath);
             }
+        }
+
+        private static string GetAssemblyLocation(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath)) return null;
+            if (File.Exists(filePath)) return filePath;
+
+            var directory = Path.GetDirectoryName(filePath);
+            return Directory.Exists(directory) ? directory : null;
         }
 
         // 查看程序集信息

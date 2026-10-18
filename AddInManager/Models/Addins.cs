@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
+using AddInManager.DebugTools;
+
 using Autodesk.Revit.Attributes;
 
 namespace AddInManager.Models
@@ -73,6 +75,13 @@ namespace AddInManager.Models
             }
             catch (ReflectionTypeLoadException ex)
             {
+                // 部分类型加载失败时保留可用类型，并记录每个依赖异常。
+                DebugLogger.Instance.Error(ex, $"LoadItems: {originalAssemblyFilePath}; interface={fullName}");
+                foreach (var loaderException in ex.LoaderExceptions ?? Array.Empty<Exception>())
+                {
+                    if (loaderException == null) continue;
+                    DebugLogger.Instance.Error(loaderException, $"LoadItems dependency: {originalAssemblyFilePath}; interface={fullName}");
+                }
                 array = ex.Types;
                 if (array == null)
                 {
@@ -135,8 +144,9 @@ namespace AddInManager.Models
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    DebugLogger.Instance.Error(ex, $"LoadItems type: {type2?.FullName}; assembly={originalAssemblyFilePath}; interface={fullName}");
                 }
             }
 

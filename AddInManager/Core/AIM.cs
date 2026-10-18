@@ -59,12 +59,16 @@ namespace AddInManager.Core
                 }
 
                 var filePath = ActiveCmd.FilePath;
+                DebugLogger.Instance.RecordCommandContext(filePath, ActiveCmdItem.FullClassName);
                 DebugLogger.Instance.Info($"Run command: {ActiveCmdItem.FullClassName} ({filePath})");
                 assemLoader.HookAssemblyResolve();
                 var assembly = assemLoader.LoadAddinsToTempFolder(filePath, false);
                 if (null == assembly)
                 {
-                    DebugLogger.Instance.Error($"Assembly load failed: {filePath}");
+                    // 无界面运行失败时仍显示错误提示。
+                    message = string.Format(Properties.Resources.RunAssemblyLoadFailed, filePath);
+                    DebugLogger.Instance.Error(message);
+                    MessageBox.Show(message, Properties.Resources.WindowTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
                     result = Result.Failed;
                 }
                 else
@@ -73,12 +77,16 @@ namespace AddInManager.Core
                     var externalCommand = assembly.CreateInstance(ActiveCmdItem.FullClassName) as IExternalCommand;
                     if (externalCommand == null)
                     {
-                        DebugLogger.Instance.Error($"Can not create command instance: {ActiveCmdItem.FullClassName}");
+                        message = string.Format(Properties.Resources.RunCommandNotFound, ActiveCmdItem.FullClassName, filePath);
+                        DebugLogger.Instance.Error(message);
+                        MessageBox.Show(message, Properties.Resources.WindowTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
                         result = Result.Failed;
                     }
                     else
                     {
                         ActiveEC = externalCommand;
+                        // 进入命令前保存记录，命令异常退出时仍可快速定位。
+                        AddinManager.RecordCommandRun(filePath, ActiveCmdItem.FullClassName);
                         result = ActiveEC.Execute(data, ref message, elements);
                         DebugLogger.Instance.Info($"Command execution completed, result: {result}");
                     }

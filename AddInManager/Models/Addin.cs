@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 using AddInManager.Core;
@@ -14,6 +15,29 @@ namespace AddInManager.Models
         public bool Save { get; set; }
 
         public bool Hidden { get; set; }
+
+        public bool IsExpanded { get; set; } = true;
+
+        public DateTime? LoadedFileWriteTimeUtc { get; set; }
+
+        // JSON 时间精度为毫秒，文件时间使用相同精度避免重启后误报更新。
+        internal static DateTime? GetFileWriteTimeUtc(string filePath)
+        {
+            try
+            {
+                if (!File.Exists(filePath)) return null;
+                var time = File.GetLastWriteTimeUtc(filePath);
+                return new DateTime(time.Ticks - time.Ticks % TimeSpan.TicksPerMillisecond, DateTimeKind.Utc);
+            }
+            catch (System.IO.IOException)
+            {
+                return null;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return null;
+            }
+        }
 
         public Addin(string filePath)
         {

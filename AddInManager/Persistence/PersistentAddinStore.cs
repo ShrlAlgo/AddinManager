@@ -38,6 +38,13 @@ namespace AddInManager
         [DataMember]
         public bool Hidden { get; set; }
 
+        // 旧配置没有此字段时使用默认展开，兼容已有配置文件。
+        [DataMember(EmitDefaultValue = false)]
+        public bool? IsExpanded { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public DateTime? LoadedFileWriteTimeUtc { get; set; }
+
         [DataMember]
         public List<PersistentAddinItem> Items { get; set; } = new List<PersistentAddinItem>();
     }
@@ -59,6 +66,9 @@ namespace AddInManager
 
         [DataMember]
         public string FullClassName { get; set; }
+
+        [DataMember(EmitDefaultValue = false)]
+        public DateTime? LastRunUtc { get; set; }
 
         [DataMember]
         public string Name { get; set; }

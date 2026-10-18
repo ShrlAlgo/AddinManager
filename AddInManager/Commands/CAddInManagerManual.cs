@@ -45,6 +45,7 @@ namespace AddInManager
             }
             catch (Exception ex)
             {
+                DebugTools.DebugLogger.Instance.Error(ex, nameof(CAddInManagerManual));
                 message = ex.Message;
                 return Result.Failed;
             }

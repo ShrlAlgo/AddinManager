@@ -23,11 +23,12 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel
+            <WrapPanel
                 Grid.Row="0"
                 Margin="0,0,0,8"
                 Orientation="Horizontal">
@@ -82,17 +83,42 @@
                     Margin="16,0,0,0"
                     Content="{x:Static props:Resources.ChkAutoScroll}"
                     IsChecked="True" />
-            </StackPanel>
+                <Button
+                    x:Name="btnCopyDiagnostics"
+                    Margin="8,0,0,0"
+                    Click="BtnCopyDiagnostics_Click"
+                    Content="{x:Static props:Resources.CopyDiagnostics}"
+                    Style="{StaticResource ActionButton}" />
+            </WrapPanel>
 
-            <Border Grid.Row="1" Style="{StaticResource ContentContainer}">
+            <TextBox
+                x:Name="logSearchTextBox"
+                Grid.Row="1"
+                Margin="0,0,0,8"
+                Style="{StaticResource SearchTextBox}"
+                Tag="{x:Static props:Resources.LogSearchWatermark}"
+                TextChanged="LogSearchTextBox_TextChanged" />
+
+            <Border Grid.Row="2" Style="{StaticResource ContentContainer}">
                 <ListView
                     x:Name="logListView"
                     BorderThickness="0"
                     FontFamily="Consolas"
-                    SelectionMode="Single"
+                    SelectionMode="Extended"
                     Style="{StaticResource ModernListView}"
                     VirtualizingPanel.IsVirtualizing="True"
                     VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListView.CommandBindings>
+                        <CommandBinding Command="Copy" CanExecute="CopyLog_CanExecute" Executed="CopyLog_Executed" />
+                    </ListView.CommandBindings>
+                    <ListView.InputBindings>
+                        <KeyBinding Key="C" Modifiers="Control" Command="Copy" />
+                    </ListView.InputBindings>
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="Copy" Header="{Binding Source={x:Static ApplicationCommands.Copy}, Path=Text}" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
                     <ListView.View>
                         <GridView ColumnHeaderContainerStyle="{StaticResource ModernGridViewColumnHeader}">
                             <GridViewColumn
@@ -107,10 +133,21 @@
                                 Width="150"
                                 DisplayMemberBinding="{Binding Source}"
                                 Header="{x:Static props:Resources.ColSource}" />
-                            <GridViewColumn
-                                Width="600"
-                                DisplayMemberBinding="{Binding Message}"
-                                Header="{x:Static props:Resources.ColMessage}" />
+                            <GridViewColumn Width="600" Header="{x:Static props:Resources.ColMessage}">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBox
+                                            Padding="0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListViewItem}}"
+                                            IsReadOnly="True"
+                                            IsReadOnlyCaretVisible="True"
+                                            Style="{x:Null}"
+                                            Text="{Binding Message, Mode=OneWay}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                     <ListView.ItemContainerStyle>
@@ -130,7 +167,7 @@
 
             <TextBlock
                 x:Name="statusText"
-                Grid.Row="2"
+                Grid.Row="3"
                 Style="{StaticResource ModernStatusText}"
                 Text="{x:Static props:Resources.StatusReady}" />
         </Grid>

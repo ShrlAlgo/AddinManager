@@ -199,7 +199,7 @@
     <value>説明：</value>
   </data>
   <data name="LabelNotes" xml:space="preserve">
-    <value>備考：</value>
+    <value>ステータス：</value>
   </data>
   <data name="BtnRun" xml:space="preserve">
     <value>実行</value>
@@ -550,5 +550,39 @@
   </data>
   <data name="UpdateExitTimedOut" xml:space="preserve">
     <value>Revit の終了待機がタイムアウトしたため、更新をキャンセルしました。</value>
+  </data>
+  <data name="RunAssemblyLoadFailed" xml:space="preserve">
+    <value>アドインのアセンブリを読み込めません：{0}。DLL ファイルの存在と読み込み可否を確認し、Manual モードで再読み込みするかコマンドを選択してください。</value>
+  </data>
+  <data name="RunCommandNotFound" xml:space="preserve">
+    <value>コマンドが見つからないか、作成できません：{0}。
+アセンブリ：{1}
+削除、名前変更、または IExternalCommand の実装変更が考えられます。Manual モードで再読み込みし、コマンドを選択してください。</value>
+  </data>
+  <data name="LogSearchWatermark" xml:space="preserve">
+    <value>ログ、例外の種類、アセンブリを検索…</value>
+  </data>
+  <data name="RecentCommands" xml:space="preserve">
+    <value>最近実行したコマンド</value>
+  </data>
+  <data name="NoRecentCommands" xml:space="preserve">
+    <value>実行履歴はありません</value>
+  </data>
+  <data name="CopyDiagnostics" xml:space="preserve">
+    <value>診断情報をコピー</value>
+  </data>
+  <data name="DiagnosticReportFormat" xml:space="preserve">
+    <value>生成日時：{0}
+AddInManager：{1}
+Revit：{2}
+.NET：{3}
+64 ビットプロセス：{4}
+最後のコマンド：{5}
+DLL：{6}
+DLL 最終更新日時（UTC）：{7}
+ログファイル：{8}
+
+最新 200 件のログ：
+{9}</value>
   </data>
 </root>

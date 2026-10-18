@@ -199,7 +199,7 @@
     <value>Description:</value>
   </data>
   <data name="LabelNotes" xml:space="preserve">
-    <value>Notes:</value>
+    <value>Status:</value>
   </data>
   <data name="BtnRun" xml:space="preserve">
     <value>Run</value>
@@ -550,5 +550,39 @@ Log: {1}</value>
   </data>
   <data name="UpdateExitTimedOut" xml:space="preserve">
     <value>Timed out waiting for Revit to exit. The update was cancelled.</value>
+  </data>
+  <data name="RunAssemblyLoadFailed" xml:space="preserve">
+    <value>Unable to load the add-in assembly: {0}. Check that the DLL exists and can be loaded, then reload or select a command in Manual mode.</value>
+  </data>
+  <data name="RunCommandNotFound" xml:space="preserve">
+    <value>Unable to find or create command: {0}.
+Assembly: {1}
+The command may have been removed, renamed, or no longer implement IExternalCommand. Reload and select a command in Manual mode.</value>
+  </data>
+  <data name="LogSearchWatermark" xml:space="preserve">
+    <value>Search logs, exception types or assemblies…</value>
+  </data>
+  <data name="RecentCommands" xml:space="preserve">
+    <value>Recent commands</value>
+  </data>
+  <data name="NoRecentCommands" xml:space="preserve">
+    <value>No recent commands</value>
+  </data>
+  <data name="CopyDiagnostics" xml:space="preserve">
+    <value>Copy diagnostics</value>
+  </data>
+  <data name="DiagnosticReportFormat" xml:space="preserve">
+    <value>Generated: {0}
+AddInManager: {1}
+Revit: {2}
+.NET: {3}
+64-bit process: {4}
+Last command: {5}
+DLL: {6}
+DLL last write (UTC): {7}
+Log file: {8}
+
+Last 200 log entries:
+{9}</value>
   </data>
 </root>

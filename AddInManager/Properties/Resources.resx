@@ -206,7 +206,7 @@
     <value>描述：</value>
   </data>
   <data name="LabelNotes" xml:space="preserve">
-    <value>备注：</value>
+    <value>状态信息：</value>
   </data>
   <data name="BtnRun" xml:space="preserve">
     <value>运行</value>
@@ -557,5 +557,39 @@
   </data>
   <data name="UpdateExitTimedOut" xml:space="preserve">
     <value>等待 Revit 退出超时，已取消更新。</value>
+  </data>
+  <data name="RunAssemblyLoadFailed" xml:space="preserve">
+    <value>无法加载插件程序集：{0}。请确认 DLL 文件存在且可加载，再通过 Manual 模式重新加载或选择命令。</value>
+  </data>
+  <data name="RunCommandNotFound" xml:space="preserve">
+    <value>无法找到或创建命令：{0}。
+程序集：{1}
+命令可能已被删除、重命名或不再实现 IExternalCommand，请通过 Manual 模式重新加载并选择命令。</value>
+  </data>
+  <data name="LogSearchWatermark" xml:space="preserve">
+    <value>搜索日志、异常类型或程序集…</value>
+  </data>
+  <data name="RecentCommands" xml:space="preserve">
+    <value>最近运行</value>
+  </data>
+  <data name="NoRecentCommands" xml:space="preserve">
+    <value>暂无运行记录</value>
+  </data>
+  <data name="CopyDiagnostics" xml:space="preserve">
+    <value>复制诊断信息</value>
+  </data>
+  <data name="DiagnosticReportFormat" xml:space="preserve">
+    <value>诊断时间：{0}
+AddInManager：{1}
+Revit：{2}
+.NET：{3}
+64 位进程：{4}
+最近命令：{5}
+DLL：{6}
+DLL 最近写入时间（UTC）：{7}
+日志文件：{8}
+
+最近 200 条日志：
+{9}</value>
   </data>
 </root>

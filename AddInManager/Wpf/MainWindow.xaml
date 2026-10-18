@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="AddInManager.Wpf.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -79,6 +79,14 @@
                             </StackPanel>
                             <!--  工具栏  -->
                             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                <Button
+                                    x:Name="recentCommandsButton"
+                                    Margin="2"
+                                    Click="RecentCommandsButton_Click"
+                                    Style="{StaticResource ToolbarButton}"
+                                    ToolTip="{x:Static props:Resources.RecentCommands}">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE81C;" />
+                                </Button>
 
                                 <UniformGrid Rows="1">
                                     <Button
@@ -327,57 +335,28 @@
             </TabControl>
         </Border>
 
-        <!--  输入区域  -->
-        <Grid Grid.Row="1" Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <!--  Notes  -->
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+            <TextBlock Text="{x:Static props:Resources.LabelNotes}" />
+            <TextBox x:Name="notesTextBox" IsReadOnly="True" />
+        </StackPanel>
 
-            <!--  Name  -->
-            <StackPanel Grid.Row="0">
-                <TextBlock Text="{x:Static props:Resources.LabelName}" />
-                <TextBox x:Name="nametextBox" LostFocus="NameTextBox_LostFocus" />
-            </StackPanel>
-
-            <!--  Description  -->
-            <StackPanel Grid.Row="1">
-                <TextBlock Text="{x:Static props:Resources.LabelDescription}" />
-                <TextBox
-                    x:Name="descriptionTextBox"
-                    AcceptsReturn="True"
-                    LostFocus="DescriptionTextBox_LostFocus"
-                    TextWrapping="Wrap"
-                    VerticalScrollBarVisibility="Auto" />
-            </StackPanel>
-
-            <!--  Notes  -->
-            <StackPanel Grid.Row="2">
-                <TextBlock Text="{x:Static props:Resources.LabelNotes}" />
-                <TextBox x:Name="notesTextBox" IsReadOnly="True" />
-            </StackPanel>
-        </Grid>
-
-        <!--  Right Side Buttons  -->
-        <UniformGrid
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="5"
-            Columns="1">
-            <Button
-                x:Name="runButton"
-                Margin="5"
-                Click="RunButton_Click"
-                Style="{StaticResource ActionButton}"
-                Tag="Primary">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" />
-                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnRun}" />
-                </StackPanel>
-            </Button>
+        <!--  左侧管理程序集，右侧保存与运行。  -->
+        <Grid
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <Button
                 x:Name="loadButton"
+                Grid.Column="0"
+                MinWidth="80"
                 Margin="5"
                 Click="LoadButton_Click"
                 Style="{StaticResource ActionButton}"
@@ -389,6 +368,8 @@
             </Button>
             <Button
                 x:Name="removeButton"
+                Grid.Column="1"
+                MinWidth="80"
                 Margin="5"
                 Click="RemoveButton_Click"
                 LostFocus="RemoveButton_LostFocus"
@@ -400,16 +381,51 @@
                     <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnRemove}" />
                 </StackPanel>
             </Button>
-            <Button
+            <ToggleButton
                 x:Name="saveSplitButton"
+                Grid.Column="3"
+                MinWidth="96"
                 Margin="5"
                 Click="SaveSplitButton_Click">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Background" Value="{StaticResource SecondaryBrush}" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="Padding" Value="12,4" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="4">
+                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource SecondaryHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="{StaticResource SecondaryPressedBrush}" />
+                                <Setter Property="IsHitTestVisible" Value="False" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="{StaticResource DisabledBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource DisabledTextBrush}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEA35;" />
                     <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnSave}" />
+                    <TextBlock Margin="8,0,0,0" FontFamily="Segoe MDL2 Assets" FontSize="10" Text="&#xE70D;" />
                 </StackPanel>
-                <Button.ContextMenu>
-                    <ContextMenu x:Name="saveContextMenu">
+                <ToggleButton.ContextMenu>
+                    <ContextMenu x:Name="saveContextMenu" Placement="Bottom" Closed="SaveContextMenu_Closed">
                         <MenuItem Click="SaveToAddinMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToAddins}">
                             <MenuItem.Icon>
                                 <TextBlock
@@ -428,8 +444,21 @@
                             </MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>
-                </Button.ContextMenu>
+                </ToggleButton.ContextMenu>
+            </ToggleButton>
+            <Button
+                x:Name="runButton"
+                Grid.Column="4"
+                MinWidth="96"
+                Margin="5"
+                Click="RunButton_Click"
+                Style="{StaticResource ActionButton}"
+                Tag="Primary">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" />
+                    <TextBlock Margin="5,0,0,0" Text="{x:Static props:Resources.BtnRun}" />
+                </StackPanel>
             </Button>
-        </UniformGrid>
+        </Grid>
     </Grid>
 </Window>

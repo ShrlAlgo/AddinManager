@@ -18,6 +18,7 @@ namespace AddInManager.Commands
             }
             catch (Exception ex)
             {
+                DebugTools.DebugLogger.Instance.Error(ex, nameof(CDebugLogViewer));
                 message = ex.Message;
                 return Result.Failed;
             }
