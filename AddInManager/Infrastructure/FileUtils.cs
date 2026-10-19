@@ -154,7 +154,8 @@ namespace AddInManager
                             CopyFileToFolder(sourceFilePath, destFolder, true, allCopiedFiles);
                             break;
                         default:
-                            return null;
+                            // 用户取消复制时终止本次运行，不按程序集加载失败处理。
+                            throw new System.OperationCanceledException();
                     }
                 }
                 else

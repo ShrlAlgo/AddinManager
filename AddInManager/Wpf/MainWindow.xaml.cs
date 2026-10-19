@@ -201,9 +201,10 @@ namespace AddInManager.Wpf
             menu.IsOpen = true;
         }
 
-        // 最近运行只定位命令，不执行；定位前清除可能隐藏该命令的搜索条件。
+        // 点击最近记录即运行；按当前节点匹配，避免重载后仍执行历史对象。
         private void RecentCommand_Click(object sender, RoutedEventArgs e)
         {
+            if (m_isReloading) return;
             if (sender is not MenuItem { Tag: AddinItem command }) return;
             foreach (TreeViewItem parent in commandsTreeView.Items)
             {
@@ -218,6 +219,9 @@ namespace AddInManager.Wpf
                     child.IsSelected = true;
                     child.BringIntoView();
                     child.Focus();
+                    m_aim.ActiveCmd = addin;
+                    m_aim.ActiveCmdItem = item;
+                    Run();
                     return;
                 }
             }
@@ -1114,8 +1118,29 @@ namespace AddInManager.Wpf
                 MessageBox.Show(Properties.Resources.NoItemsSelected, Properties.Resources.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
-            m_aim.AddinManager.SaveToLocal(typeToSave);
-            Close();
+            var selectedAddins = (typeToSave == AddinType.Command ? m_aim.AddinManager.Commands.AddinDict.Values : m_aim.AddinManager.Applications.AddinDict.Values)
+                .Where(a => a.Save && a.ItemList.Any(i => i.Save)).ToList();
+            var dialog = new SaveFileDialog
+            {
+                Title = Properties.Resources.MenuSaveToLocal,
+                Filter = Properties.Resources.AddinFileDialogFilter,
+                DefaultExt = ".addin",
+                AddExtension = true,
+                OverwritePrompt = true,
+                InitialDirectory = Path.GetDirectoryName(selectedAddins[0].FilePath),
+                FileName = selectedAddins.Count == 1 ? Path.GetFileNameWithoutExtension(selectedAddins[0].FilePath) + ".addin" : "CombinedAddins.addin"
+            };
+            if (dialog.ShowDialog(this) != true) return;
+
+            try
+            {
+                m_aim.AddinManager.SaveToLocal(typeToSave, dialog.FileName);
+                Close();
+            }
+            catch (Exception ex)
+            {
+                ShowStatusError(ex.Message);
+            }
         }
 
         private void ShowStatusLabel(string msg)

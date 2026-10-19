@@ -899,7 +899,7 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <!--  定义图标列，宽度固定为30  -->
-                                <ColumnDefinition Width="30" SharedSizeGroup="Icon" />
+                                <ColumnDefinition x:Name="IconColumn" Width="30" SharedSizeGroup="Icon" />
                                 <!--  定义标题列，自动填充剩余空间  -->
                                 <ColumnDefinition Width="*" />
                                 <!--  定义快捷键列，宽度自动  -->
@@ -923,6 +923,19 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!--  保存菜单使用紧凑布局，放大图标并减少周围留白。  -->
+                        <Trigger Property="Tag" Value="Compact">
+                            <Setter TargetName="IconColumn" Property="Width" Value="24" />
+                            <Setter TargetName="Icon" Property="Margin" Value="3,0" />
+                            <Setter TargetName="Border" Property="Margin" Value="2" />
+                        </Trigger>
+                        <!--  无图标时收起预留列，仅保留文字内边距。  -->
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="IconColumn" Property="Width" Value="0" />
+                            <Setter TargetName="IconColumn" Property="SharedSizeGroup" Value="{x:Null}" />
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="HeaderHost" Property="Margin" Value="8,0" />
+                        </Trigger>
                         <!--  鼠标悬停时的高亮效果  -->
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="Border" Property="Background" Value="{StaticResource LightBackgroundBrush}" />

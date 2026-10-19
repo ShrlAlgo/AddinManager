@@ -585,4 +585,7 @@ DLL 最終更新日時（UTC）：{7}
 最新 200 件のログ：
 {9}</value>
   </data>
+  <data name="AddinFileDialogFilter" xml:space="preserve">
+    <value>Revit アドインファイル (*.addin)|*.addin</value>
+  </data>
 </root>

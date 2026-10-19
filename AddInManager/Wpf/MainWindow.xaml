@@ -426,20 +426,20 @@
                 </StackPanel>
                 <ToggleButton.ContextMenu>
                     <ContextMenu x:Name="saveContextMenu" Placement="Bottom" Closed="SaveContextMenu_Closed">
-                        <MenuItem Click="SaveToAddinMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToAddins}">
+                        <MenuItem Height="28" Tag="Compact" Click="SaveToAddinMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToAddins}">
                             <MenuItem.Icon>
                                 <TextBlock
                                     FontFamily="Segoe MDL2 Assets"
-                                    FontSize="14"
+                                    FontSize="18"
                                     Text="&#xE78C;" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <Separator />
-                        <MenuItem Click="SaveLocalMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToLocal}">
+                        <MenuItem Height="28" Tag="Compact" Click="SaveLocalMenuItem_Click" Header="{x:Static props:Resources.MenuSaveToLocal}">
                             <MenuItem.Icon>
                                 <TextBlock
                                     FontFamily="Segoe MDL2 Assets"
-                                    FontSize="14"
+                                    FontSize="18"
                                     Text="&#xE792;" />
                             </MenuItem.Icon>
                         </MenuItem>

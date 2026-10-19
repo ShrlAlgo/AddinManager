@@ -585,4 +585,7 @@ Log file: {8}
 Last 200 log entries:
 {9}</value>
   </data>
+  <data name="AddinFileDialogFilter" xml:space="preserve">
+    <value>Revit add-in files (*.addin)|*.addin</value>
+  </data>
 </root>

@@ -92,6 +92,12 @@ namespace AddInManager.Core
                     }
                 }
             }
+            catch (System.OperationCanceledException)
+            {
+                message = string.Empty;
+                DebugLogger.Instance.Info("Run command cancelled by user.");
+                result = Result.Cancelled;
+            }
             catch (Exception ex)
             {
                 DebugLogger.Instance.Error(ex, "RunActiveCommand");

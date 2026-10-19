@@ -592,4 +592,7 @@ DLL 最近写入时间（UTC）：{7}
 最近 200 条日志：
 {9}</value>
   </data>
+  <data name="AddinFileDialogFilter" xml:space="preserve">
+    <value>Revit 加载项文件 (*.addin)|*.addin</value>
+  </data>
 </root>

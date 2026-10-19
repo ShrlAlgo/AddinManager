@@ -119,9 +119,9 @@ namespace AddInManager.Persistence
             return addinType;
         }
 
-        public void SaveToLocal(AddinType addinTypeToSave)
+        public void SaveToLocal(AddinType addinTypeToSave, string filePath)
         {
-            SaveToLocalManifest(addinTypeToSave);
+            SaveToLocalManifest(addinTypeToSave, filePath);
         }
 
         public void SaveToAimIni()
@@ -219,41 +219,19 @@ namespace AddInManager.Persistence
             return addinFilePath;
         }
 
-        public void SaveToLocalManifest(AddinType addinTypeToSave)
+        public void SaveToLocalManifest(AddinType addinTypeToSave, string filePath)
         {
-            if (addinTypeToSave == AddinType.Command)
-            {
-                foreach (var cmdKeyValuePair in Commands.AddinDict.Where(kv => kv.Value.Save))
-                {
-                    var value = cmdKeyValuePair.Value;
-                    var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(value.FilePath);
-                    var directoryName = Path.GetDirectoryName(value.FilePath);
-                    var text = Path.Combine(directoryName, $"{fileNameWithoutExtension}.addin");
-                    var manifestFile = new ManifestFile(true);
-                    foreach (var addinItem in value.ItemList.Where(i => i.Save))
-                    {
-                        manifestFile.Commands.Add(addinItem);
-                    }
-                    manifestFile.SaveAs(text);
-                }
-            }
+            if (addinTypeToSave != AddinType.Command && addinTypeToSave != AddinType.Application) return;
 
-            if (addinTypeToSave == AddinType.Application)
+            // 用户可另选目录；合并选中项并写入 DLL 完整路径，避免清单移位后无法加载。
+            var manifestFile = new ManifestFile(false);
+            var addins = addinTypeToSave == AddinType.Command ? Commands.AddinDict.Values : Applications.AddinDict.Values;
+            var items = addinTypeToSave == AddinType.Command ? manifestFile.Commands : manifestFile.Applications;
+            foreach (var addin in addins.Where(a => a.Save))
             {
-                foreach (var appKeyValuePair in Applications.AddinDict.Where(kv => kv.Value.Save))
-                {
-                    var value2 = appKeyValuePair.Value;
-                    var fileNameWithoutExtension2 = Path.GetFileNameWithoutExtension(value2.FilePath);
-                    var directoryName2 = Path.GetDirectoryName(value2.FilePath);
-                    var text2 = Path.Combine(directoryName2, $"{fileNameWithoutExtension2}.addin");
-                    var manifestFile2 = new ManifestFile(true);
-                    foreach (var addinItem3 in value2.ItemList.Where(i => i.Save))
-                    {
-                        manifestFile2.Applications.Add(addinItem3);
-                    }
-                    manifestFile2.SaveAs(text2);
-                }
+                items.AddRange(addin.ItemList.Where(i => i.Save));
             }
+            if (items.Count > 0) manifestFile.SaveAs(filePath);
         }
 
         private static string GetProperFilePath(string folder, string fileNameWithoutExt, string ext)

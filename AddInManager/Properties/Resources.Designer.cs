@@ -169,6 +169,15 @@ namespace AddInManager.Properties {
         }
 
         /// <summary>
+        ///   查找类似 Revit 加载项文件 (*.addin)|*.addin 的本地化字符串。
+        /// </summary>
+        public static string AddinFileDialogFilter {
+            get {
+                return ResourceManager.GetString("AddinFileDialogFilter", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   查找类似 程序集文件 (*.dll;*.exe;*.mcl)|*.dll;*.exe;*.mcl|所有文件 (*.*)|*.* 的本地化字符串。
         /// </summary>
         public static string AssemblyFileDialogFilter {
