@@ -1245,7 +1245,10 @@ namespace AddInManager.Wpf
                     if (oldNode != null)
                     {
                         node.Visibility = oldNode.Visibility;
-                        tree.Items[tree.Items.IndexOf(oldNode)] = node;
+                        var index = tree.Items.IndexOf(oldNode);
+                        // 删除后原位插入，避免虚拟化列表直接替换节点时沿用旧布局。
+                        tree.Items.RemoveAt(index);
+                        tree.Items.Insert(index, node);
                     }
                     else
                     {

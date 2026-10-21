@@ -4,7 +4,7 @@
     <RootNamespace>AddInManager</RootNamespace>
     <AssemblyName>AddInManager</AssemblyName>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
-    <Version Condition="'$(Version)' == ''">4.1.5</Version>
+    <Version Condition="'$(Version)' == ''">4.1.6</Version>
     <LangVersion>preview</LangVersion>
     <UseWPF>True</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
