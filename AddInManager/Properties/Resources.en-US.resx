@@ -319,10 +319,10 @@
     <value>Refresh Analysis</value>
   </data>
   <data name="DependencyHelpText" xml:space="preserve">
-    <value>Select an addin on the left to view its referenced assemblies.</value>
+    <value>Select a plugin to view its declared assembly references. Running the command is not required.</value>
   </data>
   <data name="DependencyLoadedPlugins" xml:space="preserve">
-    <value>Loaded Addins</value>
+    <value>Plugins</value>
   </data>
   <data name="DependencyReferencedAssemblies" xml:space="preserve">
     <value>Referenced Assemblies</value>
@@ -587,5 +587,15 @@ Last 200 log entries:
   </data>
   <data name="AddinFileDialogFilter" xml:space="preserve">
     <value>Revit add-in files (*.addin)|*.addin</value>
+  </data>
+  <data name="ReuseUnchangedAssemblies" xml:space="preserve">
+    <value>Reuse assemblies</value>
+  </data>
+  <data name="ReuseUnchangedAssembliesToolTip" xml:space="preserve">
+    <value>Commands only: reuse assemblies when the main DLL is unchanged. Static state is retained.
+After updating dependencies or resources, uncheck this option and run once.</value>
+  </data>
+  <data name="DependencyAnalysisFailed" xml:space="preserve">
+    <value>Dependency analysis failed: {0}</value>
   </data>
 </root>

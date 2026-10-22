@@ -61,6 +61,7 @@ namespace AddInManager.Core
                 var filePath = ActiveCmd.FilePath;
                 DebugLogger.Instance.RecordCommandContext(filePath, ActiveCmdItem.FullClassName);
                 DebugLogger.Instance.Info($"Run command: {ActiveCmdItem.FullClassName} ({filePath})");
+                assemLoader = AssemLoader.GetExecutionLoader(filePath, AddinManager.ReuseUnchangedAssemblies);
                 assemLoader.HookAssemblyResolve();
                 var assembly = assemLoader.LoadAddinsToTempFolder(filePath, false);
                 if (null == assembly)

@@ -430,6 +430,15 @@ namespace AddInManager.Properties {
         }
         
         /// <summary>
+        ///   查找类似 依赖分析失败：{0} 的本地化字符串。
+        /// </summary>
+        public static string DependencyAnalysisFailed {
+            get {
+                return ResourceManager.GetString("DependencyAnalysisFailed", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   查找类似 共分析 {0} 个插件 的本地化字符串。
         /// </summary>
         public static string DependencyAnalyzed {
@@ -448,7 +457,7 @@ namespace AddInManager.Properties {
         }
         
         /// <summary>
-        ///   查找类似 选择左侧插件查看其引用的程序集列表。 的本地化字符串。
+        ///   查找类似 选择插件查看 DLL 声明的直接引用，无需先运行命令。 的本地化字符串。
         /// </summary>
         public static string DependencyHelpText {
             get {
@@ -457,7 +466,7 @@ namespace AddInManager.Properties {
         }
         
         /// <summary>
-        ///   查找类似 已加载的插件 的本地化字符串。
+        ///   查找类似 插件列表 的本地化字符串。
         /// </summary>
         public static string DependencyLoadedPlugins {
             get {
@@ -870,6 +879,24 @@ namespace AddInManager.Properties {
         public static string NoItemsSelected {
             get {
                 return ResourceManager.GetString("NoItemsSelected", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 复用程序集 的本地化字符串。
+        /// </summary>
+        public static string ReuseUnchangedAssemblies {
+            get {
+                return ResourceManager.GetString("ReuseUnchangedAssemblies", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找入口 DLL 未变化时复用程序集的说明。
+        /// </summary>
+        public static string ReuseUnchangedAssembliesToolTip {
+            get {
+                return ResourceManager.GetString("ReuseUnchangedAssembliesToolTip", resourceCulture);
             }
         }
         

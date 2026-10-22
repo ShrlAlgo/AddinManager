@@ -35,6 +35,7 @@ namespace AddInManager.Wpf
             }
         }
         public List<string> ReferencedAssemblies => _node.ReferencedAssemblies;
+        public string AnalysisError => _node.AnalysisError;
     }
 
     public partial class DependencyGraphWindow : Window
@@ -59,6 +60,7 @@ namespace AddInManager.Wpf
             addinListView.Items.Clear();
             depsListView.Items.Clear();
             filePathText.Text = string.Empty;
+            detailHeader.Text = Properties.Resources.DependencyReferencedAssemblies;
 
             var nodes = _analyzer.Analyze(_aim.AddinManager);
 
@@ -73,8 +75,11 @@ namespace AddInManager.Wpf
         {
             if (addinListView.SelectedItem is DependencyNodeViewModel vm)
             {
-                detailHeader.Text = string.Format(Properties.Resources.DependencyDetailHeader, vm.Name, vm.ReferencedAssemblies.Count);
+                detailHeader.Text = string.IsNullOrEmpty(vm.AnalysisError)
+                    ? string.Format(Properties.Resources.DependencyDetailHeader, vm.Name, vm.ReferencedAssemblies.Count)
+                    : string.Format(Properties.Resources.DependencyAnalysisFailed, vm.Name);
                 filePathText.Text = vm.FilePath;
+                statusText.Text = string.IsNullOrEmpty(vm.AnalysisError) ? Properties.Resources.DependencyReady : vm.AnalysisError;
 
                 depsListView.Items.Clear();
                 foreach (var dep in vm.ReferencedAssemblies)

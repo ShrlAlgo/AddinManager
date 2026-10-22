@@ -23,6 +23,8 @@ namespace AddInManager.Persistence
 
         public int CmdCount => Commands.Count;
 
+        public bool ReuseUnchangedAssemblies { get; set; }
+
         public AddinManager()
         {
             Commands = new AddinsCommand();
@@ -47,6 +49,7 @@ namespace AddInManager.Persistence
 
         public void RemoveAddin(Addin addin)
         {
+            AssemLoader.InvalidateExecutionCache(addin.FilePath);
             if (!Commands.RemoveAddIn(addin))
             {
                 Applications.RemoveAddIn(addin);
@@ -259,6 +262,8 @@ namespace AddInManager.Persistence
                     var obj = ser.ReadObject(fs) as PersistentAddinStore;
                     if (obj == null) return false;
 
+                    ReuseUnchangedAssemblies = obj.ReuseUnchangedAssemblies;
+
 
                     // reset internal dictionaries
                     Commands.AddinDict.Clear();
@@ -333,6 +338,7 @@ namespace AddInManager.Persistence
                 {
                     FormatVersion = 1,
                     RevitVersion = App.RevitVersion,
+                    ReuseUnchangedAssemblies = ReuseUnchangedAssemblies,
                     LastSaved = DateTime.Now
                 };
 

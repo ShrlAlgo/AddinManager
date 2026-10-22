@@ -319,10 +319,10 @@
     <value>分析を更新</value>
   </data>
   <data name="DependencyHelpText" xml:space="preserve">
-    <value>左側のアドインを選択して、参照されているアセンブリを表示します。</value>
+    <value>プラグインを選択して DLL の直接参照を表示します。コマンドの実行は不要です。</value>
   </data>
   <data name="DependencyLoadedPlugins" xml:space="preserve">
-    <value>読み込まれたアドイン</value>
+    <value>プラグイン一覧</value>
   </data>
   <data name="DependencyReferencedAssemblies" xml:space="preserve">
     <value>参照されたアセンブリ</value>
@@ -587,5 +587,15 @@ DLL 最終更新日時（UTC）：{7}
   </data>
   <data name="AddinFileDialogFilter" xml:space="preserve">
     <value>Revit アドインファイル (*.addin)|*.addin</value>
+  </data>
+  <data name="ReuseUnchangedAssemblies" xml:space="preserve">
+    <value>アセンブリ再利用</value>
+  </data>
+  <data name="ReuseUnchangedAssembliesToolTip" xml:space="preserve">
+    <value>コマンドのみ：メイン DLL が未更新なら再利用し、静的状態を保持します。
+依存 DLL やリソースの更新後は、チェックを外して一度実行してください。</value>
+  </data>
+  <data name="DependencyAnalysisFailed" xml:space="preserve">
+    <value>依存関係の解析に失敗：{0}</value>
   </data>
 </root>

@@ -54,6 +54,7 @@ namespace AddInManager.Wpf
             InitializeLanguageSelector();
             m_isLanguageSelectorInitializing = false;
             m_aim = aim;
+            reuseAssembliesCheckBox.IsChecked = m_aim.AddinManager.ReuseUnchangedAssemblies;
             Loaded += MainWindow_Loaded;
             Activated += MainWindow_Activated;
             m_allCommandItems = new List<TreeViewItem>();
@@ -850,6 +851,12 @@ namespace AddInManager.Wpf
             return item.Items.Count > 0;
         }
 
+        private void ReuseAssembliesCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            m_aim.AddinManager.ReuseUnchangedAssemblies = reuseAssembliesCheckBox.IsChecked == true;
+            m_aim.AddinManager.SaveToAimIni();
+        }
+
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
             Run();
@@ -1553,7 +1560,11 @@ namespace AddInManager.Wpf
             if (content != null) content.IsEnabled = false;
             loadButton.IsEnabled = false;
             runButton.IsEnabled = false;
-            if (!automatic) ShowStatusLabel(string.Format(Properties.Resources.StatusReloading, Path.GetFileName(filePath)));
+            if (!automatic)
+            {
+                AssemLoader.InvalidateExecutionCache(filePath);
+                ShowStatusLabel(string.Format(Properties.Resources.StatusReloading, Path.GetFileName(filePath)));
+            }
             try
             {
                 AddinType addinType;

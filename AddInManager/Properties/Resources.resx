@@ -326,10 +326,10 @@
     <value>刷新分析</value>
   </data>
   <data name="DependencyHelpText" xml:space="preserve">
-    <value>选择左侧插件查看其引用的程序集列表。</value>
+    <value>选择插件查看 DLL 声明的直接引用，无需先运行命令。</value>
   </data>
   <data name="DependencyLoadedPlugins" xml:space="preserve">
-    <value>已加载的插件</value>
+    <value>插件列表</value>
   </data>
   <data name="DependencyReferencedAssemblies" xml:space="preserve">
     <value>引用的程序集</value>
@@ -594,5 +594,15 @@ DLL 最近写入时间（UTC）：{7}
   </data>
   <data name="AddinFileDialogFilter" xml:space="preserve">
     <value>Revit 加载项文件 (*.addin)|*.addin</value>
+  </data>
+  <data name="ReuseUnchangedAssemblies" xml:space="preserve">
+    <value>复用程序集</value>
+  </data>
+  <data name="ReuseUnchangedAssembliesToolTip" xml:space="preserve">
+    <value>仅命令：入口 DLL 未更新时复用程序集，保留静态状态。
+更新依赖或资源时，需取消勾选运行一次。</value>
+  </data>
+  <data name="DependencyAnalysisFailed" xml:space="preserve">
+    <value>依赖分析失败：{0}</value>
   </data>
 </root>

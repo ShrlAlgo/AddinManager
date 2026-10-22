@@ -19,6 +19,9 @@ namespace AddInManager
         [DataMember]
         public DateTime LastSaved { get; set; }
 
+        [DataMember(EmitDefaultValue = false)]
+        public bool ReuseUnchangedAssemblies { get; set; }
+
         [DataMember]
         public List<PersistentAddin> Commands { get; set; } = new List<PersistentAddin>();
 

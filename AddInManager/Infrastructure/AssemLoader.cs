@@ -19,6 +19,12 @@ namespace AddInManager
         private List<string> m_refedFolders;
         private Dictionary<string, DateTime> m_copiedFiles;
         private bool m_parsingOnly;
+        private static readonly Dictionary<string, AssemLoader> s_executionLoaders =
+            new Dictionary<string, AssemLoader>(StringComparer.OrdinalIgnoreCase);
+        private bool m_reuseUnchanged;
+        private DateTime m_sourceWriteTimeUtc;
+        private long m_sourceLength;
+        private Assembly m_executionAssembly;
 
         public static string m_resolvedAssemPath = string.Empty;
 
@@ -27,6 +33,34 @@ namespace AddInManager
             TempFolder = string.Empty;
             m_refedFolders = new List<string>();
             m_copiedFiles = new Dictionary<string, DateTime>();
+        }
+
+        // 执行缓存仅保留每个插件的最新副本；关闭选项后恢复每次重新加载。
+        public static AssemLoader GetExecutionLoader(string filePath, bool reuseUnchanged)
+        {
+            if (!reuseUnchanged)
+            {
+                s_executionLoaders.Clear();
+                return new AssemLoader();
+            }
+
+            if (s_executionLoaders.TryGetValue(filePath, out var loader) && loader.CanReuse(filePath)) return loader;
+            s_executionLoaders.Remove(filePath);
+            return new AssemLoader { m_reuseUnchanged = true };
+        }
+
+        // 手动重载或移除插件时废弃对应缓存，下一次执行重新复制并加载。
+        internal static void InvalidateExecutionCache(string filePath)
+        {
+            s_executionLoaders.Remove(filePath);
+        }
+
+        // 仅检查入口 DLL 的时间和大小，不扫描依赖及资源目录。
+        private bool CanReuse(string filePath)
+        {
+            if (m_executionAssembly == null || !File.Exists(m_executionAssembly.Location)) return false;
+            var file = new FileInfo(filePath);
+            return file.Exists && file.LastWriteTimeUtc == m_sourceWriteTimeUtc && file.Length == m_sourceLength;
         }
 
         // ... CopyGeneratedFilesBack 保持不变 ...
@@ -45,7 +79,11 @@ namespace AddInManager
                     {
                         var text2 = text.Remove(0, TempFolder.Length);
                         var text3 = OriginalFolder + text2;
-                        FileUtils.CopyFile(text, text3);
+                        if (FileUtils.CopyFile(text, text3))
+                        {
+                            // 回写成功后同步临时文件时间，避免复用时反复回写。
+                            m_copiedFiles[text] = fileInfo.LastWriteTime;
+                        }
                     }
                 }
                 // 新生成的文件不建议盲目拷回，可能会污染源目录，视需求而定
@@ -69,9 +107,22 @@ namespace AddInManager
                 DebugLogger.Instance.Warning($"AssemLoader: Invalid file path: {originalFilePath}");
                 return null;
             }
+            if (!parsingOnly && m_executionAssembly != null)
+            {
+                DebugLogger.Instance.Info($"AssemLoader: Reusing unchanged assembly: {Path.GetFileName(originalFilePath)}");
+                return m_executionAssembly;
+            }
             DebugLogger.Instance.Info($"AssemLoader: Loading {System.IO.Path.GetFileName(originalFilePath)} (Parsing only: {parsingOnly})");
             m_parsingOnly = parsingOnly;
             OriginalFolder = Path.GetDirectoryName(originalFilePath);
+
+            if (!parsingOnly && m_reuseUnchanged)
+            {
+                // 加载前记录，编译发生在复制期间时也会在下次执行中使缓存失效。
+                var sourceFile = new FileInfo(originalFilePath);
+                m_sourceWriteTimeUtc = sourceFile.LastWriteTimeUtc;
+                m_sourceLength = sourceFile.Length;
+            }
 
             var stringBuilder = new StringBuilder(Path.GetFileNameWithoutExtension(originalFilePath));
             stringBuilder.Append(parsingOnly ? "-Parsing-" : "-Executing-");
@@ -87,6 +138,11 @@ namespace AddInManager
             {
                 DebugLogger.Instance.Warning($"AssemLoader: Assembly does not reference Revit API or failed to load: {System.IO.Path.GetFileName(originalFilePath)}");
                 return null;
+            }
+            if (!parsingOnly && m_reuseUnchanged)
+            {
+                m_executionAssembly = assembly;
+                s_executionLoaders[originalFilePath] = this;
             }
             return assembly;
         }
