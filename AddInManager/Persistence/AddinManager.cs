@@ -14,6 +14,8 @@ namespace AddInManager.Persistence
     public class AddinManager
     {
         private readonly string m_persistentStoreFilePath;
+        private readonly Dictionary<string, string> m_typeDefinitionSignatures =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public AddinsApplication Applications { get; }
 
@@ -50,13 +52,43 @@ namespace AddInManager.Persistence
         public void RemoveAddin(Addin addin)
         {
             AssemLoader.InvalidateExecutionCache(addin.FilePath);
+            m_typeDefinitionSignatures.Remove(addin.FilePath);
             if (!Commands.RemoveAddIn(addin))
             {
                 Applications.RemoveAddIn(addin);
             }
         }
 
-        public AddinType LoadAddin(string filePath)
+        // 类型定义未变时只更新已核对时间，保留节点、选择、勾选和执行缓存。
+        internal bool TryKeepAddinList(string filePath, DateTime writeTimeUtc)
+        {
+            var addins = Commands.AddinDict.Values.Concat(Applications.AddinDict.Values)
+                .Where(addin => string.Equals(addin.FilePath, filePath, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (addins.Count == 0) return false;
+            var hasSignature = m_typeDefinitionSignatures.TryGetValue(filePath, out var previousSignature);
+            var sameTime = addins.All(addin => addin.LoadedFileWriteTimeUtc == writeTimeUtc);
+            if (hasSignature && sameTime) return true;
+            // 历史记录未核对过当前文件时，先完整解析，不能用新版文件建立旧列表的基线。
+            if (!hasSignature && !sameTime) return false;
+            var signature = AssemLoader.ReadTypeDefinitionSignature(filePath);
+            if (Addin.GetFileWriteTimeUtc(filePath) != writeTimeUtc) return false;
+            if (hasSignature && signature != previousSignature) return false;
+            m_typeDefinitionSignatures[filePath] = signature;
+            foreach (var addin in addins) addin.LoadedFileWriteTimeUtc = writeTimeUtc;
+            return true;
+        }
+
+        private static bool HasSameItems(Addin previous, List<AddinItem> items)
+        {
+            if (previous.ItemList.Count != items.Count) return false;
+            var oldItems = previous.ItemList.OrderBy(item => item.FullClassName, StringComparer.Ordinal);
+            var newItems = items.OrderBy(item => item.FullClassName, StringComparer.Ordinal);
+            return oldItems.Zip(newItems, (oldItem, newItem) => oldItem.FullClassName == newItem.FullClassName &&
+                oldItem.TransactionMode == newItem.TransactionMode && oldItem.RegenerationMode == newItem.RegenerationMode &&
+                oldItem.JournalingMode == newItem.JournalingMode).All(same => same);
+        }
+
+        public AddinType LoadAddin(string filePath, bool onlyIfChanged = false)
         {
             var addinType = AddinType.Invalid;
             if (!File.Exists(filePath))
@@ -69,8 +101,10 @@ namespace AddInManager.Persistence
             var assemLoader = new AssemLoader();
             List<AddinItem> cmdItems = null;
             List<AddinItem> appItems = null;
+            string definitionSignature = null;
             try
             {
+                definitionSignature = AssemLoader.ReadTypeDefinitionSignature(filePath);
                 assemLoader.HookAssemblyResolve();
                 var assembly = assemLoader.LoadAddinsToTempFolder(filePath, true);
                 if (null == assembly)
@@ -89,7 +123,27 @@ namespace AddInManager.Persistence
             {
                 assemLoader.UnhookAssemblyResolve();
             }
-            if (cmdItems != null && cmdItems.Count > 0)
+            if (cmdItems == null || appItems == null) return AddinType.Invalid;
+            if (definitionSignature != null) m_typeDefinitionSignatures[filePath] = definitionSignature;
+            var key = Path.GetFileName(filePath);
+            Commands.AddinDict.TryGetValue(key, out var oldCommand);
+            Applications.AddinDict.TryGetValue(key, out var oldApplication);
+            // 自动核对只替换实际变化的列表；只增删辅助类型也不重建现有节点。
+            var keepCommand = onlyIfChanged && oldCommand != null &&
+                string.Equals(oldCommand.FilePath, filePath, StringComparison.OrdinalIgnoreCase) && HasSameItems(oldCommand, cmdItems);
+            var keepApplication = onlyIfChanged && oldApplication != null &&
+                string.Equals(oldApplication.FilePath, filePath, StringComparison.OrdinalIgnoreCase) && HasSameItems(oldApplication, appItems);
+            if (keepCommand)
+            {
+                oldCommand.LoadedFileWriteTimeUtc = loadedFileWriteTimeUtc;
+                addinType |= AddinType.Command;
+            }
+            if (keepApplication)
+            {
+                oldApplication.LoadedFileWriteTimeUtc = loadedFileWriteTimeUtc;
+                addinType |= AddinType.Application;
+            }
+            if (!keepCommand && (cmdItems.Count > 0 || (onlyIfChanged && oldCommand != null && appItems.Count == 0)))
             {
                 var cmdAddin = new Addin(filePath, cmdItems)
                 {
@@ -108,7 +162,7 @@ namespace AddInManager.Persistence
                 addinType |= AddinType.Command;
                 DebugLogger.Instance.Info($"LoadAddin: found {cmdItems.Count} commands in {System.IO.Path.GetFileName(filePath)}");
             }
-            if (appItems != null && appItems.Count > 0)
+            if (!keepApplication && (appItems.Count > 0 || (onlyIfChanged && oldApplication != null && cmdItems.Count == 0)))
             {
                 var appAddin = new Addin(filePath, appItems)
                 {

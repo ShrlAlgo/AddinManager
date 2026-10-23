@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
@@ -27,6 +31,67 @@ namespace AddInManager
         private Assembly m_executionAssembly;
 
         public static string m_resolvedAssemPath = string.Empty;
+
+        // 只读取类型、继承、接口和类型特性；方法体变化不会触发列表重载。
+        internal static string ReadTypeDefinitionSignature(string filePath)
+        {
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+            using (var pe = new PEReader(stream))
+            {
+                var reader = pe.GetMetadataReader();
+                var definitions = new List<string>();
+                foreach (var handle in reader.TypeDefinitions)
+                {
+                    var type = reader.GetTypeDefinition(handle);
+                    var interfaces = type.GetInterfaceImplementations()
+                        .Select(h => GetMetadataTypeName(reader, reader.GetInterfaceImplementation(h).Interface))
+                        .OrderBy(name => name, StringComparer.Ordinal);
+                    var attributes = type.GetCustomAttributes().Select(h =>
+                    {
+                        var attribute = reader.GetCustomAttribute(h);
+                        var owner = attribute.Constructor.Kind == HandleKind.MemberReference
+                            ? reader.GetMemberReference((MemberReferenceHandle)attribute.Constructor).Parent
+                            : reader.GetMethodDefinition((MethodDefinitionHandle)attribute.Constructor).GetDeclaringType();
+                        return GetMetadataTypeName(reader, owner) + ":" + Convert.ToBase64String(reader.GetBlobBytes(attribute.Value));
+                    }).OrderBy(value => value, StringComparer.Ordinal);
+                    definitions.Add(GetMetadataTypeName(reader, handle) + "|" + (int)type.Attributes + "|" +
+                        GetMetadataTypeName(reader, type.BaseType) + "|" + string.Join(";", interfaces) + "|" + string.Join(";", attributes));
+                }
+                using (var hash = SHA256.Create())
+                {
+                    return Convert.ToBase64String(hash.ComputeHash(Encoding.UTF8.GetBytes(
+                        string.Join("\n", definitions.OrderBy(value => value, StringComparer.Ordinal)))));
+                }
+            }
+        }
+
+        private static string GetMetadataTypeName(MetadataReader reader, EntityHandle handle)
+        {
+            if (handle.IsNil) return string.Empty;
+            switch (handle.Kind)
+            {
+                case HandleKind.TypeDefinition:
+                    var definition = reader.GetTypeDefinition((TypeDefinitionHandle)handle);
+                    return GetMetadataTypeName(reader, definition.GetDeclaringType()) + "/" +
+                        reader.GetString(definition.Namespace) + "." + reader.GetString(definition.Name);
+                case HandleKind.TypeReference:
+                    var reference = reader.GetTypeReference((TypeReferenceHandle)handle);
+                    return GetMetadataTypeName(reader, reference.ResolutionScope) + "/" +
+                        reader.GetString(reference.Namespace) + "." + reader.GetString(reference.Name);
+                case HandleKind.AssemblyReference:
+                    var assembly = reader.GetAssemblyReference((AssemblyReferenceHandle)handle);
+                    return reader.GetString(assembly.Name) + "," + assembly.Version + "," + reader.GetString(assembly.Culture) +
+                        "," + Convert.ToBase64String(reader.GetBlobBytes(assembly.PublicKeyOrToken));
+                case HandleKind.TypeSpecification:
+                    // 泛型签名含类型索引，同时核对索引映射，避免同一索引已指向不同基类或接口。
+                    var names = reader.TypeReferences.Select(h => GetMetadataTypeName(reader, h))
+                        .Concat(reader.TypeDefinitions.Select(h => GetMetadataTypeName(reader, h)));
+                    return Convert.ToBase64String(reader.GetBlobBytes(reader.GetTypeSpecification((TypeSpecificationHandle)handle).Signature)) +
+                        "[" + string.Join(";", names) + "]";
+                default:
+                    return handle.Kind.ToString();
+            }
+        }
 
         public AssemLoader()
         {
@@ -134,7 +199,8 @@ namespace AddInManager
             // CopyAllDllsToTemp(OriginalFolder, TempFolder); // 这是一个建议实现的辅助方法
 
             var assembly = CopyAndLoadAddin(originalFilePath, parsingOnly);
-            if (null == assembly || !IsAPIReferenced(assembly))
+            // 解析允许不再引用 Revit API 的 DLL，以便自动核对能识别最后一个入口被删除。
+            if (null == assembly || (!parsingOnly && !IsAPIReferenced(assembly)))
             {
                 DebugLogger.Instance.Warning($"AssemLoader: Assembly does not reference Revit API or failed to load: {System.IO.Path.GetFileName(originalFilePath)}");
                 return null;

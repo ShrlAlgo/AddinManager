@@ -119,6 +119,7 @@ namespace AddInManager.Wpf
                     var writeTime = Addin.GetFileWriteTimeUtc(addin.FilePath);
                     if (!writeTime.HasValue || !addin.LoadedFileWriteTimeUtc.HasValue || writeTime == addin.LoadedFileWriteTimeUtc)
                     {
+                        if (writeTime.HasValue) m_aim.AddinManager.TryKeepAddinList(addin.FilePath, writeTime.Value);
                         m_assemblyUpdates.Remove(addin.FilePath);
                         continue;
                     }
@@ -129,6 +130,12 @@ namespace AddInManager.Wpf
                     }
                     if (update.Attempted) continue;
                     m_assemblyUpdates[addin.FilePath] = (writeTime.Value, true);
+                    if (m_aim.AddinManager.TryKeepAddinList(addin.FilePath, writeTime.Value))
+                    {
+                        m_assemblyUpdates.Remove(addin.FilePath);
+                        m_aim.AddinManager.SaveToAimIni();
+                        continue;
+                    }
                     await ReloadAssemblyAsync(addin.FilePath, true);
                     if (!IsLoaded) return;
                 }
@@ -835,7 +842,7 @@ namespace AddInManager.Wpf
         {
             if (commandsTreeView == null || runButton == null) return;
 
-            if (commandsTreeView.SelectedItem is TreeViewItem selectedItem && !HasChildren(selectedItem))
+            if (commandsTreeView.SelectedItem is TreeViewItem selectedItem && selectedItem.Tag is AddinItem)
             {
                 runButton.IsEnabled = !m_isReloading && File.Exists(m_aim.ActiveCmd?.FilePath);
             }
@@ -1218,6 +1225,7 @@ namespace AddInManager.Wpf
             var key = Path.GetFileName(filePath);
             addins.AddinDict.TryGetValue(key, out var updatedAddin);
             if (oldNode == null && updatedAddin == null) return;
+            if (oldNode != null && ReferenceEquals(oldNode.Tag, updatedAddin)) return;
 
             var selected = tree.SelectedItem as TreeViewItem;
             var restoreSelection = oldNode != null && (selected == oldNode || oldNode.Items.Contains(selected));
@@ -1570,7 +1578,7 @@ namespace AddInManager.Wpf
                 AddinType addinType;
                 try
                 {
-                    addinType = await Task.Run(() => m_aim.AddinManager.LoadAddin(filePath));
+                    addinType = await Task.Run(() => m_aim.AddinManager.LoadAddin(filePath, automatic));
                 }
                 catch (Exception ex)
                 {
